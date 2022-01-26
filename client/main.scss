@@ -1,0 +1,202 @@
+$primary: #11999E;
+$secondary:#E4F9F5;
+
+@import '../node_modules/bootstrap/scss/bootstrap.scss';
+
+body{
+  background-color: $secondary;
+  //background-image: url('/images/suraj.png');
+}
+.goti{
+  height: 100%;
+  width: 100%;
+}
+.centered {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+.container {
+  position: relative;
+  width:100%;
+  text-align: center;
+  color: white;
+}
+.modal-image{
+  display:block;
+  width: 100%;
+
+  object-fit: contain;
+}
+
+.upload-image-container{
+    position: relative;
+    width: 100%;
+    max-width: 400px;
+    border:1px solid black;
+  }
+
+  .upload-image-container .circle-x-button {
+  position: absolute;
+  top: 10%;
+  left: 90%;
+  transform: translate(-50%, -50%);
+  -ms-transform: translate(-50%, -50%);
+  background-color: red;
+  color: white;
+  font-size: 16px;
+  padding: 6px 12px;
+  border: none;
+  cursor: pointer;
+  border-radius: 100%;
+  text-align: center;
+}
+.upload-preview-image{
+  padding: 1px;
+   width: 100%;
+  height: auto;
+}
+
+.preview-image{
+  transition: transform .2s;
+  padding: 1px;
+   width: 50px;
+  height: 100px;
+  object-fit: scale-down;
+}
+
+.preview-image:hover {
+  transform: scale(5);
+  transition: transform .2s;
+
+}
+  .btn-primary {
+    color: #fff!important;
+  }
+  .form{
+    margin: auto;
+    width: 75%;
+    height:100%;
+    border: 1px groove rgb(175, 175, 175);
+    border-radius: 5px;
+    padding: 10px;
+    color:#40514E;
+    background-color: #fff;
+    box-shadow: 1px 1px 5px rgb(88, 88, 88);
+  }
+  @media(max-width: 800px){
+    .form{
+    width:65%;
+    }
+    
+  }
+  
+  .DateSelector{
+    text-align: center;
+  }
+  
+
+  
+  .spinner {
+    display: block;
+    position: fixed;
+    //z-index: 1031; /* High z-index so it is on top of the page */
+    top: calc( 50% - ( 10px / 2) ); /* where ... is the element's height */
+    right: calc( 50% - ( 10px / 2) ); /* where ... is the element's width */
+  }
+ .loginError{
+   color:red;
+   display:block;
+ } 
+
+ .dropdown-menu { 
+  color:#FFF; 
+  background-color: #40514E; 
+  min-width:30px;
+  
+  //border:solid black 0.5px;
+}
+
+.dropdown-menu a:hover{
+  background-color: $secondary; 
+}
+.red-text{
+  color:$warning;
+}
+.dropdown-menu a{   
+  color: #FFFFFF;
+}
+
+
+// .dropdown-menu::before {
+//   border-bottom: 9px solid rgba(0, 0, 0, 0.2);
+//   border-left: 9px solid rgba(0, 0, 0, 0);
+//   border-right: 9px solid rgba(0, 0, 0, 0);
+//   content: "";
+//   display: inline-block;
+//   left: 5%; /* position */
+//   position: absolute;
+//   top: -8px;
+// }
+// .dropdown-menu::after {
+//   border-bottom: 8px solid #40514E;
+//   border-left: 9px solid rgba(0, 0, 0, 0);
+//   border-right: 9px solid rgba(0, 0, 0, 0);
+//   content: "";
+//   display: inline-block;
+//   left: 5%; /* position */
+//   position: absolute;
+//   top: -7px;
+// }
+// .image-table{
+//     border: none;
+//     padding: 0;
+//     height:10%;
+//     width: 10%;
+//     font-size:0;
+   
+// }
+.admin-table{
+    font-family: arial, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+    border-radius: 5px;
+    td, th {
+      border: 1px solid #000;
+      text-align: left;
+      padding: 8px;
+    }
+.not-verified{
+  background-color: #fd5252;
+  color:black;
+} 
+.verified{
+  background-color: #78ff56;
+  color:black;
+}   
+    // tr:nth-child(even) {
+    //   background-color: #dddddd;
+    // }
+}
+  
+textarea:focus,
+input[type="text"]:focus,
+input[type="password"]:focus,
+input[type="datetime"]:focus,
+input[type="datetime-local"]:focus,
+input[type="date"]:focus,
+input[type="month"]:focus,
+input[type="time"]:focus,
+input[type="week"]:focus,
+input[type="number"]:focus,
+input[type="email"]:focus,
+input[type="url"]:focus,
+input[type="search"]:focus,
+input[type="tel"]:focus,
+input[type="color"]:focus,
+.uneditable-input:focus {   
+  border-color: #30E3CA;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset, 0 0 8px #30E3CA;//for adding glow effect to focused textbox
+  outline: 0 none;
+}
