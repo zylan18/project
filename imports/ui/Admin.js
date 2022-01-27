@@ -52,7 +52,7 @@ const Admin = () => {
 
     //console.log(donname);
     return (
-        <div className="form">
+        <div>
             <table className="admin-table">
                 
                 <tr>
