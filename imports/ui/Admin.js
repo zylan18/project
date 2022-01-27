@@ -4,6 +4,7 @@ import { useTracker } from 'meteor/react-meteor-data';
 import {Alert,Modal,Spinner} from 'react-bootstrap';
 import {Files} from '../api/links';
 
+
 function verify(index){
     const user=Meteor.user();
     const donname=DonationList.find({},{fields:{}}).fetch();
@@ -54,8 +55,8 @@ const Admin = () => {
     return (
         <div>
             <table className="admin-table">
-                
                 <tr>
+                    
                     <th>Donor Name</th>
                     <th>Medicine Name</th>
                     <th>Expiry Date</th>
@@ -64,6 +65,7 @@ const Admin = () => {
                     <th>Verified by</th>
                     <th>Verify</th>
                     <th></th>
+                    
                 </tr>
             {
             donname.map((name,index) => (
