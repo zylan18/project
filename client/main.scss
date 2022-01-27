@@ -1,5 +1,6 @@
 $primary: #11999E;
 $secondary:#E4F9F5;
+$dark:#40514E;
 
 @import '../node_modules/bootstrap/scss/bootstrap.scss';
 
@@ -84,12 +85,12 @@ body{
     color:#40514E;
     background-color: #fff;
     box-shadow: 1px 1px 5px rgb(88, 88, 88);
+    
   }
   @media(max-width: 800px){
     .form{
     width:65%;
     }
-    
   }
   
   .DateSelector{
@@ -157,27 +158,66 @@ body{
 //     font-size:0;
    
 // }
+
+  /* Designing for scroll-bar */
+  ::-webkit-scrollbar {
+    width: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+    background: gainsboro;
+    border-radius: 5px;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background:$dark;
+    border-radius: 5px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+    background: $primary;
+}
+.table-scrollbar{
+  overflow-x:auto;
+}
+.Flipped, .Flipped .table-scrollbar{
+  transform: rotateX(180deg);
+}
 .admin-table{
     font-family: arial, sans-serif;
-    border-collapse: collapse;
+    table-layout: fixed;
+    border-collapse: separate;//for seperating table rows
+    border-spacing: 0 5px;
     width: 100%;
     border-radius: 5px;
     td, th {
-      border: 1px solid #000;
+      // border: 0.5px solid #000;
       text-align: left;
       padding: 8px;
     }
+    th{
+      background-color: #ffffff;
+    }
 .not-verified{
-  background-color: #fd5252;
+  background-color: #ffa0a0;
   color:black;
+  border:1px solid #ff2222;
 } 
 .verified{
-  background-color: #78ff56;
+  background-color: #cbfdbe;
   color:black;
+  border:1px solid #26bd00;
 }   
     // tr:nth-child(even) {
     //   background-color: #dddddd;
     // }
+}
+.status{
+  border-radius:25px;
+  padding: 5px;
 }
   
 textarea:focus,

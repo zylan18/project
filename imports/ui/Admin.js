@@ -3,9 +3,10 @@ import { DonationList } from '../api/links'
 import { useTracker } from 'meteor/react-meteor-data';
 import {Alert,Modal,Spinner} from 'react-bootstrap';
 import {Files} from '../api/links';
-
-
+import {GiConfirmed} from '@react-icons/all-files/gi/GiConfirmed';//to use icon
+import {GiCancel} from '@react-icons/all-files/gi/GiCancel';
 function verify(index){
+    
     const user=Meteor.user();
     const donname=DonationList.find({},{fields:{}}).fetch();
     if(donname[index].verify_status == true){
@@ -44,6 +45,8 @@ function verifyColor(t){
 }
 const Admin = () => {
     if(Meteor.user()){
+    let verifyIcon = { color: "#26bd00"};//used to change color of icon
+    let cancelIcon = { color: "#ff2222"};//used to change color of icon
     const [show, setShow] = useState(false);
     const [donation_id,setDonation_id]=useState('');
     const handleClose = () => setShow(false);
@@ -53,19 +56,20 @@ const Admin = () => {
 
     //console.log(donname);
     return (
-        <div>
+        <div className='form'>
+          <div className="table-scrollbar Flipped"> {/*used to flip the div to get horizontal scrollbar */}
+          <div className='Flipped'> {/*used to flip back the table contents*/}
             <table className="admin-table">
+                
                 <tr>
-                    
-                    <th>Donor Name</th>
-                    <th>Medicine Name</th>
-                    <th>Expiry Date</th>
-                    <th>Verify Status</th>
-                    <th>Status</th>
-                    <th>Verified by</th>
-                    <th>Verify</th>
-                    <th></th>
-                    
+                    <th width="100px">Donor Name</th>
+                    <th width="100px">Medicine Name</th>
+                    <th width="100px">Expiry Date</th>
+                    <th width="100px">Verify Status</th>
+                    <th width="130px">Status</th>
+                    <th width="100px">Verified by</th>
+                    <th width="100px">Verify</th>
+                    <th width="100px"></th>
                 </tr>
             {
             donname.map((name,index) => (
@@ -76,9 +80,12 @@ const Admin = () => {
                     <td>{name.medicine_name}</td>
                     <td>{name.exp_date}</td>
                     <td>{name.status}</td>
-                    <td>{(name.verify_status==true)?("Verified")
-                    :(name.verify_status=="rejected")?("Rejected")
+                    <td>
+                    <span className={"status "+(verifyColor(name.verify_status))}>
+                    {(name.verify_status==true)?(<span style={verifyIcon}><GiConfirmed style={verifyIcon}/> Verified</span>)
+                    :(name.verify_status=="rejected")?(<span style={cancelIcon}><GiCancel style={cancelIcon}/> Rejected</span>)
                     :("Not Verified")}
+                    </span>
                     </td>
                     <td>{name.verified_by}</td>
                     <td>
@@ -101,6 +108,8 @@ const Admin = () => {
         )
     }
             </table>
+            </div>
+           </div> 
             <Modal show={show} onHide={handleClose} fullscreen={true}>
                 <Modal.Header closeButton>
                 </Modal.Header>
