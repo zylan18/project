@@ -15,29 +15,20 @@ function NavBar() {
     const handleShow = () => setShow(true);  
     const user = useTracker(() => Meteor.user());
    // console.log(user);
+   if(Meteor.user()){
   return (
         <div>
         <meta name="viewport" content="width=device-width, initial-scale=1"/>
         <Navbar bg="primary" className="w-auto" variant="dark" expand='lg'>
           <Container>
-            <Navbar.Brand href="/">We care for you</Navbar.Brand>    
+            <Navbar.Brand href="/">Navbar</Navbar.Brand>    
             <Navbar.Toggle aria-controls="basic-navbar-nav" />
               <Navbar.Collapse id="basic-navbar-nav">    
-              <Nav className="me-auto">
-                {user ? (<Link className="nav-link" to={"/donate"}>Donate</Link>):
-                        (<Link className="nav-link" to={"/register"}>Donate</Link>)
-                }
-                 
-                {user ? (<Link className="nav-link" to={"/request"}>Request</Link>):
-                        (<Link className="nav-link" to={"/register"}>Request</Link>)
-                }
+              <Nav className="ms-auto">
+                  <Link className="nav-link" to={"/donate"}>Donate</Link>
+                  <Link className="nav-link" to={"/request"}>Request</Link>
+                  <Link className="nav-link" to={"/aboutus"}>About Us</Link>
               
-                {user ? (null):
-                (<Link className="nav-link" to={"/register"}>Register</Link>)
-                }
-                <Link className="nav-link" to={"/aboutus"}>About Us</Link>
-
-                {user ? (
                   <NavDropdown title={user.username} id="navbarScrollingDropdown">
                   <NavDropdown.Item href="/profile">Profile</NavDropdown.Item>
                   <NavDropdown.Item href="/donationandrequest">Donations and<br/>Requests</NavDropdown.Item>
@@ -46,12 +37,7 @@ function NavBar() {
                     <span className="red-text">Signout</span>
                   </NavDropdown.Item>
                 </NavDropdown>
-                )
-                :(
-                <LoginForm/>
-                )
-              }
-           
+              
             </Nav>
             </Navbar.Collapse>
           </Container>
@@ -60,6 +46,38 @@ function NavBar() {
         </div>
  
     )
+  }
+  else if(Meteor.loggingIn()){
+    return(
+    <Navbar bg="primary" className="w-auto" variant="dark" expand='lg'>
+    <Container>
+      <Nav>
+        <Navbar.Brand href="/">Navbar</Navbar.Brand>
+      </Nav>
+    </Container>
+    </Navbar>
+    )
+  }
+  else{
+    return(
+    <Navbar bg="primary" className="w-auto" variant="dark" expand='lg'>
+          <Container>
+            <Navbar.Brand href="/">Navbar</Navbar.Brand>    
+            <Navbar.Toggle aria-controls="basic-navbar-nav" />
+              <Navbar.Collapse id="basic-navbar-nav">    
+              <Nav className="ms-auto">
+               
+              <Link className="nav-link" to={"/register"}>Donate</Link>
+              <Link className="nav-link" to={"/register"}>Request</Link>
+              <Link className="nav-link" to={"/register"}>Register</Link>
+
+                <LoginForm/>
+            </Nav>
+            </Navbar.Collapse>
+          </Container>
+          </Navbar>
+          )
+  }
 }
 
 export default NavBar
