@@ -21,7 +21,7 @@ function NavBar() {
         <meta name="viewport" content="width=device-width, initial-scale=1"/>
         <Navbar bg="primary" className="w-auto" variant="dark" expand='lg'>
           <Container>
-            <Navbar.Brand href="/">Navbar</Navbar.Brand>    
+            <Navbar.Brand href="/">We Care For You</Navbar.Brand>    
             <Navbar.Toggle aria-controls="basic-navbar-nav" />
               <Navbar.Collapse id="basic-navbar-nav">    
               <Nav className="ms-auto">
@@ -52,7 +52,7 @@ function NavBar() {
     <Navbar bg="primary" className="w-auto" variant="dark" expand='lg'>
     <Container>
       <Nav>
-        <Navbar.Brand href="/">Navbar</Navbar.Brand>
+        <Navbar.Brand href="/">We Care For You</Navbar.Brand>
       </Nav>
     </Container>
     </Navbar>
@@ -62,7 +62,7 @@ function NavBar() {
     return(
     <Navbar bg="primary" className="w-auto" variant="dark" expand='lg'>
           <Container>
-            <Navbar.Brand href="/">Navbar</Navbar.Brand>    
+            <Navbar.Brand href="/">We Care For You</Navbar.Brand>    
             <Navbar.Toggle aria-controls="basic-navbar-nav" />
               <Navbar.Collapse id="basic-navbar-nav">    
               <Nav className="ms-auto">
