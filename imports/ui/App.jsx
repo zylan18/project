@@ -8,7 +8,7 @@ import { Navbar,Nav,Container} from 'react-bootstrap';
 import Home from './Home.js';
 import NavBar from './NavBar';
 import Admin from './Admin';
-import RequestForm from'./RequestForm';
+import Request from'./Request';
 import Profile from './Profile';
 import DonationsAndRequests from './DonationsAndRequests';
 import AboutUs from './AboutUs'
@@ -25,7 +25,7 @@ const App = () => {
           <Route exact path="/register" element={<RegistrationForm/>}/>
           <Route exact path="/donate" element={<DonationForm/>}/>
           <Route exact path="/admin" element={<Admin/>}/>
-          <Route exact path="/request" element={<RequestForm/>}/>
+          <Route exact path="/request" element={<Request/>}/>
           <Route exact path="/profile" element={<Profile/>}/>
           <Route exact path="/donationandrequest" element={<DonationsAndRequests/>}/>
           <Route exact path="/aboutus" element={<AboutUs/>}/>

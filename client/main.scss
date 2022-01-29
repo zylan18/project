@@ -539,7 +539,12 @@ footer{
        box-shadow: 0px 0px 5px 0px #2ecc71;
        height:200px;
        width:300px;
-       
-    
      }
-     
+     .text-on-image {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color:#034444;
+      background-color: rgba(172, 255, 209, 0.726);
+    }
