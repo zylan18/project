@@ -27,23 +27,31 @@ const DonationForm = () =>{
     function fileInput(event){ 
         var file = event.target.files[0]; //assuming 1 file only
         if (!file) return;
-        if(file.size<=5243000){
-        handleFileError('');
-        console.log(file.size);
-        var reader = new FileReader(); //create a reader according to HTML5 File API
-    
-        reader.onload = function(event){          
-          var buffer = new Uint8Array(reader.result) // convert to binary
-          handleFileChange(buffer);
+         
+        if(file.size<=5243000){ //used to check file size
+            console.log(file.type);
+            if (file.type=='image/jpeg'||file.type=='image/png'){ //used to check file type
+            handleFileError('');
+            console.log(file.size);
+            var reader = new FileReader(); //create a reader according to HTML5 File API
+            reader.onload = function(event){          
+            var buffer = new Uint8Array(reader.result) // convert to binary
+            handleFileChange(buffer);
         }
         reader.readAsArrayBuffer(file); //read the file as arraybuffer
     }
     else{
+        handleFileError('Only jpg, jpeg and png files support');
+        handleFileChange('');
+        document.getElementById("file").value=null;
+    }
+}
+    else{
         handleFileError('File Size more than 5MB');
         handleFileChange('');
-    }
-     
-    }
+        document.getElementById("file").value=null;
+    } 
+}
         if(Meteor.user()){
         
         // var dbimg = Files.find({user_id:Meteor.user()._id},{fields:{}}).fetch();

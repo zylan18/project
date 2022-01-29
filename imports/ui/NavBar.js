@@ -37,7 +37,6 @@ function NavBar() {
                     <span className="red-text">Signout</span>
                   </NavDropdown.Item>
                 </NavDropdown>
-              
             </Nav>
             </Navbar.Collapse>
           </Container>
