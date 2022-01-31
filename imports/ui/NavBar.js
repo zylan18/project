@@ -10,10 +10,8 @@ const logout = () => {
 }
 
 function NavBar() {
-    const [show, setShow] = useState(false);
-    const handleClose = () => setShow(false);
-    const handleShow = () => setShow(true);  
-    const user = useTracker(() => Meteor.user());
+    //const [show, setShow] = useState(false);
+   // const user = useTracker(() => Meteor.user());
    // console.log(user);
    if(Meteor.user()){
   return (
@@ -24,12 +22,12 @@ function NavBar() {
             <Navbar.Brand href="/">We Care For You</Navbar.Brand>    
             <Navbar.Toggle aria-controls="basic-navbar-nav" />
               <Navbar.Collapse id="basic-navbar-nav">    
-              <Nav className="ms-auto">
+                <Nav className="container-fluid">{/*used container-fluid to get username div to left of navbar */}
                   <Link className="nav-link" to={"/donate"}>Donate</Link>
                   <Link className="nav-link" to={"/request"}>Request</Link>
                   <Link className="nav-link" to={"/aboutus"}>About Us</Link>
-              
-                  <NavDropdown title={user.username} id="navbarScrollingDropdown">
+               <div className='ms-auto'> 
+                  <NavDropdown title={Meteor.user().username} id="navbarScrollingDropdown">
                   <NavDropdown.Item href="/profile">Profile</NavDropdown.Item>
                   <NavDropdown.Item href="/donationandrequest">Donations and<br/>Requests</NavDropdown.Item>
                   <NavDropdown.Divider />
@@ -37,6 +35,7 @@ function NavBar() {
                     <span className="red-text">Signout</span>
                   </NavDropdown.Item>
                 </NavDropdown>
+               </div>
             </Nav>
             </Navbar.Collapse>
           </Container>
@@ -64,13 +63,14 @@ function NavBar() {
             <Navbar.Brand href="/">We Care For You</Navbar.Brand>    
             <Navbar.Toggle aria-controls="basic-navbar-nav" />
               <Navbar.Collapse id="basic-navbar-nav">    
-              <Nav className="ms-auto">
+              <Nav className="container-fluid">
                
               <Link className="nav-link" to={"/register"}>Donate</Link>
               <Link className="nav-link" to={"/register"}>Request</Link>
               <Link className="nav-link" to={"/register"}>Register</Link>
-
+              <div className='ms-auto'>
                 <LoginForm/>
+              </div>  
             </Nav>
             </Navbar.Collapse>
           </Container>

@@ -1,7 +1,6 @@
-$primary: #11999E;
+$primary: #11999E;//this will also change color of anchor tag <a>
 $secondary:#E4F9F5;
 $dark:#40514E;
-
 @import '../node_modules/bootstrap/scss/bootstrap.scss';
 
 body{
@@ -253,7 +252,7 @@ input[type="tel"]:focus,
 input[type="color"]:focus,
 .uneditable-input:focus {   
   border-color: #30E3CA;
-  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset, 0 0 8px #30E3CA;//for adding glow effect to focused textbox
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset, 0 0 8px #30E3CA !important;//for adding glow effect to focused textbox
   outline: 0 none;
 }
 
@@ -438,7 +437,7 @@ h2:after{
     height: 4px;
     width: 50px;
     border-radius: 2px;
-    background-color: #2ecc71;
+    background-color: #000000;
 }
 
 .field{
@@ -548,3 +547,4 @@ footer{
       color:#034444;
       background-color: rgba(172, 255, 209, 0.726);
     }
+    

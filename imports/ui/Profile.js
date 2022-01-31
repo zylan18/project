@@ -26,7 +26,7 @@ const Profile = () => {
                         <Form.Label>E-Mail</Form.Label>
                         <Form.Control type="text" value={email} onChange={e=>handleEmailChange(e.target.value)}/>
                         <Form.Label>Address</Form.Label>
-                        <Form.Control as="textarea" value={address} onChange={e=>handleAddressChange(e.target.value)}/>
+                        <textarea className='form-control' value={address} onChange={e=>handleAddressChange(e.target.value)}/>
                         <Form.Text muted>
                             Clicking the change button will change your profile details to the ones in the textbox
                         </Form.Text><br/>

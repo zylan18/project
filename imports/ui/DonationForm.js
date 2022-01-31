@@ -11,7 +11,6 @@ const DonationForm = () =>{
     const [donorname,handleDonornameChange]=useState('');
     const [medfile,handleFileChange]=useState('');
     const [fileerror,handleFileError]=useState('');
-   console.log(Meteor.call("fetchfrommedicine","donor_name","yash"));
     handleSubmit=(event)=>{
         alert(`Donor Name:${donorname}\n Medicine Name: ${medname}\n Expiry Date:${expdate}`);
         date=new Date;
@@ -65,7 +64,7 @@ const DonationForm = () =>{
                 <div className="form">
                  <Form.Label><h1>Donation Form</h1></Form.Label>              
                 <FloatingLabel controlId="floatingInput" label="Donor Name" className="mb-3">
-                        <input type='text' className="form-control" onChange={e=>handleDonornameChange(e.target.value)}
+                        <input type='text' value={Meteor.user().profile.name} className="form-control" onChange={e=>handleDonornameChange(e.target.value)}
                         placeholder="Donor Name"
                         />
                     </FloatingLabel>
@@ -89,7 +88,7 @@ const DonationForm = () =>{
                         ):null}
                         
 
-                <Button variant="primary" type="submit">Submit</Button>
+                <Button className="btn-primary" variant="primary" type="submit">Submit</Button>
                 </div>
                 </Form>
         )
