@@ -53,7 +53,7 @@ const Admin = () => {
     const handleShow = () => {setShow(true)};
     const donname=DonationList.find({},{fields:{}}).fetch();
 
-
+    var image;
     //console.log(donname);
     return (
         <div className='form'>
@@ -98,7 +98,7 @@ const Admin = () => {
                         <button style={{"color":"red"}} onClick={()=>rejectVerification(index)}>Reject</button>
                     </td> 
                     <td className="image-table">
-                            {(Files.findOne({donation_id:name._id}))?(<img className="preview-image"src={URL.createObjectURL(new Blob([(Files.findOne({donation_id:name._id})).data]))}
+                            {(image=(Files.findOne({donation_id:name._id})).data)?(<img className="preview-image"src={URL.createObjectURL(new Blob([image]))}
                             onClick={()=>{setDonation_id(name._id);handleShow()}}/>):"Not found"}
                     </td>
                 </tr>

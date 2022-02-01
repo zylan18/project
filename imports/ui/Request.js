@@ -1,11 +1,11 @@
-import React from 'react';
+import React,{useCallback,useState} from 'react';
 
 const Request = () => {
   return (
   <div>
        <div className="container-main">
-        <div className="container-new" onClick={()=>{alert('antipyretics')}} href="https://en.wikipedia.org/wiki/Antipyretic" style={{cursor: "pointer"}}>
-        <a href="https://en.wikipedia.org/wiki/Antipyretic" style={{color:'black'}}>
+        <div className="container-new" onClick={()=>{alert('antipyretics')}} style={{cursor: "pointer"}}>
+        <a href="/antipyretics" style={{color:'black'}}>
             <img className="image-new" src="/images/antipyretics.jpg" alt="Some Error" />
             <div className="text-on-image"><h3>Antipyretics</h3></div>
             <div className="overlay-new"><p><h3>Antipyretics</h3><br/>

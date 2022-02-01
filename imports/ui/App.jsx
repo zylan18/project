@@ -9,9 +9,11 @@ import Home from './Home.js';
 import NavBar from './NavBar';
 import Admin from './Admin';
 import Request from'./Request';
+import RequestForm from './RequestForm';
 import Profile from './Profile';
 import DonationsAndRequests from './DonationsAndRequests';
 import AboutUs from './AboutUs'
+import Antipyretics from './Antipyretics';
 
 const logout = () => Meteor.logout();
 const App = () => {
@@ -26,9 +28,11 @@ const App = () => {
           <Route exact path="/donate" element={<DonationForm/>}/>
           <Route exact path="/admin" element={<Admin/>}/>
           <Route exact path="/request" element={<Request/>}/>
+          <Route exact path="/requestform/:id" element={<RequestForm/>}/>{/*here :id is used for sending any value to the requestform*/}
           <Route exact path="/profile" element={<Profile/>}/>
           <Route exact path="/donationandrequest" element={<DonationsAndRequests/>}/>
           <Route exact path="/aboutus" element={<AboutUs/>}/>
+          <Route exact path="/antipyretics" element={<Antipyretics/>}/>
         </Routes>
       </Router>
     </div>
