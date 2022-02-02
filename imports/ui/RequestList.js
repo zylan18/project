@@ -25,7 +25,7 @@ const Antipyretics = () => {
     return(
   <div className="form">
       <table className="admin-table">
-                
+                <tbody>
                 <tr>
                     <th></th>
                     <th>Medicine Name</th>
@@ -48,6 +48,7 @@ const Antipyretics = () => {
             
         )
     }
+            </tbody>
             </table>
             <Modal show={show} onHide={handleClose} size='lg'>
                 <Modal.Header closeButton>

@@ -33,6 +33,7 @@ const DonationsAndRequests = () => {
         return (
             <div className="form">
                 <table className="admin-table">
+                    <tbody>
                     
                     <tr>
                         <th>Medicine Name</th>
@@ -61,6 +62,7 @@ const DonationsAndRequests = () => {
                     </tr>)
                     )
                 }
+                </tbody>
                 </table>
                 <Modal show={show} onHide={handleClose} fullscreen={true}>
                 <Modal.Header closeButton>

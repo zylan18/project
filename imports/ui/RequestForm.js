@@ -64,6 +64,7 @@ const RequestForm = () => {
                 <Form onSubmit={handleSubmit}>
                     <Form.Label><h1>Request Form:</h1></Form.Label><br/>              
                         <table className='admin-table' style={{border:'1px solid #11999E'}}>
+                            <tbody>
                             <tr padding='1px'><b>Medicine Details:</b></tr>
                             <tr>
                                 <td rowspan="2">
@@ -77,6 +78,7 @@ const RequestForm = () => {
                                 <td><b>Expiry Date:   </b></td>
                                 <td>{medicine.exp_date}</td>
                             </tr>
+                            </tbody>
                         </table>
                         <br/>
                         <FloatingLabel controlId="floatingInput" label="Reason for Requesting Medicine" className="mb-3">

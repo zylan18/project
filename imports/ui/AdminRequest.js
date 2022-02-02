@@ -46,15 +46,14 @@ function verifyColor(t){
 }
 
 const AdminRequest = () => {
-    if(Meteor.user()){
-        let verifyIcon = { color: "#26bd00"};//used to change color of icon
+    let verifyIcon = { color: "#26bd00"};//used to change color of icon
         let cancelIcon = { color: "#ff2222"};//used to change color of icon
         const [show, setShow] = useState(false);
         const [request_id,setRequest_id]=useState('');
         const handleClose = () => setShow(false);
         const handleShow = () => {setShow(true)};
         const reqname=Request.find({},{fields:{}}).fetch();
-    
+    if(Meteor.user()){
         var image;
         //console.log(reqname);
         return (
@@ -62,7 +61,7 @@ const AdminRequest = () => {
               <div className="table-scrollbar Flipped"> {/*used to flip the div to get horizontal scrollbar */}
               <div className='Flipped'> {/*used to flip back the table contents*/}
                 <table className="admin-table">
-                    
+                    <tbody>
                     <tr>
                         <th width="100px">Requester Name</th>
                         <th width="100px">Medicine Name</th>
@@ -118,6 +117,7 @@ const AdminRequest = () => {
             )
             
         }
+                </tbody>
                 </table>
                 </div>
                </div> 

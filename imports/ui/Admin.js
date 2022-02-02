@@ -1,7 +1,7 @@
 import React,{useState} from 'react'
 import { DonationList } from '../api/links'
 import { useTracker } from 'meteor/react-meteor-data';
-import {Alert,Modal,Spinner} from 'react-bootstrap';
+import {Alert,Modal,Spinner,Form,Row,Col} from 'react-bootstrap';
 import {Files} from '../api/links';
 import {GiConfirmed} from '@react-icons/all-files/gi/GiConfirmed';//to use icon
 import {GiCancel} from '@react-icons/all-files/gi/GiCancel';
@@ -49,37 +49,70 @@ const Admin = () => {
     let cancelIcon = { color: "#ff2222"};//used to change color of icon
     const [show, setShow] = useState(false);
     const [donation_id,setDonation_id]=useState('');
+    const [status,handleStatus]=useState('')
     const handleClose = () => setShow(false);
     const handleShow = () => {setShow(true)};
+    const [donindex,setDonindex]=useState('');
+    const [detailshow, setDetailShow] = useState(false);
+    const handleDetailClose = () => setDetailShow(false);
+    const handleDetailShow = () => {setDetailShow(true)};
     const donname=DonationList.find({},{fields:{}}).fetch();
+    console.log(donname[1]._id);
+    setStatus=(index)=>{
+        if(status!=''){
+        DonationList.update(donname[index]._id,{$set:{status:status}});
+        console.log(donname)
+        window.location.reload(false);
+        }
+        else{
+        alert('select a status');
+        }
+    }
 
     var image;
     //console.log(donname);
     return (
-        <div className='form'>
+        <div className='admin-page'>
           <div className="table-scrollbar Flipped"> {/*used to flip the div to get horizontal scrollbar */}
           <div className='Flipped'> {/*used to flip back the table contents*/}
             <table className="admin-table">
-                
+                <tbody>
                 <tr>
                     <th width="100px">Donor Name</th>
                     <th width="100px">Medicine Name</th>
                     <th width="100px">Expiry Date</th>
-                    <th width="100px">Verify Status</th>
-                    <th width="130px">Status</th>
+                    <th width="100px">Status</th>
+                    <th width="250px">Set Status</th>
+                    <th width="130px">Verification Status</th>
                     <th width="100px">Verified by</th>
                     <th width="100px">Verify</th>
                     <th width="100px"></th>
                 </tr>
             {
             donname.map((name,index) => (
-                <tr data-index={index} className={(verifyColor(name.verify_status))}>
+                <tr data-index={index} onClick={()=>{setDonindex(name._id);handleDetailShow()}} className={(verifyColor(name.verify_status))}>
                     {/* {console.log(index)} */}
                     <td>{name.donor_name}</td>
                     {/* {console.log(name.donor_name)} */}
                     <td>{name.medicine_name}</td>
                     <td>{name.exp_date}</td>
                     <td>{name.status}</td>
+                    <td>
+                        <Row>
+                            <Col>
+                                <Form.Select size="sm" onChange={e=>handleStatus(e.target.value)}>
+                                    <option>select status</option>
+                                    <option value='in collection'>in collection</option>
+                                    <option value='storage'>storage</option>
+                                    <option value='in delivery'>in delivery</option>
+                                    <option value='delivered'>delivered</option>
+                                </Form.Select>
+                            </Col>
+                            <Col>
+                                <button onClick={()=>{setStatus(index)}}>set</button>
+                            </Col>
+                        </Row>
+                    </td>
                     <td>
                     <span className={"status "+(verifyColor(name.verify_status))}>
                     {(name.verify_status==true)?(<span style={verifyIcon}><GiConfirmed style={verifyIcon}/> Verified</span>)
@@ -107,6 +140,7 @@ const Admin = () => {
             
         )
     }
+            </tbody>
             </table>
             </div>
            </div> 
@@ -115,6 +149,56 @@ const Admin = () => {
                 </Modal.Header>
                 <Modal.Body>
                 {donation_id?(<img className="modal-image" src={URL.createObjectURL(new Blob([(Files.findOne({donation_id:donation_id})).data]))}/>):null}
+                </Modal.Body>
+              </Modal>
+              <Modal show={detailshow} onHide={handleDetailClose}>
+                <Modal.Header closeButton>
+                </Modal.Header>
+                <Modal.Body>
+                {(donindex)?    
+                (<table>
+                    <tr>
+                        <td align='right'>_id:</td>
+                        <td>{donindex}</td>
+                    </tr>
+                    <tr>
+                        <td align='right'>user_id:</td>
+                        <td>{((DonationList.findOne({_id:donindex})).user_id)?((DonationList.findOne({_id:donindex})).user_id):('not found')}</td>
+                    </tr>
+                    <tr>
+                        <td align='right'>donatdeat:</td>
+                        <td>{(DonationList.findOne({_id:donindex})).donatedat}</td>
+                    </tr>
+                    <tr>
+                        <td align='right'>username:</td>
+                        <td>{(DonationList.findOne({_id:donindex})).username}</td>
+                    </tr>
+                    <tr>
+                        <td align='right'>donor_name:</td>
+                        <td>{(DonationList.findOne({_id:donindex})).donor_name}</td>
+                    </tr>
+                    <tr>
+                        <td align='right'>medicine_name:</td>
+                        <td>{(DonationList.findOne({_id:donindex})).medicine_name}</td>
+                    </tr>
+                    <tr>
+                        <td align='right'>exp_date:</td>
+                        <td>{(DonationList.findOne({_id:donindex})).exp_date}</td>
+                    </tr>
+                    <tr>
+                        <td align='right'>verify_status:</td>
+                        <td>{((DonationList.findOne({_id:donindex})).verify_status)?('true'):('false')}</td>
+                    </tr>
+                    <tr>
+                        <td align='right'>status:</td>
+                        <td>{(DonationList.findOne({_id:donindex})).status}</td>
+                    </tr>
+                    <tr>
+                        <td align='right'>verified_by</td>
+                        <td>{(DonationList.findOne({_id:donindex})).verified_by}</td>
+                    </tr>
+                </table>):(null)
+    }
                 </Modal.Body>
               </Modal>
         </div>)
