@@ -18,7 +18,7 @@ const RequestForm = () => {
     const [reason,handleReasonChange]=useState('');
     const handleClose = () => setShow(false);
     const handleShow = () => {setShow(true)};
-    const [address,handleAddressChange]=useState(Meteor.user().profile.address);
+    const [address,handleAddressChange]=useState(user.profile.address);
     const [fileerror,handleFileError]=useState('');
     
     var img;
@@ -50,8 +50,13 @@ const RequestForm = () => {
             document.getElementById("file").value=null;
         } 
     }
+    var date=new Date;
     handleSubmit=()=>{
-        alert(`donation_id:${id}\nMedicine Name:${medicine.medicine_name}\nexpiry date:${medicine.exp_date}\nreason:${reason}\naddress:${address}`)
+        //alert(`user_id:${Meteor.user()._id}\nrequestdate:${date.toLocaleString()}\nusername:${user.username}\nrequester_name:${user.profile.name}\ndonation_id:${id}\nmedicine_name:${medicine.medicine_name}\nexp_date:${medicine.exp_date}\nverify_status:${false}\nverified_by:${''}\nstatus:${'in verification'}\ntype:${medicine.type}`);
+        Request.insert({user_id:Meteor.user()._id,requestdate:date.toLocaleString(),
+        username:user.username,requester_name:user.profile.name,donation_id:id, 
+        medicine_name:medicine.medicine_name, exp_date:medicine.exp_date,verify_status:false,verified_by:'',status:'in verification',type:medicine.type,reason:reason,address:address})
+        Meteor.call('requestFormSaveFile',Meteor.user()._id,Meteor.user().username,medfile);    
     }
         var img=URL.createObjectURL(new Blob([medfile]))
         return (

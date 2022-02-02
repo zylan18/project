@@ -3,7 +3,7 @@ import {DonationList} from '../api/links'
 import {Files} from '../api/links'
 import {Spinner,Modal} from 'react-bootstrap'
 import {useNavigate} from 'react-router-dom';
-
+import { useParams } from 'react-router-dom'
  
 
 const Antipyretics = () => {
@@ -19,9 +19,10 @@ const Antipyretics = () => {
     const handleClose = () => setShow(false);
     const handleShow = () => {setShow(true)};
     if(Meteor.user()){
-    var medicineList=DonationList.find({status:'storage',type:'antipyretic'},{fields:{}}).fetch();//used to fetch medicine in storage and of type antipyretic
+    let { type } = useParams();//used to get values from address bar
+    var medicineList=DonationList.find({status:'storage',type:type},{fields:{}}).fetch();//used to fetch medicine in storage and of type antipyretic
     var image;
-  return(
+    return(
   <div className="form">
       <table className="admin-table">
                 

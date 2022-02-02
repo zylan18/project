@@ -79,14 +79,27 @@ body{
   object-fit: scale-down;
 }
 
-.preview-image:hover {
-  transform: scale(5);
-  transition: transform .2s;
+// .preview-image:hover {
+//   transform: scale(5);
+//   transition: transform .2s;
 
-}
+// }
+
   .btn-primary {
     color: #fff !important;
   }
+  .admin-page{
+    margin: auto;
+    width: 95%;
+    height:100%;
+    border: 1px groove rgb(175, 175, 175);
+    border-radius: 5px;
+    padding: 10px;
+    color:#40514E;
+    background-color: #fff;
+    //box-shadow: 1px 1px 5px rgb(88, 88, 88); 
+  }
+
   .form{
     margin: auto;
     width: 75%;
@@ -96,8 +109,7 @@ body{
     padding: 10px;
     color:#40514E;
     background-color: #fff;
-    box-shadow: 1px 1px 5px rgb(88, 88, 88);
-    
+    box-shadow: 1px 1px 5px rgb(88, 88, 88); 
   }
   @media(max-width: 800px){
     .form{
@@ -191,6 +203,7 @@ body{
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
     background: $primary;
+    border:2px solid $dark;
 }
 .table-scrollbar{
   overflow-x:auto;

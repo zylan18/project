@@ -2,7 +2,7 @@ import { Accounts } from 'meteor/accounts-base';
 import {DonationList} from './links';
 import {Meteor} from 'meteor/meteor'
 import {Files} from './links'
-
+import {Request} from './links'
 
 Meteor.methods({
     'Account.create'(username,password,email,nameofuser,address){
@@ -35,5 +35,9 @@ Meteor.methods({
       'saveFile'(id,username,buffer){
        var donation_id= DonationList.findOne({},{sort:{$natural:-1}});
           Files.insert({user_id:id,donation_id:donation_id._id,username:username,data:buffer})         ;
-      }   
+      },   
+      'requestFormSaveFile'(id,username,buffer){
+        var request_id= Request.findOne({},{sort:{$natural:-1}});
+           Files.insert({user_id:id,request_id:request_id._id,username:username,data:buffer})         ;
+       }   
 });

@@ -13,7 +13,8 @@ import RequestForm from './RequestForm';
 import Profile from './Profile';
 import DonationsAndRequests from './DonationsAndRequests';
 import AboutUs from './AboutUs'
-import Antipyretics from './Antipyretics';
+import RequestList from './RequestList';
+import AdminRequest from './AdminRequest';
 
 const logout = () => Meteor.logout();
 const App = () => {
@@ -32,7 +33,8 @@ const App = () => {
           <Route exact path="/profile" element={<Profile/>}/>
           <Route exact path="/donationandrequest" element={<DonationsAndRequests/>}/>
           <Route exact path="/aboutus" element={<AboutUs/>}/>
-          <Route exact path="/antipyretics" element={<Antipyretics/>}/>
+          <Route exact path="/requestlist/:type" element={<RequestList/>}/>
+          <Route exact path="/adminrequest" element={<AdminRequest/>}/>
         </Routes>
       </Router>
     </div>
