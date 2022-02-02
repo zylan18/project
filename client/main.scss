@@ -72,6 +72,12 @@ body{
     object-fit: scale-down;
   
 }
+.request-form-preview-image{
+  padding: 1px;
+   width: 25%;
+  height: 25%;
+  object-fit: scale-down;
+}
 
 .preview-image:hover {
   transform: scale(5);

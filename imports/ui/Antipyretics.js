@@ -9,7 +9,10 @@ import {useNavigate} from 'react-router-dom';
 const Antipyretics = () => {
     const navigate = useNavigate();
     var med_id;//used to send medicine id to next page
-    const handleOnClick = useCallback(() => navigate(`/requestform/${med_id}`, {replace: true}), [navigate]);//used to send to /requestform/med_id
+    // const handleOnClick = useCallback(() => navigate(`/requestform/${med_id}`, {replace: true}), [navigate]);//used to send to /requestform/med_id
+    const handleOnClick=()=>{
+        navigate(`/requestform/${med_id}`)
+    }
 
     const [show, setShow] = useState(false);
     const [donation_id,setDonation_id]=useState('');
