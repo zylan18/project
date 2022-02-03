@@ -112,7 +112,7 @@ const Home = () => {
 				<input type="text" class="field" placeholder="Your Email"/>
 				<input type="text" class="field" placeholder="Phone"/>
 				<textarea placeholder="Message" class="field"></textarea>
-				<button class="btn">Send</button>
+				<button class="btn1">Send</button>
         <img src="/images/fb.webp"/>
         <img src="/images/ig.webp"/>
         <svg preserveAspectRatio="none" data-bbox="20.045 51 159.91 98.001" viewBox="20.045 51 159.91 98.001" 

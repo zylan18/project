@@ -26,7 +26,7 @@ export const LoginForm = () => {
 
   return (
     <div>
-    <Button variant="primary" onClick={handleShow}>
+    <Button className='btn1' variant="primary" onClick={handleShow}>
         Login
       </Button>
       <Modal show={show} onHide={handleClose}>

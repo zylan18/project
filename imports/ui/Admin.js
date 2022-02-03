@@ -1,7 +1,7 @@
-import React,{useState} from 'react'
+import React,{useState,useEffect} from 'react'
 import { DonationList } from '../api/links'
 import { useTracker } from 'meteor/react-meteor-data';
-import {Alert,Modal,Spinner,Form,Row,Col} from 'react-bootstrap';
+import {Alert,Modal,Spinner,Form,Row,Col,Button} from 'react-bootstrap';
 import {Files} from '../api/links';
 import {GiConfirmed} from '@react-icons/all-files/gi/GiConfirmed';//to use icon
 import {GiCancel} from '@react-icons/all-files/gi/GiCancel';
@@ -43,8 +43,10 @@ function verifyColor(t){
         return "not-verified"
     }
 }
+
 const Admin = () => {
     if(Meteor.user()){
+    const donname=DonationList.find({},{fields:{}}).fetch();
     let verifyIcon = { color: "#26bd00"};//used to change color of icon
     let cancelIcon = { color: "#ff2222"};//used to change color of icon
     const [show, setShow] = useState(false);
@@ -57,9 +59,7 @@ const Admin = () => {
     const [detailshow, setDetailShow] = useState(false);
     const handleDetailClose = () => setDetailShow(false);
     const handleDetailShow = () => {setDetailShow(true)};
-    const donname=DonationList.find({},{fields:{}}).fetch();
-    console.log(donname[1]._id);
-    var select;
+    
     setStatus=(index)=>{
         if(status!=''){
         DonationList.update(donname[index]._id,{$set:{status:status}});
@@ -74,16 +74,22 @@ const Admin = () => {
         if(medtype!=''){
             DonationList.update(donname[index]._id,{$set:{type:medtype}});
             console.log(donname)
-            window.location.reload(false);
+            window.location.reload(false);//reload page
             }
             else{
             alert('select a medtype');
             }
     }
-    const changeSelected = (index,value) => {
-        const $select = document.querySelector(`#status${index}`);
-        $select.value = value;
-      };
+    useEffect(() => {
+        console.log(donname.lenght)
+        for(i=0;i<donname.length;i++){
+            if('in collection'||'storage'||'in delivery'||'delivered'){
+                document.getElementById(`status${i}`).value=donname[i].status;
+                document.getElementById(`type${i}`).value=donname[i].type;
+                }
+        }
+        }, []);
+    
     var image;
     //console.log(donname);
     return (
@@ -97,10 +103,10 @@ const Admin = () => {
                     <th width="100px">Donor Name</th>
                     <th width="100px">Medicine Name</th>
                     <th width="100px">Medicine Type</th>
-                    <th width='200px'>Set Medicine Type</th>
+                    <th width='210px'>Set Medicine Type</th>
                     <th width="100px">Expiry Date</th>
                     <th width="100px">Status</th>
-                    <th width="200px">Set Status</th>
+                    <th width="210px">Set Status</th>
                     <th width="130px">Verification Status</th>
                     <th width="100px">Verified by</th>
                     <th width="100px">Verify</th>
@@ -108,9 +114,10 @@ const Admin = () => {
                 </tr>
             {
             donname.map((name,index) => (
+                
                 <tr data-index={index}  className={(verifyColor(name.verify_status))}>
                     {/* {console.log(index)} */}
-                    <td><button onClick={()=>{setDonindex(name._id);handleDetailShow();}}>detail</button></td>
+                    <td><Button variant='info' onClick={()=>{setDonindex(name._id);handleDetailShow();}}>detail</Button></td>
                     <td>{name.donor_name}</td>
                     {/* {console.log(name.donor_name)} */}
                     <td>{name.medicine_name}</td>
@@ -119,7 +126,7 @@ const Admin = () => {
                         <tr>{/*select for medicine type*/}
                             <td>
                                 
-                                <Form.Select size="sm" id={`status${index}`} onChange={e=>handleMedType(e.target.value)} onLoad={()=>changeSelected(index,name.status)}>
+                                <Form.Select size="sm" id={`type${index}`} onChange={e=>handleMedType(e.target.value)} onLoad={()=>changeSelected(index,name.status)}>
                                     <option>select medicine type</option>
                                     <option value='antipyretic'>antipyretic</option>
                                     <option value='antibiotic'>antibiotic</option>
@@ -127,7 +134,7 @@ const Admin = () => {
                                 </Form.Select>
                             </td>
                             <td>
-                                <button onClick={()=>{setMedType(index)}}>set</button>
+                                <Button variant='warning' onClick={()=>{setMedType(index)}}>set</Button>
                             </td>
                         </tr>
                     </td></td>
@@ -136,18 +143,16 @@ const Admin = () => {
                     <td>{/*select for status*/}
                         <tr>
                             <td>      
-                                <Form.Select size="sm" onChange={e=>handleStatus(e.target.value)} id={`status`}>
+                                <Form.Select size="sm" onChange={e=>handleStatus(e.target.value)} id={`status${index}`}>
                                     <option>select status</option>
                                     <option value='in collection'>in collection</option>
                                     <option value='storage'>storage</option>
                                     <option value='in delivery'>in delivery</option>
                                     <option value='delivered'>delivered</option>
                                 </Form.Select>
-                                
                             </td>
-                            
                             <td>
-                                <button onClick={()=>{setStatus(index)}}>set</button>
+                                <Button variant='warning' onClick={()=>{setStatus(index)}}>set</Button>
                             </td>
                         </tr>
                     </td>
@@ -174,8 +179,9 @@ const Admin = () => {
                     </td>
                 </tr>
             )
-            
+         
         )
+       
     }
             </tbody>
             </table>
