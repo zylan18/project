@@ -34,10 +34,10 @@ Meteor.methods({
     },
       'saveFile'(id,username,buffer){
        var donation_id= DonationList.findOne({},{sort:{$natural:-1}});
-          Files.insert({user_id:id,donation_id:donation_id._id,username:username,data:buffer})         ;
+          Files.insert({user_id:id,donation_id:donation_id._id,username:username,data:buffer});
       },   
       'requestFormSaveFile'(id,username,buffer){
         var request_id= Request.findOne({},{sort:{$natural:-1}});
-           Files.insert({user_id:id,request_id:request_id._id,username:username,data:buffer})         ;
+           Files.insert({user_id:id,request_id:request_id._id,username:username,data:buffer});
        }   
 });

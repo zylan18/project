@@ -49,7 +49,8 @@ const Admin = () => {
     let cancelIcon = { color: "#ff2222"};//used to change color of icon
     const [show, setShow] = useState(false);
     const [donation_id,setDonation_id]=useState('');
-    const [status,handleStatus]=useState('')
+    const [status,handleStatus]=useState('');
+    const [medtype,handleMedType]=useState('');
     const handleClose = () => setShow(false);
     const handleShow = () => {setShow(true)};
     const [donindex,setDonindex]=useState('');
@@ -58,6 +59,7 @@ const Admin = () => {
     const handleDetailShow = () => {setDetailShow(true)};
     const donname=DonationList.find({},{fields:{}}).fetch();
     console.log(donname[1]._id);
+    var select;
     setStatus=(index)=>{
         if(status!=''){
         DonationList.update(donname[index]._id,{$set:{status:status}});
@@ -68,7 +70,20 @@ const Admin = () => {
         alert('select a status');
         }
     }
-
+    setMedType=(index)=>{
+        if(medtype!=''){
+            DonationList.update(donname[index]._id,{$set:{type:medtype}});
+            console.log(donname)
+            window.location.reload(false);
+            }
+            else{
+            alert('select a medtype');
+            }
+    }
+    const changeSelected = (index,value) => {
+        const $select = document.querySelector(`#status${index}`);
+        $select.value = value;
+      };
     var image;
     //console.log(donname);
     return (
@@ -78,11 +93,14 @@ const Admin = () => {
             <table className="admin-table">
                 <tbody>
                 <tr>
+                    <th width='100px'></th>
                     <th width="100px">Donor Name</th>
                     <th width="100px">Medicine Name</th>
+                    <th width="100px">Medicine Type</th>
+                    <th width='200px'>Set Medicine Type</th>
                     <th width="100px">Expiry Date</th>
                     <th width="100px">Status</th>
-                    <th width="250px">Set Status</th>
+                    <th width="200px">Set Status</th>
                     <th width="130px">Verification Status</th>
                     <th width="100px">Verified by</th>
                     <th width="100px">Verify</th>
@@ -90,28 +108,48 @@ const Admin = () => {
                 </tr>
             {
             donname.map((name,index) => (
-                <tr data-index={index} onClick={()=>{setDonindex(name._id);handleDetailShow()}} className={(verifyColor(name.verify_status))}>
+                <tr data-index={index}  className={(verifyColor(name.verify_status))}>
                     {/* {console.log(index)} */}
+                    <td><button onClick={()=>{setDonindex(name._id);handleDetailShow();}}>detail</button></td>
                     <td>{name.donor_name}</td>
                     {/* {console.log(name.donor_name)} */}
                     <td>{name.medicine_name}</td>
+                    <td>{name.type}</td>
+                    <td><td>
+                        <tr>{/*select for medicine type*/}
+                            <td>
+                                
+                                <Form.Select size="sm" id={`status${index}`} onChange={e=>handleMedType(e.target.value)} onLoad={()=>changeSelected(index,name.status)}>
+                                    <option>select medicine type</option>
+                                    <option value='antipyretic'>antipyretic</option>
+                                    <option value='antibiotic'>antibiotic</option>
+                                    <option value='antiseptic'>antiseptic</option>
+                                </Form.Select>
+                            </td>
+                            <td>
+                                <button onClick={()=>{setMedType(index)}}>set</button>
+                            </td>
+                        </tr>
+                    </td></td>
                     <td>{name.exp_date}</td>
                     <td>{name.status}</td>
-                    <td>
-                        <Row>
-                            <Col>
-                                <Form.Select size="sm" onChange={e=>handleStatus(e.target.value)}>
+                    <td>{/*select for status*/}
+                        <tr>
+                            <td>      
+                                <Form.Select size="sm" onChange={e=>handleStatus(e.target.value)} id={`status`}>
                                     <option>select status</option>
                                     <option value='in collection'>in collection</option>
                                     <option value='storage'>storage</option>
                                     <option value='in delivery'>in delivery</option>
                                     <option value='delivered'>delivered</option>
                                 </Form.Select>
-                            </Col>
-                            <Col>
+                                
+                            </td>
+                            
+                            <td>
                                 <button onClick={()=>{setStatus(index)}}>set</button>
-                            </Col>
-                        </Row>
+                            </td>
+                        </tr>
                     </td>
                     <td>
                     <span className={"status "+(verifyColor(name.verify_status))}>
@@ -135,7 +173,6 @@ const Admin = () => {
                             onClick={()=>{setDonation_id(name._id);handleShow()}}/>):"Not found"}
                     </td>
                 </tr>
-                
             )
             
         )
@@ -194,7 +231,7 @@ const Admin = () => {
                         <td>{(DonationList.findOne({_id:donindex})).status}</td>
                     </tr>
                     <tr>
-                        <td align='right'>verified_by</td>
+                        <td align='right'>verified_by:</td>
                         <td>{(DonationList.findOne({_id:donindex})).verified_by}</td>
                     </tr>
                 </table>):(null)
