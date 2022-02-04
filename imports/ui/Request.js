@@ -16,16 +16,18 @@ const Request = () => {
             </div></a>
         </div>
         <div className="container-new" style={{cursor: "pointer"}}>
-            <a href="/requestlist/antibiotic">
+        <a href="/requestlist/antibiotic" style={{color:'black'}}>
             <img className="image-new" src="/images/Antibiotics.png" alt="Some Error" />
             <div className="text-on-image"><h3>Antibiotics</h3></div>
             <div className="overlay-new">Text 2</div>
             </a>
         </div>
         <div className="container-new" style={{cursor: "pointer"}}>
-            <img className="image-new" src="/images/antiseptic.jpg" alt="Some Error" />
+        <a href="/requestlist/antiseptic" style={{color:'black'}}>            
+        <img className="image-new" src="/images/antiseptic.jpg" alt="Some Error" />
             <div className="text-on-image"><h3>Antiseptics</h3></div>
             <div className="overlay-new">Text 3</div>
+         </a>   
         </div>
        </div>
   </div>

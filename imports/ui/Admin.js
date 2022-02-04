@@ -122,10 +122,9 @@ const Admin = () => {
                     {/* {console.log(name.donor_name)} */}
                     <td>{name.medicine_name}</td>
                     <td>{name.type}</td>
-                    <td><td>
+                    <td>
                         <tr>{/*select for medicine type*/}
                             <td>
-                                
                                 <Form.Select size="sm" id={`type${index}`} onChange={e=>handleMedType(e.target.value)} onLoad={()=>changeSelected(index,name.status)}>
                                     <option>select medicine type</option>
                                     <option value='antipyretic'>antipyretic</option>
@@ -137,7 +136,7 @@ const Admin = () => {
                                 <Button variant='warning' onClick={()=>{setMedType(index)}}>set</Button>
                             </td>
                         </tr>
-                    </td></td>
+                    </td>
                     <td>{name.exp_date}</td>
                     <td>{name.status}</td>
                     <td>{/*select for status*/}
