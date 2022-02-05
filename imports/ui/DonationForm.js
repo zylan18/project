@@ -12,7 +12,7 @@ const DonationForm = () =>{
         const [address,handleAddressChange]=useState(Meteor.user().profile.address);
         const [medname,handleMednameChange]=useState('');
         const [expdate,handleExpdateChange]=useState('');
-        const [medfile,handleFileChange]=useState('');
+        const [medfile,handleFileChange]=useState([]);
         const [fileerror,handleFileError]=useState('');
         handleSubmit=(event)=>{
             if(confirm(`Are you sure your details correct?\nDonor Name:${donorname}\nAddress:${address}\nMedicine Name:${medname}\nExpiry Date:${expdate}
@@ -43,7 +43,7 @@ const DonationForm = () =>{
                 var reader = new FileReader(); //create a reader according to HTML5 File API
                 reader.onload = function(event){          
                 var buffer = new Uint8Array(reader.result) // convert to binary
-                handleFileChange(buffer);
+                handleAddMedfile(buffer);
             }
             reader.readAsArrayBuffer(file); //read the file as arraybuffer
         }
@@ -59,7 +59,17 @@ const DonationForm = () =>{
             document.getElementById("file").value=null;
         } 
     }
-        
+    const handleAddMedfile = (file) => {
+        const newmedfile = [...medfile];
+        newmedfile.push(file);
+        handleFileChange(newmedfile);
+        console.log(medfile)
+      }
+      const handleRemoveMedfile = (file) => {
+        const newmedfile = medfile.filter((t) => t !== file);
+        handleFileChange(newmedfile);
+      }
+    
         // var dbimg = Files.find({user_id:Meteor.user()._id},{fields:{}}).fetch();
         // dbimg=new Blob([dbimg[0].data]);
         // dbimg=URL.createObjectURL(dbimg);
@@ -93,12 +103,15 @@ const DonationForm = () =>{
                     <Form.Label className="loginError">{fileerror}</Form.Label>
                     <br/>
                         {medfile?(
-                        <div className="upload-image-container"><img src={img} className="upload-preview-image"/>
-                        <button className="circle-x-button" onClick={()=>{handleFileChange('');
-                        document.getElementById("file").value=null;}}>X</button>
-                        </div>
-                        ):null}
-                        
+                         medfile.map((img,index) => (   
+                        <div className="upload-image-container">
+                        <img src={URL.createObjectURL(new Blob([img]))}
+                        className="upload-preview-image"/>
+                        <button className="circle-x-button" onClick={()=>{handleRemoveMedfile(img);}}
+                        >X</button>
+                        </div>))):(null)
+                        }
+                   <br/>     
 
                 <Button className="btn-primary" variant="primary" type="submit">Submit</Button>
                 </div>

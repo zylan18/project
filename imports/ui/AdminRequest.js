@@ -1,7 +1,7 @@
 import React,{useState} from 'react'
 import { Request } from '../api/links'
 import { useTracker } from 'meteor/react-meteor-data';
-import {Alert,Modal,Spinner} from 'react-bootstrap';
+import {Alert,Modal,Spinner,Carousel} from 'react-bootstrap';
 import {Files} from '../api/links';
 import {GiConfirmed} from '@react-icons/all-files/gi/GiConfirmed';//to use icon
 import {GiCancel} from '@react-icons/all-files/gi/GiCancel';
@@ -63,6 +63,7 @@ const AdminRequest = () => {
                 <table className="admin-table">
                     <tbody>
                     <tr>
+                        <th width="150px"></th>
                         <th width="100px">Requester Name</th>
                         <th width="100px">Medicine Name</th>
                         <th width='100px'>Medicine Type</th>
@@ -74,12 +75,23 @@ const AdminRequest = () => {
                         <th width="130px">Status</th>
                         <th width="100px">Verified by</th>
                         <th width="100px">Verify</th>
-                        <th width="100px"></th>
+                        
                     </tr>
                 {
                 reqname.map((medicine,index) => (
                     <tr data-index={index} className={(verifyColor(medicine.verify_status))}>
                         {/* {console.log(index)} */}
+                        <td>
+                            <Carousel variant="dark">
+                                    {(image=(Files.findOne({request_id:medicine._id})).data)?
+                                    ( image.map((img,index) => (
+                                    <Carousel.Item>
+                                    <img className='preview-image' src={URL.createObjectURL(new Blob([img]))}
+                                    onClick={()=>{setDonation_id(medicine._id);{console.log(donation_id)};handleShow()}}/>
+                                    </Carousel.Item>))):"Not found"
+                                    }
+                            </Carousel>
+                        </td>
                         <td>{medicine.requester_name}</td>
                         {/* {console.log(medicine.donor_name)} */}
                         <td>{medicine.medicine_name}</td>
@@ -106,10 +118,6 @@ const AdminRequest = () => {
                         <td>   
                             <button style={{"color":"red"}} onClick={()=>rejectVerification(index)}>Reject</button>
                         </td> 
-                        <td className="image-table">
-                                {(image=(Files.findOne({request_id:medicine._id})).data)?(<img className="preview-image"src={URL.createObjectURL(new Blob([image]))}
-                                onClick={()=>{setRequest_id(medicine._id);handleShow()}}/>):"Not found"}
-                        </td>
                     </tr>
                     
                 )
@@ -125,7 +133,15 @@ const AdminRequest = () => {
                     <Modal.Header closeButton>
                     </Modal.Header>
                     <Modal.Body>
-                    {request_id?(<img className="modal-image" src={URL.createObjectURL(new Blob([(Files.findOne({request_id:request_id})).data]))}/>):null}
+                    {request_id?(<Carousel variant="dark">
+                                    {(image=(Files.findOne({donation_id:request_id})).data)?
+                                    ( image.map((img,index) => (
+                                    <Carousel.Item>
+                                    <img className='admin-image' src={URL.createObjectURL(new Blob([img]))}
+                                    onClick={()=>{setDonation_id(medicine._id);{console.log(request_id)};handleShow()}}/>
+                                    </Carousel.Item>))):"Not found"
+                                    }
+                            </Carousel>):null}
                     </Modal.Body>
                   </Modal>
             </div>)

@@ -1,5 +1,5 @@
 import React,{useState} from 'react'
-import {Alert,Form,FloatingLabel,Modal,Spinner,Col,Row} from 'react-bootstrap'
+import {Alert,Form,FloatingLabel,Modal,Spinner,Col,Row,Carousel} from 'react-bootstrap'
 import { useParams } from 'react-router-dom'
 import { DonationList } from '../api/links'
 import { Files } from '../api/links'
@@ -24,32 +24,44 @@ const RequestForm = () => {
     var img;
     
     function fileInput(event){ 
-            var file = event.target.files[0]; //assuming 1 file only
-            if (!file) return;
-            if(file.size<=5243000){ //used to check file size
-                console.log(file.type);
-                if (file.type=='image/jpeg'||file.type=='image/png'){ //used to check file type
-                handleFileError('');
-                console.log(file.size);
-                var reader = new FileReader(); //create a reader according to HTML5 File API
-                reader.onload = function(event){          
-                var buffer = new Uint8Array(reader.result) // convert to binary
-                handleFileChange(buffer);
-            }
-            reader.readAsArrayBuffer(file); //read the file as arraybuffer
+        var file = event.target.files[0]; //assuming 1 file only
+        if (!file) return;
+         
+        if(file.size<=5243000){ //used to check file size
+            console.log(file.type);
+            if (file.type=='image/jpeg'||file.type=='image/png'){ //used to check file type
+            handleFileError('');
+            console.log(file.size);
+            var reader = new FileReader(); //create a reader according to HTML5 File API
+            reader.onload = function(event){          
+            var buffer = new Uint8Array(reader.result) // convert to binary
+            handleAddMedfile(buffer);
         }
-        else{
-            handleFileError('Only jpg, jpeg and png files support');
-            handleFileChange('');
-            document.getElementById("file").value=null;
-        }
+        reader.readAsArrayBuffer(file); //read the file as arraybuffer
     }
-        else{
-            handleFileError('File Size more than 5MB');
-            handleFileChange('');
-            document.getElementById("file").value=null;
-        } 
+    else{
+        handleFileError('Only jpg, jpeg and png files support');
+        handleFileChange('');
+        document.getElementById("file").value=null;
     }
+}
+    else{
+        handleFileError('File Size more than 5MB');
+        handleFileChange('');
+        document.getElementById("file").value=null;
+    } 
+}
+const handleAddMedfile = (file) => {
+    const newmedfile = [...medfile];
+    newmedfile.push(file);
+    handleFileChange(newmedfile);
+    console.log(medfile)
+  }
+  const handleRemoveMedfile = (file) => {
+    const newmedfile = medfile.filter((t) => t !== file);
+    handleFileChange(newmedfile);
+  }
+  
     var date=new Date;
     handleSubmit=()=>{
         //alert(`user_id:${Meteor.user()._id}\nrequestdate:${date.toLocaleString()}\nusername:${user.username}\nrequester_name:${user.profile.name}\ndonation_id:${id}\nmedicine_name:${medicine.medicine_name}\nexp_date:${medicine.exp_date}\nverify_status:${false}\nverified_by:${''}\nstatus:${'in verification'}\ntype:${medicine.type}`);
@@ -68,9 +80,15 @@ const RequestForm = () => {
                             <tr padding='1px'><b>Medicine Details:</b></tr>
                             <tr>
                                 <td rowspan="2">
-                                    {(image=(Files.findOne({donation_id:id})).data)?(<img className="request-preview-image"src={URL.createObjectURL(new Blob([image]))}
-                                    onClick={()=>{setDonation_id(medicine._id);handleShow()}}/>):"Not found"}
-                                    </td>
+                                <Carousel variant="dark">
+                                    {(image=(Files.findOne({donation_id:medicine._id})).data)?
+                                    ( image.map((img,index) => (
+                                    <Carousel.Item>
+                                    <img className='request-preview-image' src={URL.createObjectURL(new Blob([img]))}
+                                    onClick={()=>{setDonation_id(medicine._id);{console.log(donation_id)};handleShow()}}/>
+                                    </Carousel.Item>))):"Not found"
+                                    }
+                            </Carousel></td>
                                 <td><b>Medicine Name: </b></td>
                                 <td>{medicine.medicine_name}</td>
                             </tr>
@@ -96,18 +114,29 @@ const RequestForm = () => {
                         <Form.Label className="loginError">{fileerror}</Form.Label>
                         <br/>
                         {medfile?(
-                        <div className="upload-image-container"><img src={img} className="upload-preview-image"/>
-                        <button className="circle-x-button" onClick={()=>{handleFileChange('');
-                        document.getElementById("file").value=null;}}>X</button>
-                        </div>
-                        ):null}
+                         medfile.map((img,index) => (   
+                        <div className="upload-image-container">
+                        <img src={URL.createObjectURL(new Blob([img]))}
+                        className="upload-preview-image"/>
+                        <button className="circle-x-button" onClick={()=>{handleRemoveMedfile(img);}}
+                        >X</button>
+                        </div>))):(null)
+                        }
                          <button type='submit'>Submit</button>   
                     </Form>
                     <Modal show={show} onHide={handleClose} size='lg'>
                     <Modal.Header closeButton>
                     </Modal.Header>
                     <Modal.Body>
-                    {donation_id?(<img className="modal-image" src={URL.createObjectURL(new Blob([(Files.findOne({donation_id:donation_id})).data]))}/>):null}
+                    {donation_id?(<Carousel variant="dark">
+                                    {(image=(Files.findOne({donation_id:medicine._id})).data)?
+                                    ( image.map((img,index) => (
+                                    <Carousel.Item>
+                                    <img className='admin-image' src={URL.createObjectURL(new Blob([img]))}
+                                    onClick={()=>{setDonation_id(medicine._id);{console.log(donation_id)};handleShow()}}/>
+                                    </Carousel.Item>))):"Not found"
+                                    }
+                            </Carousel>):null}
                     </Modal.Body>
                 </Modal>
             </div>

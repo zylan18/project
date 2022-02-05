@@ -1,7 +1,7 @@
 import React,{useState,useEffect} from 'react'
 import { DonationList } from '../api/links'
 import { useTracker } from 'meteor/react-meteor-data';
-import {Alert,Modal,Spinner,Form,Row,Col,Button} from 'react-bootstrap';
+import {Alert,Modal,Spinner,Form,Row,Col,Button,Carousel} from 'react-bootstrap';
 import {Files} from '../api/links';
 import {GiConfirmed} from '@react-icons/all-files/gi/GiConfirmed';//to use icon
 import {GiCancel} from '@react-icons/all-files/gi/GiCancel';
@@ -81,7 +81,7 @@ const Admin = () => {
             }
     }
     useEffect(() => {
-        console.log(donname.lenght)
+        console.log(donname.length)
         for(i=0;i<donname.length;i++){
             if('in collection'||'storage'||'in delivery'||'delivered'){
                 document.getElementById(`status${i}`).value=donname[i].status;
@@ -99,6 +99,7 @@ const Admin = () => {
             <table className="admin-table">
                 <tbody>
                 <tr>
+                    <th width="150px"></th>
                     <th width='100px'></th>
                     <th width="100px">Donor Name</th>
                     <th width="100px">Medicine Name</th>
@@ -110,12 +111,22 @@ const Admin = () => {
                     <th width="130px">Verification Status</th>
                     <th width="100px">Verified by</th>
                     <th width="100px">Verify</th>
-                    <th width="100px"></th>
                 </tr>
             {
             donname.map((name,index) => (
                 
                 <tr data-index={index}  className={(verifyColor(name.verify_status))}>
+                     <td className="image-table">
+                            <Carousel variant="dark">
+                                    {(image=(Files.findOne({donation_id:name._id})).data)?
+                                    ( image.map((img,index) => (
+                                    <Carousel.Item>
+                                    <img className='preview-image' src={URL.createObjectURL(new Blob([img]))}
+                                    onClick={()=>{setDonation_id(name._id);{console.log(donation_id)};handleShow()}}/>
+                                    </Carousel.Item>))):"Not found"
+                                    }
+                            </Carousel>
+                    </td>
                     {/* {console.log(index)} */}
                     <td><Button variant='info' onClick={()=>{setDonindex(name._id);handleDetailShow();}}>detail</Button></td>
                     <td>{name.donor_name}</td>
@@ -172,10 +183,6 @@ const Admin = () => {
                     <td>   
                         <button style={{"color":"red"}} onClick={()=>rejectVerification(index)}>Reject</button>
                     </td> 
-                    <td className="image-table">
-                            {(image=(Files.findOne({donation_id:name._id})).data)?(<img className="preview-image"src={URL.createObjectURL(new Blob([image]))}
-                            onClick={()=>{setDonation_id(name._id);handleShow()}}/>):"Not found"}
-                    </td>
                 </tr>
             )
          
@@ -190,7 +197,15 @@ const Admin = () => {
                 <Modal.Header closeButton>
                 </Modal.Header>
                 <Modal.Body>
-                {donation_id?(<img className="modal-image" src={URL.createObjectURL(new Blob([(Files.findOne({donation_id:donation_id})).data]))}/>):null}
+                {donation_id?(<Carousel variant="dark">
+                            {(image=(Files.findOne({donation_id:donation_id})).data)?
+                            ( image.map((img,index) => (
+                            <Carousel.Item>
+                            <img className='admin-image' src={URL.createObjectURL(new Blob([img]))}
+                            />
+                            </Carousel.Item>))):"Not found"
+                            }
+                    </Carousel> ):null}
                 </Modal.Body>
               </Modal>
               <Modal show={detailshow} onHide={handleDetailClose}>

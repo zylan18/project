@@ -1,7 +1,7 @@
 import React,{useState,useCallback} from 'react';
 import {DonationList} from '../api/links'
 import {Files} from '../api/links'
-import {Spinner,Modal} from 'react-bootstrap'
+import {Spinner,Modal,Carousel} from 'react-bootstrap'
 import {useNavigate} from 'react-router-dom';
 import { useParams } from 'react-router-dom'
  
@@ -36,8 +36,15 @@ const Antipyretics = () => {
             medicineList.map((medicine,index) => (
                 <tr data-index={index} style={{backgroundColor:'#dddddd'}}>
                     <td className="image-table">
-                    {(image=(Files.findOne({donation_id:medicine._id})).data)?(<img className="request-preview-image"src={URL.createObjectURL(new Blob([image]))}
-                      onClick={()=>{setDonation_id(medicine._id);console.log(donation_id);handleShow()}}/>):"Not found"}
+                    <Carousel variant="dark">
+                            {(image=(Files.findOne({donation_id:medicine._id})).data)?
+                            ( image.map((img,index) => (
+                            <Carousel.Item>
+                            <img className='preview-image' src={URL.createObjectURL(new Blob([img]))}
+                            onClick={()=>{setDonation_id(medicine._id);{console.log(donation_id)};handleShow()}}/>
+                            </Carousel.Item>))):"Not found"
+                            }
+                    </Carousel>
                     </td>
                     <td>{medicine.medicine_name}</td>
                     <td>{medicine.exp_date}</td>
@@ -54,7 +61,15 @@ const Antipyretics = () => {
                 <Modal.Header closeButton>
                 </Modal.Header>
                 <Modal.Body>
-                {donation_id?(<img className="modal-image" src={URL.createObjectURL(new Blob([(Files.findOne({donation_id:donation_id})).data]))}/>):null}
+                {donation_id?(<Carousel variant="dark">
+                            {(image=(Files.findOne({donation_id:donation_id})).data)?
+                            ( image.map((img,index) => (
+                            <Carousel.Item>
+                            <img className='admin-image' src={URL.createObjectURL(new Blob([img]))}
+                            />
+                            </Carousel.Item>))):"Not found"
+                            }
+                    </Carousel> ):null}
                 </Modal.Body>
               </Modal>
   </div>

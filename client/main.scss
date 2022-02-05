@@ -33,7 +33,8 @@ body{
 .upload-image-container{
     position: relative;
     width: 100%;
-    max-width: 400px;
+    display:inline-block;//used to keep images in same line
+    max-width: 200px;//used to control size of image and container
     border:1px solid black;
   }
 
@@ -57,6 +58,12 @@ body{
    width: 100%;
   height: auto;
 }
+.admin-image{
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 50%;
+}
 
 .preview-image{
   transition: transform .2s;
@@ -64,12 +71,20 @@ body{
    width: 50px;
   height: 100px;
   object-fit: scale-down;
+  display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 50%;
 }
 .request-preview-image{
     padding: 1px;
      width: 50%;
     height: 50%;
     object-fit: scale-down;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 50%;
   
 }
 .request-form-preview-image{
