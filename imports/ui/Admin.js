@@ -117,7 +117,12 @@ const Admin = () => {
                 
                 <tr data-index={index}  className={(verifyColor(name.verify_status))}>
                      <td className="image-table">
-                            <Carousel variant="dark">
+                     {((Files.findOne({donation_id:name._id})).data.length == 1)?
+                        ((image=(Files.findOne({donation_id:name._id})).data)?
+                        (<img className='preview-image' src={URL.createObjectURL(new Blob([image[0]]))}
+                        onClick={()=>{setDonation_id(name._id);handleShow()}}/>)
+                        :"Not found")
+                        :(<Carousel variant="dark">
                                     {(image=(Files.findOne({donation_id:name._id})).data)?
                                     ( image.map((img,index) => (
                                     <Carousel.Item>
@@ -125,7 +130,7 @@ const Admin = () => {
                                     onClick={()=>{setDonation_id(name._id);{console.log(donation_id)};handleShow()}}/>
                                     </Carousel.Item>))):"Not found"
                                     }
-                            </Carousel>
+                            </Carousel>)}
                     </td>
                     {/* {console.log(index)} */}
                     <td><Button variant='info' onClick={()=>{setDonindex(name._id);handleDetailShow();}}>detail</Button></td>

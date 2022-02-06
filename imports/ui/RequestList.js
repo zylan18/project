@@ -36,7 +36,12 @@ const Antipyretics = () => {
             medicineList.map((medicine,index) => (
                 <tr data-index={index} style={{backgroundColor:'#dddddd'}}>
                     <td className="image-table">
-                    <Carousel variant="dark">
+                    {((Files.findOne({donation_id:medicine._id})).data.length == 1)?//it checks if one image is uploaded then display one image else display carousel
+                        ((image=(Files.findOne({donation_id:medicine._id})).data)?
+                        (<img className='preview-image' src={URL.createObjectURL(new Blob([image[0]]))}
+                        onClick={()=>{setDonation_id(medicine._id);handleShow()}}/>)
+                        :"Not found")
+                        :(<Carousel variant="dark">
                             {(image=(Files.findOne({donation_id:medicine._id})).data)?
                             ( image.map((img,index) => (
                             <Carousel.Item>
@@ -44,7 +49,7 @@ const Antipyretics = () => {
                             onClick={()=>{setDonation_id(medicine._id);{console.log(donation_id)};handleShow()}}/>
                             </Carousel.Item>))):"Not found"
                             }
-                    </Carousel>
+                    </Carousel>)}
                     </td>
                     <td>{medicine.medicine_name}</td>
                     <td>{medicine.exp_date}</td>

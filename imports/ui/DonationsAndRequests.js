@@ -1,6 +1,6 @@
 import React,{useState} from 'react';
 import { DonationList } from '../api/links';
-import {Alert,Spinner,Button,Modal} from 'react-bootstrap';
+import {Alert,Spinner,Button,Modal,Carousel} from 'react-bootstrap';
 import { useTracker } from 'meteor/react-meteor-data';
 import {Files} from '../api/links';
 
@@ -36,6 +36,7 @@ const DonationsAndRequests = () => {
                     <tbody>
                     
                     <tr>
+                        <th></th>
                         <th>Medicine Name</th>
                         <th>Donated at</th>
                         <th>Expiry Date</th>
@@ -44,6 +45,23 @@ const DonationsAndRequests = () => {
                     </tr>
                 {donationList.map((donor,index) => (
                     <tr data-index={index} className={(verifyColor(donor.verify_status))}>
+                        <td>
+                        {((Files.findOne({donation_id:donor._id})).data.length == 1)?//it checks if one image is uploaded then display one image else display carousel
+                        ((image=(Files.findOne({donation_id:donor._id})).data)?
+                        (<img className='preview-image' src={URL.createObjectURL(new Blob([image[0]]))}
+                        onClick={()=>{setDonation_id(donor._id);handleShow()}}/>)
+                        :"Not found")
+                        :(<Carousel variant="dark">
+                                    {(image=(Files.findOne({donation_id:donor._id})).data)?
+                                    ( image.map((img,index) => (
+                                    <Carousel.Item>
+                                    <img className='preview-image' src={URL.createObjectURL(new Blob([img]))}
+                                    onClick={()=>{setDonation_id(donor._id);handleShow()}}/>
+                                    </Carousel.Item>))):"Not found"
+                                    }
+                        </Carousel>)
+                        }
+                        </td>
                         <td>{donor.medicine_name}</td>
                         <td>{donor.donatedat}</td>
                         <td>{donor.exp_date}</td>
@@ -53,12 +71,6 @@ const DonationsAndRequests = () => {
                         <td>
                             <Button className="btn-danger" onClick={()=>cancelDonation(index)}>Cancel</Button>
                         </td>):null} 
-                        <td>
-                            {}
-                            {console.log((Files.findOne({donation_id:donor._id})).data)}
-                       <img className="preview-image"src={URL.createObjectURL(new Blob([(Files.findOne({donation_id:donor._id})).data]))}
-                       onClick={()=>{setDonation_id(donor._id);handleShow()}}/>
-                       </td>
                     </tr>)
                     )
                 }
@@ -68,7 +80,16 @@ const DonationsAndRequests = () => {
                 <Modal.Header closeButton>
                 </Modal.Header>
                 <Modal.Body>
-                {donation_id?(<img className="modal-image" src={URL.createObjectURL(new Blob([(Files.findOne({donation_id:donation_id})).data]))}/>):null}
+                {donation_id?
+                (<Carousel variant="dark">
+                            {(image=(Files.findOne({donation_id:donation_id})).data)?
+                            ( image.map((img,index) => (
+                            <Carousel.Item>
+                            <img className='admin-image' src={URL.createObjectURL(new Blob([img]))}
+                            />
+                            </Carousel.Item>))):"Not found"
+                            }
+                </Carousel> ):null}
                 </Modal.Body>
               </Modal>
             </div>

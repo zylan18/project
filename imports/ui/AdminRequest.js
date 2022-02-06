@@ -82,7 +82,12 @@ const AdminRequest = () => {
                     <tr data-index={index} className={(verifyColor(medicine.verify_status))}>
                         {/* {console.log(index)} */}
                         <td>
-                            <Carousel variant="dark">
+                        {((Files.findOne({request_id:medicine._id})).data.length == 1)?//it checks if one image is uploaded then display one image else display carousel
+                        ((image=(Files.findOne({request_id:medicine._id})).data)?
+                        (<img className='preview-image' src={URL.createObjectURL(new Blob([image[0]]))}
+                        onClick={()=>{setRequest_id(medicine._id);handleShow()}}/>)
+                        :"Not found")
+                        :(<Carousel variant="dark">
                                     {(image=(Files.findOne({request_id:medicine._id})).data)?
                                     ( image.map((img,index) => (
                                     <Carousel.Item>
@@ -90,7 +95,7 @@ const AdminRequest = () => {
                                     onClick={()=>{setDonation_id(medicine._id);{console.log(donation_id)};handleShow()}}/>
                                     </Carousel.Item>))):"Not found"
                                     }
-                            </Carousel>
+                            </Carousel>)}
                         </td>
                         <td>{medicine.requester_name}</td>
                         {/* {console.log(medicine.donor_name)} */}
@@ -134,7 +139,7 @@ const AdminRequest = () => {
                     </Modal.Header>
                     <Modal.Body>
                     {request_id?(<Carousel variant="dark">
-                                    {(image=(Files.findOne({donation_id:request_id})).data)?
+                                    {(image=(Files.findOne({request_id:request_id})).data)?
                                     ( image.map((img,index) => (
                                     <Carousel.Item>
                                     <img className='admin-image' src={URL.createObjectURL(new Blob([img]))}
