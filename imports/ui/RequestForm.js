@@ -1,5 +1,5 @@
 import React,{useState} from 'react'
-import {Alert,Form,FloatingLabel,Modal,Spinner,Col,Row,Carousel} from 'react-bootstrap'
+import {Alert,Form,FloatingLabel,Modal,Spinner,Col,Row,Carousel,Button} from 'react-bootstrap'
 import { useParams } from 'react-router-dom'
 import { DonationList } from '../api/links'
 import { Files } from '../api/links'
@@ -36,6 +36,7 @@ const RequestForm = () => {
             reader.onload = function(event){          
             var buffer = new Uint8Array(reader.result) // convert to binary
             handleAddMedfile(buffer);
+            document.getElementById('file').value=null;
         }
         reader.readAsArrayBuffer(file); //read the file as arraybuffer
     }
@@ -109,9 +110,7 @@ const handleAddMedfile = (file) => {
                                 placeholder="Address"
                                 />        
                         </FloatingLabel><br/>
-                        <Form.Label>Prescription/Documents</Form.Label>
-                        <Form.Control type='file' id='file' required onChange={fileInput}/>
-                        <Form.Label className="loginError">{fileerror}</Form.Label>
+                        <Form.Label>Upload Prescription/Documents</Form.Label>
                         <br/>
                         {medfile?(
                          medfile.map((img,index) => (   
@@ -122,7 +121,10 @@ const handleAddMedfile = (file) => {
                         >X</button>
                         </div>))):(null)
                         }
-                         <button type='submit'>Submit</button>   
+                        <input type='file' id='file' className="file-input" required onChange={fileInput}/>
+                        <Form.Label className="loginError">{fileerror}</Form.Label>
+                        <br/>
+                         <Button type='submit'>Submit</Button>   
                     </Form>
                     <Modal show={show} onHide={handleClose} size='lg'>
                     <Modal.Header closeButton>

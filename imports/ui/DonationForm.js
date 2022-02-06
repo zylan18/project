@@ -49,13 +49,11 @@ const DonationForm = () =>{
         }
         else{
             handleFileError('Only jpg, jpeg and png files support');
-            handleFileChange('');
             document.getElementById("file").value=null;
         }
     }
         else{
             handleFileError('File Size more than 5MB');
-            handleFileChange('');
             document.getElementById("file").value=null;
         } 
     }
@@ -99,9 +97,8 @@ const DonationForm = () =>{
                                 placeholder="Address"
                                 />        
                         </FloatingLabel>
-                    <Form.Control type='file' id='file' required onChange={fileInput}/>
-                    <Form.Label className="loginError">{fileerror}</Form.Label>
                     <br/>
+                    <Form.Label>Upload images of Medicine</Form.Label><br/>
                         {medfile?(
                          medfile.map((img,index) => (   
                         <div className="upload-image-container">
@@ -111,7 +108,9 @@ const DonationForm = () =>{
                         >X</button>
                         </div>))):(null)
                         }
-                   <br/>     
+                        <input className='file-input' type='file' id='file' required onChange={fileInput}/>
+                        <Form.Label className="loginError" style={{'display':'inline-block'}}>{fileerror}</Form.Label>
+                   <br/><br/>     
 
                 <Button className="btn-primary" variant="primary" type="submit">Submit</Button>
                 </div>
