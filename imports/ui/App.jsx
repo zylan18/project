@@ -15,6 +15,7 @@ import DonationsAndRequests from './DonationsAndRequests';
 import AboutUs from './AboutUs'
 import RequestList from './RequestList';
 import AdminRequest from './AdminRequest';
+import Delivery  from './Delivery';
 
 const logout = () => Meteor.logout();
 const App = () => {
@@ -35,6 +36,7 @@ const App = () => {
           <Route exact path="/aboutus" element={<AboutUs/>}/>
           <Route exact path="/requestlist/:type" element={<RequestList/>}/>
           <Route exact path="/adminrequest" element={<AdminRequest/>}/>
+          <Route exact path='/delivery' element={<Delivery/>}/>
         </Routes>
       </Router>
     </div>
