@@ -42,13 +42,11 @@ const RequestForm = () => {
     }
     else{
         handleFileError('Only jpg, jpeg and png files support');
-        handleFileChange('');
         document.getElementById("file").value=null;
     }
 }
     else{
         handleFileError('File Size more than 5MB');
-        handleFileChange('');
         document.getElementById("file").value=null;
     } 
 }
