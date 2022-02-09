@@ -1,6 +1,6 @@
 import React,{useState} from 'react';
 import { DonationList } from '../api/links';
-import {Alert,Spinner,Button,Modal,Carousel} from 'react-bootstrap';
+import {Alert,Spinner,Button,Modal,Carousel,} from 'react-bootstrap';
 import { useTracker } from 'meteor/react-meteor-data';
 import {Files} from '../api/links';
 
@@ -21,27 +21,32 @@ function cancelDonation(index){
     
 }
 
-const DonationsAndRequests = () => {
+
+const YourDonations = () => {
     
     
     if(Meteor.user()){
+        
     const [donation_id,setDonation_id]=useState('');
     const handleClose = () => setShow(false);
     const handleShow = () => {setShow(true)};
     const [show, setShow] = useState(false);
     const donationList=DonationList.find({username:(Meteor.user()).username},{fields:{}}).fetch();
         return (
-            <div className="form">
+            <div className="admin-page">
+                <h1>Your Donations</h1>
                 <table className="admin-table">
                     <tbody>
                     
                     <tr>
-                        <th></th>
-                        <th>Medicine Name</th>
-                        <th>Donated at</th>
-                        <th>Expiry Date</th>
-                        <th>Status</th>
-                        <th>Verified by</th>
+                        <th width='100'></th>
+                        <th width='100'>Medicine Name</th>
+                        <th width='100'>Donated at</th>
+                       
+                        <th width='100'>Status</th>
+                      
+                        <th width='100'></th>
+                      
                     </tr>
                 {donationList.map((donor,index) => (
                     <tr data-index={index} className={(verifyColor(donor.verify_status))}>
@@ -64,14 +69,16 @@ const DonationsAndRequests = () => {
                         </td>
                         <td>{donor.medicine_name}</td>
                         <td>{donor.donatedat}</td>
-                        <td>{donor.exp_date}</td>
+                       
                         <td>{donor.status}</td>
-                        <td>{donor.verified_by?(donor.verified_by):("Not verified yet")}</td>
-                        {(donor.status!='rejected' && donor.status!='canceled')?(
+                        
+                        {/* {(donor.status!='rejected' && donor.status!='canceled')?(
                         <td>
                             <Button className="btn-danger" onClick={()=>cancelDonation(index)}>Cancel</Button>
-                        </td>):null} 
-                    </tr>)
+                        </td>):null}  */}
+                        <td><a href={`/donationstatus/${donor._id}`}>click here for more details</a></td>
+                    </tr>
+                    )
                     )
                 }
                 </tbody>
@@ -112,4 +119,4 @@ const DonationsAndRequests = () => {
     }
 }
 
-export default DonationsAndRequests
+export default YourDonations

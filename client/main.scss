@@ -5,6 +5,7 @@ $dark:#40514E;
 
 body{
   background-color: $secondary;
+  font-family: arial, sans-serif;
   //background-image: url('/images/suraj.png');
 }
 .goti{
@@ -120,6 +121,7 @@ body{
     padding: 10px;
     color:#40514E;
     background-color: #fff;
+    overflow-x:auto;
     //box-shadow: 1px 1px 5px rgb(88, 88, 88); 
   }
 
@@ -167,6 +169,9 @@ body{
   @media(max-width: 800px){
     .form{
     width:65%;
+    }
+    .admin-table{
+      table-layout: auto;
     }
   }
   
@@ -265,14 +270,13 @@ body{
   transform: rotateX(180deg);
 }
 .admin-table{
-    font-family: arial, sans-serif;
+    //font-family: arial, sans-serif;
     table-layout: fixed;
     border-collapse: separate;//for seperating table rows
     border-spacing: 0 5px;
     width: 100%;
     border-radius: 10px;
     td, th {
-      // border: 0.5px solid #000;
       text-align: left;
       padding: 8px;
     }
@@ -291,6 +295,7 @@ body{
     //
     tr{
       border-radius: 10px;
+      //outline:1px solid rgb(141, 141, 141);//used to put border on tr
     }
     th{
       background-color: #ffffff;
@@ -632,7 +637,8 @@ footer{
       width: 330px;
       font-family: 'Helvetica';
       font-size: 14px;
-      border: 1px solid #CCC;
+      //border: 1px solid #CCC;
+      
     }
     
     .StepProgress {
@@ -647,8 +653,8 @@ footer{
         top: 0;
         left: 14.5%;
         width: 10px;
-        height: 100%;
-        border-left: 2px solid #CCC;
+        height: 99%;
+        border-left: 1px solid #CCC;
       }
       
       &-item {
@@ -660,12 +666,12 @@ footer{
           padding-bottom: 20px;
         }
         
-        &::before {
+        &::before {//line
           display: inline-block;
           content: '';
           position: absolute;
-          left: 1px;
-          height: 100%;
+          left: 0px;
+          height: 97%;
           width: 10px;
         }
         
@@ -683,16 +689,16 @@ footer{
         }
         
         &.is-done {
-          &::before {
-            border-left: 2px solid green;
+          &::before {//is-done line
+            border-left: 2px solid $primary;
           }
-          &::after {
+          &::after {//is-done circle
             content: "✔";
             font-size: 10px;
             color: #FFF;
             text-align: center;
-            border: 2px solid green;
-            background-color: green;
+            border: 2px solid $primary;
+            background-color: $primary;
           }
         }
         
@@ -710,7 +716,7 @@ footer{
             font-size: 14px;
             text-align: center;
             color: grey;
-            border: 2px solid grey;
+            border: 2px solid $primary;
             background-color: white;
           }
         }
