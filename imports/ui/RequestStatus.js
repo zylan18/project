@@ -1,26 +1,25 @@
 import React,{useEffect,useState} from 'react';
-import { DonationList } from '../api/links';
+import { Request } from '../api/links';
 import { Files } from '../api/links';
 import {FaCheck} from '@react-icons/all-files/fa/FaCheck';
 import { Spinner ,Col,Row,Button,Carousel,Modal} from 'react-bootstrap';
 import { useParams } from 'react-router-dom'
 
-const DonationStatus = () => { 
+const RequestStatus = () => { 
  if(Meteor.user()){
     let { id } = useParams();
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
     const handleShow = () => {setShow(true)};
-    const donation=DonationList.findOne({_id:id})
-    function cancelDonation(){
-        if(confirm("Are you sure you want to cancel your donation?")){
-            DonationList.update(id,{$set:{status:'canceled'}});
+    const request=Request.findOne({_id:id});
+    function cancelRequest(){
+        if(confirm("Are you sure you want to cancel your request?")){
+            Request.update(id,{$set:{status:'canceled'}});
             window.location.reload(false);
         }   
     }
     useEffect(()=>{
-        console.log((DonationList.find({_id:id}).fetch())[0].status)
-        switch(donation.status){
+        switch(request.status){
             case 'canceled':{
                 document.getElementById("verification").classList.add('not-done');
                 break;
@@ -37,31 +36,31 @@ const DonationStatus = () => {
                 document.getElementById("verification").classList.add('is-done');
                 break;
             }
-            case 'pickup in progress':{
+            case 'dispatched':{
                 document.getElementById("verification").classList.add('is-done');
-                document.getElementById("pick-up").classList.add('current');
-                break;
-            }
-            case 'collected':{
-                document.getElementById("verification").classList.add('is-done');
-                document.getElementById("pick-up").classList.add('is-done');
-                document.getElementById("collected").classList.add('current');
-
+                document.getElementById("dispatched").classList.add('current');
                 break;
             }
             case 'in transit':{
                 document.getElementById("verification").classList.add('is-done');
-                document.getElementById("pick-up").classList.add('is-done');
-                document.getElementById("collected").classList.add('is-done');
-                document.getElementById("in-transit").classList.add('current');  
+                document.getElementById("dispatched").classList.add('is-done');
+                document.getElementById("in-transit").classList.add('current');
+
                 break;
             }
-            case 'storage':{
+            case 'out for delivery':{
                 document.getElementById("verification").classList.add('is-done');
-                document.getElementById("pick-up").classList.add('is-done');
-                document.getElementById("collected").classList.add('is-done');
-                document.getElementById("in-transit").classList.add('is-done');  
-                document.getElementById("storage").classList.add('is-done');  
+                document.getElementById("dispatched").classList.add('is-done');
+                document.getElementById("in-transit").classList.add('is-done');
+                document.getElementById("out-for-delivery").classList.add('current');  
+                break;
+            }
+            case 'delivered':{
+                document.getElementById("verification").classList.add('is-done');
+                document.getElementById("dispatched").classList.add('is-done');
+                document.getElementById("in-transit").classList.add('is-done');
+                document.getElementById("out-for-delivery").classList.add('is-done');  
+                document.getElementById("delivered").classList.add('is-done');  
                 break;
             }
         }
@@ -71,7 +70,7 @@ const DonationStatus = () => {
       
         <Row>
         <Col sm>    
-        <h1>Current Status: {donation.status}</h1>
+        <h3>Current Status: {request.status}</h3>
         <div class="delivery-progress">
             <ul class="StepProgress">
                 <li id='verification' class="StepProgress-item">
@@ -79,24 +78,24 @@ const DonationStatus = () => {
                         <strong>Verification</strong>
                     </div>
                 </li>
-                <li id='pick-up' class="StepProgress-item">
+                <li id='dispatched' class="StepProgress-item">
                     <div className='progress-text'>
-                        <strong>Pick Up in progress</strong>
+                        <strong>Dispatched</strong>
                     </div>
                 </li>
-                <li id='collected' class="StepProgress-item">
+                <li id='in-transit' class="StepProgress-item">
                     <div className='progress-text'>
-                        <strong>Collected</strong>
+                        <strong>In transit</strong>
                     </div>   
                 </li>
-                <li id ='in-transit' class="StepProgress-item">
+                <li id ='out-for-delivery' class="StepProgress-item">
                     <div className='progress-text'>
-                        <strong>In Transit</strong>
+                        <strong>Out for delivery</strong>
                     </div>    
                 </li>
-                <li id='storage' class="StepProgress-item">
+                <li id='delivered' class="StepProgress-item">
                     <div className='progress-text'>
-                        <strong>Sucessfully Donated</strong>
+                        <strong>Sucessfully Delivered</strong>
                     </div>    
                 </li>
             </ul>
@@ -104,13 +103,13 @@ const DonationStatus = () => {
         </Col>
         <Col sm>
         <Row>
-            <Col> {((Files.findOne({donation_id:id})).data.length == 1)?//it checks if one image is uploaded then display one image else display carousel
-                        ((image=(Files.findOne({donation_id:id})).data)?
+            <Col> {((Files.findOne({request_id:id})).data.length == 1)?//it checks if one image is uploaded then display one image else display carousel
+                        ((image=(Files.findOne({request_id:id})).data)?
                         (<img className='preview-image' src={URL.createObjectURL(new Blob([image[0]]))}
                         onClick={()=>{handleShow()}}/>)
                         :"Not found")
                         :(<Carousel variant="dark">
-                                    {(image=(Files.findOne({donation_id:id})).data)?
+                                    {(image=(Files.findOne({request_id:id})).data)?
                                     ( image.map((img,index) => (
                                     <Carousel.Item>
                                     <img className='preview-image' src={URL.createObjectURL(new Blob([img]))}
@@ -123,33 +122,33 @@ const DonationStatus = () => {
         </Row>
         <br/>   
         <Row>
-            <Col style={{'text-align':'right'}}>Donor Name:</Col><Col>{donation.donor_name}</Col>
+            <Col style={{'text-align':'right'}}>Donor Name:</Col><Col>{request.requester_name}</Col>
         </Row>
         <Row>
-            <Col style={{'text-align':'right'}}>Address:</Col><Col>{donation.address}</Col>
+            <Col style={{'text-align':'right'}}>Address:</Col><Col>{request.address}</Col>
         </Row>
         <Row>
-            <Col style={{'text-align':'right'}}>Medicine Name:</Col><Col>{donation.medicine_name}</Col>
+            <Col style={{'text-align':'right'}}>Medicine Name:</Col><Col>{request.medicine_name}</Col>
         </Row>
         <Row>
-            <Col style={{'text-align':'right'}}>Medicine type:</Col><Col>{donation.type}</Col>
+            <Col style={{'text-align':'right'}}>Medicine type:</Col><Col>{request.type}</Col>
         </Row>
         <Row>
-            <Col style={{'text-align':'right'}}>Donated At:</Col><Col>{donation.donatedat}</Col>
+            <Col style={{'text-align':'right'}}>Donated At:</Col><Col>{request.requestdate}</Col>
         </Row>
         <Row>
-            <Col style={{'text-align':'right'}}>Expiry Date:</Col><Col>{donation.exp_date}</Col>
+            <Col style={{'text-align':'right'}}>Expiry Date:</Col><Col>{request.exp_date}</Col>
         </Row>
         <Row>
-            <Col style={{'text-align':'right'}}>Status:</Col><Col>{donation.status}</Col>
+            <Col style={{'text-align':'right'}}>Status:</Col><Col>{request.status}</Col>
         </Row>
         <br/>
         <Row>
             <Col></Col>
             <Col></Col>
-            <Col>{(donation.status!='rejected' && donation.status!='canceled')?(
+            <Col>{(request.status!='rejected' && request.status!='canceled')?(
                 <td>
-                    <Button className="btn-danger" onClick={()=>cancelDonation()}>Cancel</Button>
+                    <Button className="btn-danger" onClick={()=>cancelRequest()}>Cancel</Button>
                 </td>):null}
             </Col>
             <Col></Col>
@@ -163,7 +162,7 @@ const DonationStatus = () => {
                 <Modal.Body>
                 {id?
                 (<Carousel variant="dark">
-                    {(image=(Files.findOne({donation_id:id})).data)?
+                    {(image=(Files.findOne({request_id:id})).data)?
                     ( image.map((img,index) => (
                     <Carousel.Item>
                     <img className='admin-image' src={URL.createObjectURL(new Blob([img]))}
@@ -183,4 +182,4 @@ const DonationStatus = () => {
   } 
 };
 
-export default DonationStatus;
+export default RequestStatus;

@@ -30,6 +30,7 @@ function NavBar() {
                   <NavDropdown title={Meteor.user().username} id="navbarScrollingDropdown">
                   <NavDropdown.Item href="/profile">Profile</NavDropdown.Item>
                   <NavDropdown.Item href="/yourdonations">Your Donations</NavDropdown.Item>
+                  <NavDropdown.Item href="/yourrequests">Your Requests</NavDropdown.Item>
                   <NavDropdown.Divider />
                   <NavDropdown.Item onClick={logout}>
                     <span className="red-text">Signout</span>

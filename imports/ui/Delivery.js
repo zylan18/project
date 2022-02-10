@@ -5,7 +5,7 @@ import { Request } from '../api/links';
 
  const Delivery = () => {
     const donation=DonationList.find({status:{$in:['verified','pickup in progress','collected','in transit']}}).fetch()//this will get 
-    const request=Request.find({status:'verified'}).fetch()
+    const request=Request.find({status:{$in:['verified','dispatched','in transit','out for delivery','delivered']}}).fetch()
       
       // Get the element with id="defaultOpen" and click on it
     if(Meteor.user()){
@@ -13,9 +13,18 @@ import { Request } from '../api/links';
             document.getElementById("collect").click();
         },[])
         const [status,handleStatus]=useState('');
-        setStatus=(id)=>{
+        setCollectionStatus=(id)=>{
             if(status!=''){
             DonationList.update(id,{$set:{status:status}});
+            window.location.reload(false);
+            }
+            else{
+            alert('select a status');
+            }
+        }
+        setDeliveryStatus=(id)=>{
+            if(status!=''){
+            Request.update(id,{$set:{status:status}});
             window.location.reload(false);
             }
             else{
@@ -72,7 +81,7 @@ import { Request } from '../api/links';
                                                     </Form.Select>
                                                 </td>
                                                 <td>
-                                                <Button variant='warning' onClick={()=>{setStatus(medicine._id)}}>set</Button>
+                                                <Button variant='warning' onClick={()=>{setCollectionStatus(medicine._id)}}>set</Button>
                                                 </td>
                                                 </tr>
                                             </td>
@@ -126,7 +135,7 @@ import { Request } from '../api/links';
                                                     </Form.Select>
                                                 </td>
                                                 <td>
-                                                <Button variant='warning' onClick={()=>{setStatus(medicine._id)}}>set</Button>
+                                                <Button variant='warning' onClick={()=>{setDeliveryStatus(medicine._id)}}>set</Button>
                                                 </td>
                                                 </tr>
                                             </td>

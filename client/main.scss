@@ -720,6 +720,19 @@ footer{
             background-color: white;
           }
         }
+        &.not-done{
+          // &::before {//is-done line
+          //   border-left: 2px solid red;
+          // }
+          &::after {//is-done circle
+            content: "X";
+            font-size: 10px;
+            color: #FFF;
+            text-align: center;
+            border: 2px solid red;
+            background-color: red;
+          }
+        }
       }
       
       strong {
