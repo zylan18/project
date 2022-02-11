@@ -3,7 +3,7 @@ import { Request } from '../api/links';
 import { Files } from '../api/links';
 import {FaCheck} from '@react-icons/all-files/fa/FaCheck';
 import { Spinner ,Col,Row,Button,Carousel,Modal} from 'react-bootstrap';
-import { useParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom';
 
 const RequestStatus = () => { 
  if(Meteor.user()){

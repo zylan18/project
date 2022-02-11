@@ -1,30 +1,35 @@
-import React, {useState} from 'react';
+import React, {useState,useEffect} from 'react';
 import {Form, FloatingLabel,Button,Alert,Spinner} from 'react-bootstrap';
 import { DonationList } from '../api/links';
 //import {Meteor} from 'meteor/meteor';
 import {Files} from '../api/links';
-
+import { useParams } from 'react-router-dom';
+import {useNavigate} from 'react-router-dom';
 
 const DonationForm = () =>{
+    let { id } = useParams();
         if(Meteor.user()){
+        const navigate = useNavigate();   
+        if((DonationList.findOne({_id:id})).edit){    
+        const donation=DonationList.findOne({_id:id});
         var fileinput;
-        const [donorname,handleDonornameChange]=useState(Meteor.user().profile.name);
-        const [address,handleAddressChange]=useState(Meteor.user().profile.address);
-        const [medname,handleMednameChange]=useState('');
-        const [expdate,handleExpdateChange]=useState('');
-        const [medfile,handleFileChange]=useState([]);
+        const [donorname,handleDonornameChange]=useState(donation.donor_name);
+        const [address,handleAddressChange]=useState(donation.address);
+        const [medname,handleMednameChange]=useState(donation.medicine_name);
+        const [expdate,handleExpdateChange]=useState(donation.exp_date);
+        const [medfile,handleFileChange]=useState((Files.findOne({donation_id:id}).data));
         const [fileerror,handleFileError]=useState('');
         handleSubmit=(event)=>{
             if(confirm(`Are you sure your details correct?\nDonor Name:${donorname}\nAddress:${address}\nMedicine Name:${medname}\nExpiry Date:${expdate}
             `)){
             date=new Date;
-            DonationList.insert({user_id:Meteor.user()._id,donatedat:date.toLocaleString(),
+            DonationList.update(id,{$set:{user_id:Meteor.user()._id,donatedat:date.toLocaleString(),
             username:Meteor.user().username,donor_name:donorname,address:address, 
             medicine_name:medname, exp_date:expdate,verify_status:false,verified_by:'',
-            status:'in verification',edit:true,remark:''})
-
+            status:'in verification',edit:true}})
+            
             console.log(medfile);
-            Meteor.call('saveFile',Meteor.user()._id,Meteor.user().username,medfile);
+            Files.update((Files.findOne({donation_id:id})._id),{$set:{data:medfile}});
             alert('Donation form submitted');
             window.location.reload(false);
 
@@ -57,8 +62,8 @@ const DonationForm = () =>{
         else{
             handleFileError('File Size more than 5MB');
             document.getElementById("file").value=null;
-        } 
-    }
+        }
+    }    
     const handleAddMedfile = (file) => {
         const newmedfile = [...medfile];
         newmedfile.push(file);
@@ -86,12 +91,12 @@ const DonationForm = () =>{
                         />
                     </FloatingLabel>
                     <FloatingLabel controlId="floatingInput" label="Medicine Name" className="mb-3">
-                        <input type='text' className="form-control" onChange={e=>handleMednameChange(e.target.value)}
+                        <input type='text' value={medname}className="form-control" onChange={e=>handleMednameChange(e.target.value)}
                         placeholder="Medicine Name" required
                         />
                     </FloatingLabel>
                     <FloatingLabel controlId="floatingInput" label="Expiry Date" className="mb-3">
-                        <input type='date' className='form-control' onChange={e=>handleExpdateChange(e.target.value)}
+                        <input type='date' value={expdate} className='form-control' onChange={e=>handleExpdateChange(e.target.value)}
                         required/>
                     </FloatingLabel>
                     <FloatingLabel controlId="floatingInput" label="Address" className="mb-3">
@@ -118,8 +123,18 @@ const DonationForm = () =>{
                 </div>
                 </Form>
         )
-      }//if
+      
+        }//if edit
+        else{
+                return(
+                <Alert variant='warning'>You cannot edit this donation anymore. 
+                    <Alert.Link href="/yourdonations" variant="warning"> Click here </Alert.Link>
+                     to go back to your donations
+                </Alert>)
+        }
+    }//if user
       else if(Meteor.loggingIn()){
+
       return(<div>
           <Spinner className="spinner" animation="border" variant="primary" />
       </div>)         
@@ -133,6 +148,6 @@ const DonationForm = () =>{
               </Alert>
           </div>)
       }
-    }
+}
 
 export default DonationForm

@@ -19,6 +19,7 @@ import Delivery  from './Delivery';
 import DonationStatus from './DonationStatus';
 import YourRequests from './YourRequests';
 import RequestStatus from './RequestStatus';
+import EditDonationForm from './EditDonationForm';
 
 const logout = () => Meteor.logout();
 const App = () => {
@@ -31,6 +32,7 @@ const App = () => {
           <Route exact path="/" element={<Home/>}/>
           <Route exact path="/register" element={<RegistrationForm/>}/>
           <Route exact path="/donate" element={<DonationForm/>}/>
+          <Route exact path="/editdonation/:id" element={<EditDonationForm/>}/>
           <Route exact path="/admin" element={<Admin/>}/>
           <Route exact path="/request" element={<Request/>}/>
           <Route exact path="/requestform/:id" element={<RequestForm/>}/>{/*here :id is used for sending any value to the requestform*/}

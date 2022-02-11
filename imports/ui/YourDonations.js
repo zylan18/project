@@ -3,6 +3,7 @@ import { DonationList } from '../api/links';
 import {Alert,Spinner,Button,Modal,Carousel,} from 'react-bootstrap';
 import { useTracker } from 'meteor/react-meteor-data';
 import {Files} from '../api/links';
+import {useNavigate} from 'react-router-dom';
 
 function verifyColor(t){
     if(t==true){
@@ -22,12 +23,11 @@ function cancelDonation(index){
 }
 
 
-const YourDonations = () => {
+const YourDonations = () => {  
     
-    
-    if(Meteor.user()){
-        
+    if(Meteor.user()){  
     const [donation_id,setDonation_id]=useState('');
+    const navigate = useNavigate();
     const handleClose = () => setShow(false);
     const handleShow = () => {setShow(true)};
     const [show, setShow] = useState(false);
@@ -39,13 +39,14 @@ const YourDonations = () => {
                     <tbody>
                     
                     <tr>
-                        <th width='100'></th>
-                        <th width='100'>Medicine Name</th>
-                        <th width='100'>Donated at</th>
+                        <th width="100px"></th>
+                        <th width='100px'>Medicine Name</th>
+                        <th width='100px'>Donated at</th>
                        
-                        <th width='100'>Status</th>
-                      
-                        <th width='100'></th>
+                        <th width='100px'>Status</th>
+                        <th width='100px'>Remarks</th>
+                        <th width='100px'></th>
+                        <th width='75px'></th>
                       
                     </tr>
                 {donationList.map((donor,index) => (
@@ -71,13 +72,15 @@ const YourDonations = () => {
                         <td>{donor.donatedat}</td>
                        
                         <td>{donor.status}</td>
-                        
+                        <td>{donor.remark}</td>
                         {/* {(donor.status!='rejected' && donor.status!='canceled')?(
                         <td>
                             <Button className="btn-danger" onClick={()=>cancelDonation(index)}>Cancel</Button>
                         </td>):null}  */}
                         <td><a href={`/donationstatus/${donor._id}`}>click here for more details</a></td>
+                        <td>{(donor.edit)?(<Button onClick={()=>navigate(`/editdonation/${donor._id}`)}>edit</Button>):(null)}</td>
                     </tr>
+                    
                     )
                     )
                 }

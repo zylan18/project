@@ -92,7 +92,7 @@ const AdminRequest = () => {
                                     ( image.map((img,index) => (
                                     <Carousel.Item>
                                     <img className='preview-image' src={URL.createObjectURL(new Blob([img]))}
-                                    onClick={()=>{setDonation_id(medicine._id);{console.log(donation_id)};handleShow()}}/>
+                                    onClick={()=>{setRequest_id(medicine._id);{console.log(request_id)};handleShow()}}/>
                                     </Carousel.Item>))):"Not found"
                                     }
                             </Carousel>)}
@@ -143,7 +143,7 @@ const AdminRequest = () => {
                                     ( image.map((img,index) => (
                                     <Carousel.Item>
                                     <img className='admin-image' src={URL.createObjectURL(new Blob([img]))}
-                                    onClick={()=>{setDonation_id(medicine._id);{console.log(request_id)};handleShow()}}/>
+                                    />
                                     </Carousel.Item>))):"Not found"
                                     }
                             </Carousel>):null}

@@ -12,16 +12,19 @@ function verify(index){
     if(donname[index].verify_status == true){
     DonationList.update(donname[index]._id,{$set:{verify_status:false}});
     DonationList.update(donname[index]._id,{$set:{status:'not verified'}});
+    DonationList.update(donname[index]._id,{$set:{edit:true}});
     console.log(donname[index].verify_status);
     }
     else if(donname[index].verify_status == "rejected"){
         DonationList.update(donname[index]._id,{$set:{verify_status:false}});
         DonationList.update(donname[index]._id,{$set:{status:'in verification'}});
+        DonationList.update(donname[index]._id,{$set:{verify_status:false}});
         console.log(donname[index].verified_by);
     }
     else{
         DonationList.update(donname[index]._id,{$set:{verify_status:true}});
         DonationList.update(donname[index]._id,{$set:{status:'verified'}});
+        DonationList.update(donname[index]._id,{$set:{edit:false}});
         console.log(donname[index].verified_by);
     }
     console.log("update");
@@ -49,26 +52,34 @@ const Admin = () => {
     const donname=DonationList.find({},{fields:{}}).fetch();
     let verifyIcon = { color: "#26bd00"};//used to change color of icon
     let cancelIcon = { color: "#ff2222"};//used to change color of icon
-    const [show, setShow] = useState(false);
+    
     const [donation_id,setDonation_id]=useState('');
     const [status,handleStatus]=useState('');
     const [medtype,handleMedType]=useState('');
+    const [remark,handleRemark]=useState('');
+    
+    const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
     const handleShow = () => {setShow(true)};
     const [donindex,setDonindex]=useState('');
+    
     const [detailshow, setDetailShow] = useState(false);
     const handleDetailClose = () => setDetailShow(false);
     const handleDetailShow = () => {setDetailShow(true)};
     
+    const [remarkshow,setRemarkShow]=useState(false);
+    const handleRemarkClose = () => setRemarkShow(false);
+    const handleRemarkShow = () => {setRemarkShow(true)};
+    
+    setRemark=(id)=>{
+    DonationList.update(id,{$set:{remark:remark,edit:true}});
+    console.log(donname);
+    window.location.reload(false);
+}
     setStatus=(index)=>{
-        if(status!=''){
-        DonationList.update(donname[index]._id,{$set:{status:status}});
+        DonationList.update(donname[index]._id,{$set:{edit:status}});
         console.log(donname)
         window.location.reload(false);
-        }
-        else{
-        alert('select a status');
-        }
     }
     setMedType=(index)=>{
         if(medtype!=''){
@@ -84,7 +95,7 @@ const Admin = () => {
         console.log(donname.length)
         for(i=0;i<donname.length;i++){
             if('in collection'||'storage'||'in delivery'||'delivered'){
-                document.getElementById(`status${i}`).value=donname[i].status;
+                document.getElementById(`status${i}`).checked=donname[i].edit;
                 document.getElementById(`type${i}`).value=donname[i].type;
                 }
         }
@@ -107,10 +118,12 @@ const Admin = () => {
                     <th width='210px'>Set Medicine Type</th>
                     <th width="100px">Expiry Date</th>
                     <th width="100px">Status</th>
-                    <th width="210px">Set Status</th>
+                    <th width="210px">Set Edit</th>
                     <th width="130px">Verification Status</th>
                     <th width="100px">Verified by</th>
                     <th width="100px">Verify</th>
+                    <th width="100px"></th>
+                    <th width="150px"></th>
                 </tr>
             {
             donname.map((name,index) => (
@@ -141,7 +154,7 @@ const Admin = () => {
                     <td>
                         <tr>{/*select for medicine type*/}
                             <td>
-                                <Form.Select size="sm" id={`type${index}`} onChange={e=>handleMedType(e.target.value)} onLoad={()=>changeSelected(index,name.status)}>
+                                <Form.Select size="sm" id={`type${index}`} onChange={e=>handleMedType(e.target.value)}>
                                     <option>select medicine type</option>
                                     <option value='antipyretic'>antipyretic</option>
                                     <option value='antibiotic'>antibiotic</option>
@@ -158,13 +171,12 @@ const Admin = () => {
                     <td>{/*select for status*/}
                         <tr>
                             <td>      
-                                <Form.Select size="sm" onChange={e=>handleStatus(e.target.value)} id={`status${index}`}>
-                                    <option>select status</option>
-                                    <option value='in collection'>in collection</option>
-                                    <option value='storage'>storage</option>
-                                    <option value='in delivery'>in delivery</option>
-                                    <option value='delivered'>delivered</option>
-                                </Form.Select>
+                                <Form.Check 
+                                type="switch"
+                                id={`status${index}`}
+                                onChange={e=>{handleStatus(e.target.checked);console.log(e.target.checked,status)}}
+                                label={(name.edit)?('Disable Edit'):('Enable Edit')}
+                                />
                             </td>
                             <td>
                                 <Button variant='warning' onClick={()=>{setStatus(index)}}>set</Button>
@@ -188,6 +200,10 @@ const Admin = () => {
                     <td>   
                         <button style={{"color":"red"}} onClick={()=>rejectVerification(index)}>Reject</button>
                     </td> 
+                    <td>
+                        {(name.remark)?(name.remark):('no remarks yet')}
+                        <Button className='btn-danger' onClick={()=>{setDonation_id(name._id);handleRemarkShow()}}>Remark</Button>
+                    </td>
                 </tr>
             )
          
@@ -261,9 +277,20 @@ const Admin = () => {
                     </tr>
                 </table>):(null)
     }
-                </Modal.Body>
+        </Modal.Body>
               </Modal>
-        </div>)
+                <Modal show={remarkshow} onHide={handleRemarkClose}>
+                    <Modal.Header closeButton>  
+                        Set Remark
+                    </Modal.Header>
+                    <Modal.Body>
+                        <input type='text' onChange={e=>handleRemark(e.target.value)} className='form-control'/>
+                        <br/>
+                        <Button className='btn-primary' onClick={()=>{setRemark(donation_id);console.log('click')}}>submit</Button>
+                    </Modal.Body>
+              </Modal>
+        </div>
+        )
     }
     else if(Meteor.loggingIn()){
         return(<div>
