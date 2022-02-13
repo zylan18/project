@@ -5,20 +5,24 @@ import { DonationList } from '../api/links'
 import { Files } from '../api/links'
 import {Request} from '../api/links'
 
-const RequestForm = () => {
+const EditRequestForm = () => {
     
     
     const user=Meteor.user();
-    if (user){
+    if (user){    
     let { id } = useParams();//used to get values from address bar
-    medicine=DonationList.findOne({_id:id})
-    const [medfile,handleFileChange]=useState('');
+    request=Request.findOne({_id:id})
     const [show, setShow] = useState(false);
-    const [donation_id,setDonation_id]=useState('');
-    const [reason,handleReasonChange]=useState('');
     const handleClose = () => setShow(false);
     const handleShow = () => {setShow(true)};
-    const [address,handleAddressChange]=useState(user.profile.address);
+
+    const [medfile,handleFileChange]=useState(Files.findOne({request_id:id}).data);
+
+    const [donation_id,setDonation_id]=useState('');
+
+    const [reason,handleReasonChange]=useState(request.reason);
+    const [address,handleAddressChange]=useState(request.address);
+
     const [fileerror,handleFileError]=useState('');
     
     var img;
@@ -61,12 +65,16 @@ const handleAddMedfile = (file) => {
   }
   
     var date=new Date;
-    handleSubmit=()=>{
+    handleSubmit=(event)=>{
+        if(confirm(`Are you sure your details correct?\nAddress:${address}\nReason:${reason}`)){
         //alert(`user_id:${Meteor.user()._id}\nrequestdate:${date.toLocaleString()}\nusername:${user.username}\nrequester_name:${user.profile.name}\ndonation_id:${id}\nmedicine_name:${medicine.medicine_name}\nexp_date:${medicine.exp_date}\nverify_status:${false}\nverified_by:${''}\nstatus:${'in verification'}\ntype:${medicine.type}`);
-        Request.insert({user_id:Meteor.user()._id,requestdate:date.toLocaleString(),
-        username:user.username,requester_name:user.profile.name,donation_id:id, 
-        medicine_name:medicine.medicine_name, exp_date:medicine.exp_date,verify_status:false,verified_by:'',status:'in verification',type:medicine.type,reason:reason,address:address,edit:false,remark:''})
-        Meteor.call('requestFormSaveFile',Meteor.user()._id,Meteor.user().username,medfile);    
+        Request.update(id,{$set:{reason:reason,address:address,status:'in verification',edit:true}})
+        Files.update(Files.findOne({request_id:id},{fields:{_id:1}})._id,{$set:{data:medfile}})
+        alert('request form updated');
+        window.location.reload(false);
+        }else{
+            event.preventDefault();
+        }
     }
         var img=URL.createObjectURL(new Blob([medfile]))
         return (
@@ -79,20 +87,20 @@ const handleAddMedfile = (file) => {
                             <tr>
                                 <td rowspan="2">
                                 <Carousel variant="dark">
-                                    {(image=(Files.findOne({donation_id:medicine._id})).data)?
+                                    {(image=(Files.findOne({donation_id:request.donation_id})).data)?
                                     ( image.map((img,index) => (
                                     <Carousel.Item>
                                     <img className='request-preview-image' src={URL.createObjectURL(new Blob([img]))}
-                                    onClick={()=>{setDonation_id(medicine._id);{console.log(donation_id)};handleShow()}}/>
+                                    onClick={()=>{setDonation_id(request.donation_id);{console.log(donation_id)};handleShow()}}/>
                                     </Carousel.Item>))):"Not found"
                                     }
                             </Carousel></td>
                                 <td><b>Medicine Name: </b></td>
-                                <td>{medicine.medicine_name}</td>
+                                <td>{request.medicine_name}</td>
                             </tr>
                             <tr>
-                                <td><b>Expiry Date:   </b></td>
-                                <td>{medicine.exp_date}</td>
+                                <td><b>Expiry Date: </b></td>
+                                <td>{request.exp_date}</td>
                             </tr>
                             </tbody>
                         </table>
@@ -118,7 +126,7 @@ const handleAddMedfile = (file) => {
                         >X</button>
                         </div>))):(null)
                         }
-                        <input type='file' id='file' className="file-input" required onChange={fileInput}/>
+                        <input type='file' id='file' className="file-input" onChange={fileInput}/>
                         <Form.Label className="loginError">{fileerror}</Form.Label>
                         <br/>
                          <Button type='submit'>Submit</Button>   
@@ -128,11 +136,11 @@ const handleAddMedfile = (file) => {
                     </Modal.Header>
                     <Modal.Body>
                     {donation_id?(<Carousel variant="dark">
-                                    {(image=(Files.findOne({donation_id:medicine._id})).data)?
+                                    {(image=(Files.findOne({donation_id:donation_id})).data)?
                                     ( image.map((img,index) => (
                                     <Carousel.Item>
                                     <img className='admin-image' src={URL.createObjectURL(new Blob([img]))}
-                                    onClick={()=>{setDonation_id(medicine._id);{console.log(donation_id)};handleShow()}}/>
+                                    />
                                     </Carousel.Item>))):"Not found"
                                     }
                             </Carousel>):null}
@@ -156,4 +164,4 @@ const handleAddMedfile = (file) => {
         </div>)
     }
 }
-export default RequestForm
+export default EditRequestForm

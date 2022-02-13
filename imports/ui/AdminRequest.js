@@ -1,7 +1,8 @@
-import React,{useState} from 'react'
+import React,{useState,useEffect} from 'react'
 import { Request } from '../api/links'
+import { DonationList } from '../api/links';
 import { useTracker } from 'meteor/react-meteor-data';
-import {Alert,Modal,Spinner,Carousel} from 'react-bootstrap';
+import {Alert,Modal,Spinner,Carousel,Form,Button} from 'react-bootstrap';
 import {Files} from '../api/links';
 import {GiConfirmed} from '@react-icons/all-files/gi/GiConfirmed';//to use icon
 import {GiCancel} from '@react-icons/all-files/gi/GiCancel';
@@ -13,16 +14,21 @@ function verify(index){
     if(reqname[index].verify_status == true){
     Request.update(reqname[index]._id,{$set:{verify_status:false}});
     Request.update(reqname[index]._id,{$set:{status:'not verified'}});
+    Request.update(reqname[index]._id,{$set:{edit:true}});
+    DonationList.update(reqname[index].donation_id,{$set:{status:'storage'}})
     console.log(reqname[index].verify_status);
     }
     else if(reqname[index].verify_status == "rejected"){
         Request.update(reqname[index]._id,{$set:{verify_status:false}});
         Request.update(reqname[index]._id,{$set:{status:'in verification'}});
+        Request.update(reqname[index]._id,{$set:{edit:true}});
         console.log(reqname[index].verified_by);
     }
     else{
         Request.update(reqname[index]._id,{$set:{verify_status:true}});
         Request.update(reqname[index]._id,{$set:{status:'verified'}});
+        Request.update(reqname[index]._id,{$set:{edit:false}});
+        DonationList.update(reqname[index].donation_id,{$set:{status:'request verified'}})
         console.log(reqname[index].verified_by);
     }
     console.log("update");
@@ -46,14 +52,41 @@ function verifyColor(t){
 }
 
 const AdminRequest = () => {
-    let verifyIcon = { color: "#26bd00"};//used to change color of icon
+        if(Meteor.user()){
+        if(Meteor.user().profile.admin){
+        const reqname=Request.find({},{fields:{}}).fetch();
+        let verifyIcon = { color: "#26bd00"};//used to change color of icon
         let cancelIcon = { color: "#ff2222"};//used to change color of icon
-        const [show, setShow] = useState(false);
+        
         const [request_id,setRequest_id]=useState('');
+        const [status,handleStatus]=useState('');
+        const [remark,handleRemark]=useState('');
+
+        const [show, setShow] = useState(false);
         const handleClose = () => setShow(false);
         const handleShow = () => {setShow(true)};
-        const reqname=Request.find({},{fields:{}}).fetch();
-    if(Meteor.user()){
+
+        const [remarkshow,setRemarkShow]=useState(false);
+        const handleRemarkClose = () => setRemarkShow(false);
+        const handleRemarkShow = () => {setRemarkShow(true)};
+        
+        setStatus=(id)=>{
+            Request.update(id,{$set:{edit:status}});
+            window.location.reload(false);
+        }
+
+        setRemark=(id)=>{
+            Request.update(id,{$set:{remark:remark,edit:true}});
+            window.location.reload(false);
+        }
+        useEffect(() => {
+            for(i=0;i<reqname.length;i++){
+                if('in collection'||'storage'||'in delivery'||'delivered'){
+                    document.getElementById(`status${i}`).checked=reqname[i].edit;
+                    }
+            }
+            }, []);
+
         var image;
         //console.log(reqname);
         return (
@@ -71,10 +104,13 @@ const AdminRequest = () => {
                         <th width="100px">Expiry Date</th>
                         <th width="200px">Reason</th>
                         <th width="200px">Address</th>
+                        <th width='210px'>Set Edit</th>
                         <th width="100px">Verify Status</th>
                         <th width="130px">Status</th>
                         <th width="100px">Verified by</th>
                         <th width="100px">Verify</th>
+                        <th width="100px"></th>
+                        <th width="150px">Remarks</th>
                         
                     </tr>
                 {
@@ -99,12 +135,27 @@ const AdminRequest = () => {
                         </td>
                         <td>{medicine.requester_name}</td>
                         {/* {console.log(medicine.donor_name)} */}
-                        <td>{medicine.medicine_name}</td>
+                        <td><a href={`/donationstatus/${medicine.donation_id}`}>{medicine.medicine_name}</a></td>
                         <td>{medicine.type}</td>
                         <td>{medicine.requestdate}</td>
                         <td>{medicine.exp_date}</td>
                         <td>{medicine.reason}</td>
                         <td>{medicine.address}</td>
+                        <td>
+                            <tr>
+                            <td>
+                            <Form.Check 
+                                type="switch"
+                                id={`status${index}`}
+                                onChange={e=>{handleStatus(e.target.checked)}}
+                                label={(medicine.edit)?('Disable Edit'):('Enable Edit')}
+                            />
+                            </td>
+                                <td>
+                                    <Button variant='warning' onClick={()=>{setStatus(medicine._id)}}>set</Button>
+                                </td>
+                            </tr>
+                        </td>
                         <td>{medicine.status}</td>
                         <td>
                         <span className={"status "+(verifyColor(medicine.verify_status))}>
@@ -122,6 +173,19 @@ const AdminRequest = () => {
                         </td> 
                         <td>   
                             <button style={{"color":"red"}} onClick={()=>rejectVerification(index)}>Reject</button>
+                        </td>
+                        <td>
+                            <tr>
+                                <td>
+                                    {(medicine.remark)?(medicine.remark):('no remarks yet')}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <Button className='btn-danger' onClick={()=>{setRequest_id(medicine._id);handleRemarkShow()}}>Remark</Button>
+                                </td>
+                            </tr>
+                            
                         </td> 
                     </tr>
                     
@@ -149,8 +213,22 @@ const AdminRequest = () => {
                             </Carousel>):null}
                     </Modal.Body>
                   </Modal>
+                <Modal show={remarkshow} onHide={handleRemarkClose}>
+                    <Modal.Header closeButton>  
+                        Set Remark
+                    </Modal.Header>
+                    <Modal.Body>
+                        <input type='text' onChange={e=>handleRemark(e.target.value)} className='form-control'/>
+                        <br/>
+                        <Button className='btn-primary' onClick={()=>{setRemark(request_id);console.log('click')}}>submit</Button>
+                    </Modal.Body>
+              </Modal>
             </div>)
         }
+        else{
+            return(<div>You do not have permission to access this page</div>)
+        }
+    }
         else if(Meteor.loggingIn()){
             return(<div>
                 <Spinner className="spinner" animation="border" variant="primary" 
@@ -160,7 +238,7 @@ const AdminRequest = () => {
           }
         else{
             return(
-                <div>You need to login</div>
+                <div>You do not have permission to access this page</div>
             )
         }
     }

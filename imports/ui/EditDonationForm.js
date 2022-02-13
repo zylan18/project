@@ -20,8 +20,7 @@ const DonationForm = () =>{
         const [medfile,handleFileChange]=useState((Files.findOne({donation_id:id}).data));
         const [fileerror,handleFileError]=useState('');
         handleSubmit=(event)=>{
-            if(confirm(`Are you sure your details correct?\nDonor Name:${donorname}\nAddress:${address}\nMedicine Name:${medname}\nExpiry Date:${expdate}
-            `)){
+            if(confirm(`Are you sure your details correct?\nDonor Name:${donorname}\nAddress:${address}\nMedicine Name:${medname}\nExpiry Date:${expdate}`)){
             date=new Date;
             DonationList.update(id,{$set:{user_id:Meteor.user()._id,donatedat:date.toLocaleString(),
             username:Meteor.user().username,donor_name:donorname,address:address, 
@@ -30,7 +29,7 @@ const DonationForm = () =>{
             
             console.log(medfile);
             Files.update((Files.findOne({donation_id:id})._id),{$set:{data:medfile}});
-            alert('Donation form submitted');
+            alert('Donation form updated');
             window.location.reload(false);
 
             }else{
@@ -70,6 +69,7 @@ const DonationForm = () =>{
         handleFileChange(newmedfile);
         console.log(medfile)
       }
+
       const handleRemoveMedfile = (file) => {
         const newmedfile = medfile.filter((t) => t !== file);
         handleFileChange(newmedfile);
@@ -115,11 +115,11 @@ const DonationForm = () =>{
                         >X</button>
                         </div>))):(null)
                         }
-                        <input className='file-input' type='file' id='file' required onChange={fileInput}/>
+                        <input className='file-input' type='file' id='file' onChange={fileInput}/>
                         <Form.Label className="loginError" style={{'display':'inline-block'}}>{fileerror}</Form.Label>
                    <br/><br/>     
 
-                <Button className="btn-primary" variant="primary" type="submit">Submit</Button>
+                <Button className="btn-primary" variant="primary" type="submit">Update</Button>
                 </div>
                 </Form>
         )

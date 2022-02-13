@@ -84,6 +84,8 @@ body{
     margin-left: auto;
     margin-right: auto;
     width: 50%;
+    border:0.5px solid $primary;
+    background-color: white;
 }
 .request-preview-image{
     padding: 1px;
@@ -94,6 +96,8 @@ body{
     margin-left: auto;
     margin-right: auto;
     width: 50%;
+    background-color: white;
+    border:0.5px solid $primary;
   
 }
 .request-form-preview-image{

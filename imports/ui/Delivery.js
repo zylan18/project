@@ -23,6 +23,7 @@ const Delivery = () => {
 
   // Get the element with id="defaultOpen" and click on it
   if (Meteor.user()) {
+    if(Meteor.user().profile.admin){
     useEffect(() => {
       document.getElementById("collect").click();
     }, []);
@@ -168,12 +169,18 @@ const Delivery = () => {
         </Tab.Container>
       </div>
     );
+  }else{
+    return(<div>You do not have permission to access this page</div>)
+  }
   } else if (Meteor.loggingIn()) {
     return (
       <div>
         <Spinner className="spinner" animation="border" variant="primary" />
       </div>
     );
+  }
+  else{
+    return(<div>You do not have permission to access this page</div>)
   }
 };
 export default Delivery;

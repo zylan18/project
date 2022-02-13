@@ -49,6 +49,7 @@ function verifyColor(t){
 
 const Admin = () => {
     if(Meteor.user()){
+    if(Meteor.user().profile.admin){
     const donname=DonationList.find({},{fields:{}}).fetch();
     let verifyIcon = { color: "#26bd00"};//used to change color of icon
     let cancelIcon = { color: "#ff2222"};//used to change color of icon
@@ -72,10 +73,10 @@ const Admin = () => {
     const handleRemarkShow = () => {setRemarkShow(true)};
     
     setRemark=(id)=>{
-    DonationList.update(id,{$set:{remark:remark,edit:true}});
-    console.log(donname);
-    window.location.reload(false);
-}
+        DonationList.update(id,{$set:{remark:remark,edit:true}});
+        console.log(donname);
+        window.location.reload(false);
+    }
     setStatus=(index)=>{
         DonationList.update(donname[index]._id,{$set:{edit:status}});
         console.log(donname)
@@ -174,7 +175,7 @@ const Admin = () => {
                                 <Form.Check 
                                 type="switch"
                                 id={`status${index}`}
-                                onChange={e=>{handleStatus(e.target.checked);console.log(e.target.checked,status)}}
+                                onChange={e=>{handleStatus(e.target.checked)}}
                                 label={(name.edit)?('Disable Edit'):('Enable Edit')}
                                 />
                             </td>
@@ -201,7 +202,7 @@ const Admin = () => {
                         <button style={{"color":"red"}} onClick={()=>rejectVerification(index)}>Reject</button>
                     </td> 
                     <td>
-                        {(name.remark)?(name.remark):('no remarks yet')}
+                        {(name.remark)?(name.remark):('no remarks yet')}<br/>
                         <Button className='btn-danger' onClick={()=>{setDonation_id(name._id);handleRemarkShow()}}>Remark</Button>
                     </td>
                 </tr>
@@ -291,7 +292,11 @@ const Admin = () => {
               </Modal>
         </div>
         )
+    }//if admin
+    else{
+        return(<div>you do not have permission to access this page</div>)
     }
+}//if user
     else if(Meteor.loggingIn()){
         return(<div>
             <Spinner className="spinner" animation="border" variant="primary" 
@@ -299,10 +304,8 @@ const Admin = () => {
           
         </div>)         
       }
-    else{
-        return(
-            <div>You need to login</div>
-        )
+      else{
+        return(<div>you do not have permission to access this page</div>)
     }
 }
 export default Admin

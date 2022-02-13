@@ -8,10 +8,13 @@ import { useParams } from 'react-router-dom'
 const DonationStatus = () => { 
  if(Meteor.user()){
     let { id } = useParams();
+    const donation=DonationList.findOne({_id:id})
+    if(Meteor.user().profile.admin||Meteor.user()._id==donation.user_id){ 
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
     const handleShow = () => {setShow(true)};
-    const donation=DonationList.findOne({_id:id})
+    
+    
     function cancelDonation(){
         if(confirm("Are you sure you want to cancel your donation?")){
             DonationList.update(id,{$set:{status:'canceled'}});
@@ -66,6 +69,7 @@ const DonationStatus = () => {
             }
         }
     },[])
+
   return( 
   <div className='form'>
       
@@ -149,7 +153,7 @@ const DonationStatus = () => {
             <Col></Col>
             <Col>{(donation.status!='rejected' && donation.status!='canceled')?(
                 <td>
-                    <Button className="btn-danger" onClick={()=>cancelDonation()}>Cancel</Button>
+                    {(donation.status=='verified')?(<Button className="btn-danger" onClick={()=>cancelDonation()}>Cancel</Button>):(null)}
                 </td>):null}
             </Col>
             <Col></Col>
@@ -175,11 +179,17 @@ const DonationStatus = () => {
               </Modal>
     </div>
   );//return
+ }else{
+     return(<div>You do not have permission to view this page</div>)
  }
+}
  else if(Meteor.loggingIn()){
     return(<div>
         <Spinner className="spinner" animation="border" variant="primary" />
     </div>)         
+  }
+  else{
+      return(<div>You have to be logged in to acces this page</div>)
   } 
 };
 

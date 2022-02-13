@@ -12,6 +12,7 @@ const RequestStatus = () => {
     const handleClose = () => setShow(false);
     const handleShow = () => {setShow(true)};
     const request=Request.findOne({_id:id});
+    if(Meteor.user().profile.admin||Meteor.user()._id==request.user_id){ 
     function cancelRequest(){
         if(confirm("Are you sure you want to cancel your request?")){
             Request.update(id,{$set:{status:'canceled'}});
@@ -103,13 +104,13 @@ const RequestStatus = () => {
         </Col>
         <Col sm>
         <Row>
-            <Col> {((Files.findOne({request_id:id})).data.length == 1)?//it checks if one image is uploaded then display one image else display carousel
-                        ((image=(Files.findOne({request_id:id})).data)?
+            <Col> {((Files.findOne({donation_id:request.donation_id})).data.length == 1)?//it checks if one image is uploaded then display one image else display carousel
+                        ((image=(Files.findOne({donation_id:request.donation_id})).data)?
                         (<img className='preview-image' src={URL.createObjectURL(new Blob([image[0]]))}
                         onClick={()=>{handleShow()}}/>)
                         :"Not found")
                         :(<Carousel variant="dark">
-                                    {(image=(Files.findOne({request_id:id})).data)?
+                                    {(image=(Files.findOne({donation_id:request.donation_id})).data)?
                                     ( image.map((img,index) => (
                                     <Carousel.Item>
                                     <img className='preview-image' src={URL.createObjectURL(new Blob([img]))}
@@ -142,13 +143,35 @@ const RequestStatus = () => {
         <Row>
             <Col style={{'text-align':'right'}}>Status:</Col><Col>{request.status}</Col>
         </Row>
+        <Row>
+            <Col style={{'text-align':'right'}}>
+                Submitted Documents/Prescription
+            </Col>
+            <Col>
+            {((Files.findOne({request_id:id})).data.length == 1)?//it checks if one image is uploaded then display one image else display carousel
+                        ((image=(Files.findOne({request_id:id})).data)?
+                        (<img className='preview-image' src={URL.createObjectURL(new Blob([image[0]]))}
+                        onClick={()=>{handleShow()}}/>)
+                        :"Not found")
+                        :(<Carousel variant="dark">
+                                    {(image=(Files.findOne({request_id:id})).data)?
+                                    ( image.map((img,index) => (
+                                    <Carousel.Item>
+                                    <img className='preview-image' src={URL.createObjectURL(new Blob([img]))}
+                                    onClick={()=>{handleShow()}}/>
+                                    </Carousel.Item>))):"Not found"
+                                    }
+                        </Carousel>)
+                    }
+            </Col>
+        </Row>
         <br/>
         <Row>
             <Col></Col>
             <Col></Col>
             <Col>{(request.status!='rejected' && request.status!='canceled')?(
                 <td>
-                    <Button className="btn-danger" onClick={()=>cancelRequest()}>Cancel</Button>
+                    {(donation.status=='verified')?(<Button className="btn-danger" onClick={()=>cancelDonation()}>Cancel</Button>):(null)}
                 </td>):null}
             </Col>
             <Col></Col>
@@ -174,11 +197,18 @@ const RequestStatus = () => {
               </Modal>
     </div>
   );//return
- }
+}
+else{
+    return(<div>you do not have permission to access this page</div>)
+}
+}
  else if(Meteor.loggingIn()){
     return(<div>
         <Spinner className="spinner" animation="border" variant="primary" />
     </div>)         
+  }
+  else{
+      return(<div>You need to be logged in to access this page</div>)
   } 
 };
 

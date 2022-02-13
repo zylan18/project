@@ -13,7 +13,8 @@ Meteor.methods({
               password: password,
               profile:{
                   name:nameofuser,
-                  address:address
+                  address:address,
+                  admin:false
               }
             });    
           }
