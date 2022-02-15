@@ -133,14 +133,14 @@ const Admin = () => {
                      <td className="image-table">
                      {((Files.findOne({donation_id:name._id})).data.length == 1)?
                         ((image=(Files.findOne({donation_id:name._id})).data)?
-                        (<img className='preview-image' src={URL.createObjectURL(new Blob([image[0]]))}
+                        (<img className='preview-image' loading='lazy' src={URL.createObjectURL(new Blob([image[0]]))}
                         onClick={()=>{setDonation_id(name._id);handleShow()}}/>)
                         :"Not found")
                         :(<Carousel variant="dark">
                                     {(image=(Files.findOne({donation_id:name._id})).data)?
                                     ( image.map((img,index) => (
                                     <Carousel.Item>
-                                    <img className='preview-image' src={URL.createObjectURL(new Blob([img]))}
+                                    <img className='preview-image' loading='lazy' src={URL.createObjectURL(new Blob([img]))}
                                     onClick={()=>{setDonation_id(name._id);{console.log(donation_id)};handleShow()}}/>
                                     </Carousel.Item>))):"Not found"
                                     }
@@ -223,7 +223,7 @@ const Admin = () => {
                             {(image=(Files.findOne({donation_id:donation_id})).data)?
                             ( image.map((img,index) => (
                             <Carousel.Item>
-                            <img className='admin-image' src={URL.createObjectURL(new Blob([img]))}
+                            <img className='admin-image' loading='lazy' src={URL.createObjectURL(new Blob([img]))}
                             />
                             </Carousel.Item>))):"Not found"
                             }

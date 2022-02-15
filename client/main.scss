@@ -75,22 +75,21 @@ body{
 }
 
 .preview-image{
-  transition: transform .2s;
-  padding: 1px;
-   width: 50px;
-  height: 100px;
-  object-fit: scale-down;
-  display: block;
+    transition: transform .2s;
+    padding: 1px;
+    width: 100px;
+    height: 100px;
+    object-fit: scale-down;
+    display: block;
     margin-left: auto;
     margin-right: auto;
-    width: 50%;
-    border:0.5px solid $primary;
-    background-color: white;
+    //border:0.5px solid $primary;
+    background-color: #DDDDDD;
 }
 .request-preview-image{
     padding: 1px;
      width: 50%;
-    height: 50%;
+    height: auto;
     object-fit: scale-down;
     display: block;
     margin-left: auto;
@@ -131,6 +130,7 @@ body{
 
   .form{
     margin: auto;
+    margin-top: 1%;
     width: 75%;
     height:100%;
     border: 1px groove rgb(175, 175, 175);
@@ -170,14 +170,7 @@ body{
   }
 
 
-  @media(max-width: 800px){
-    .form{
-    width:65%;
-    }
-    .admin-table{
-      table-layout: auto;
-    }
-  }
+ 
   
   .DateSelector{
     text-align: center;
@@ -747,3 +740,84 @@ footer{
       display: block;
       margin-left:5%;
     }
+    .carousel-indicators [data-bs-target]{
+    background-color: $dark!important;
+    // border-radius: 50%;
+    // height: 7px;
+    // width: 7px;
+    margin-bottom:-20px;
+}
+    .modal-content {
+      background-color: rgba(255, 253, 253, 0.69) !important;
+      backdrop-filter: blur(5px) !important;
+    }
+    .modal-header{
+      border-bottom: none;
+    }
+
+   @media(max-width: 800px){//used for reactive
+    
+    .ms-auto {
+      margin-left: unset !important;
+  }
+    .form{
+    width:90%;
+    }
+    .admin-table{
+      overflow-x: auto;
+    }
+    .request-table{
+    th{
+      display: none !important;
+    }
+    table, thead, tbody, th, td, tr { 
+      display: block; 
+    }
+    
+    /* Hide table headers (but not display: none;, for accessibility) */
+    thead tr { 
+      position: absolute;
+      top: -9999px;
+      left: -9999px;
+    }
+    
+    tr { 
+      border: 0.5px solid #fff !important; 
+      margin-top: 10px;
+    }
+    
+    td { 
+      /* Behave  like a "row" */
+      border: none;
+      border-bottom: 1px solid #eee; 
+      position: relative;
+      text-align: right !important;
+    }
+    
+    td:before { 
+      /* Now like a table header */
+      position: absolute;
+      /* Top/left values mimic padding */
+      top: 6px;
+      left: 6px;
+      width: 45%; 
+      padding-right: 10px; 
+      white-space: nowrap;
+    }
+    .request-button{
+      margin-right: 38%;
+    }
+    
+    /*
+    Label the data
+    */
+    td:nth-of-type(1):before { content: ""; }
+    td:nth-of-type(2):before { content: "Medicine Name"; }
+    td:nth-of-type(3):before { content: "Expiry Date"; }
+  }
+    
+    .admin-image {
+      margin-top: 30%;
+      width: 100%;
+    }
+  }

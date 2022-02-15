@@ -48,17 +48,32 @@ function NavBar() {
   }
   else if(Meteor.loggingIn()){
     return(
-    <Navbar bg="primary" className="w-auto" variant="dark" expand='lg'>
-    <Container>
-      <Nav>
-        <Navbar.Brand href="/">We Care For You</Navbar.Brand>
-      </Nav>
-    </Container>
-    </Navbar>
-    )
+      <div>
+      <meta name="viewport" content="width=device-width, initial-scale=1"/>
+      <Navbar bg="primary" className="w-auto" variant="dark" expand='lg'>
+            <Container>
+              <Navbar.Brand href="/">We Care For You</Navbar.Brand>    
+              <Navbar.Toggle aria-controls="basic-navbar-nav" />
+                <Navbar.Collapse id="basic-navbar-nav">    
+                <Nav className="container-fluid">
+                 
+                <Link className="nav-link" to={"/register"}>Donate</Link>
+                <Link className="nav-link" to={"/register"}>Request</Link>
+                <Link className="nav-link" to={"/register"}>Register</Link>
+                <div className='ms-auto'>
+                  <LoginForm/>
+                </div>  
+              </Nav>
+              </Navbar.Collapse>
+            </Container>
+            </Navbar>
+            </div>
+            )
   }
   else{
     return(
+      <div>
+      <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <Navbar bg="primary" className="w-auto" variant="dark" expand='lg'>
           <Container>
             <Navbar.Brand href="/">We Care For You</Navbar.Brand>    
@@ -76,6 +91,7 @@ function NavBar() {
             </Navbar.Collapse>
           </Container>
           </Navbar>
+          </div>
           )
   }
 }

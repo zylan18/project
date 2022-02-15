@@ -62,6 +62,10 @@ const handleAddMedfile = (file) => {
   const handleRemoveMedfile = (file) => {
     const newmedfile = medfile.filter((t) => t !== file);
     handleFileChange(newmedfile);
+    if(medfile.length==1){//to make value of file input when there are files uploaded and all are cleared
+        console.log(medfile.length);
+        document.getElementById('file').value=null;
+    }
   }
   
     var date=new Date;

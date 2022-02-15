@@ -120,14 +120,14 @@ const AdminRequest = () => {
                         <td>
                         {((Files.findOne({request_id:medicine._id})).data.length == 1)?//it checks if one image is uploaded then display one image else display carousel
                         ((image=(Files.findOne({request_id:medicine._id})).data)?
-                        (<img className='preview-image' src={URL.createObjectURL(new Blob([image[0]]))}
+                        (<img className='preview-image' loading='lazy' src={URL.createObjectURL(new Blob([image[0]]))}
                         onClick={()=>{setRequest_id(medicine._id);handleShow()}}/>)
                         :"Not found")
                         :(<Carousel variant="dark">
                                     {(image=(Files.findOne({request_id:medicine._id})).data)?
                                     ( image.map((img,index) => (
                                     <Carousel.Item>
-                                    <img className='preview-image' src={URL.createObjectURL(new Blob([img]))}
+                                    <img className='preview-image' loading='lazy' src={URL.createObjectURL(new Blob([img]))}
                                     onClick={()=>{setRequest_id(medicine._id);{console.log(request_id)};handleShow()}}/>
                                     </Carousel.Item>))):"Not found"
                                     }
@@ -206,7 +206,7 @@ const AdminRequest = () => {
                                     {(image=(Files.findOne({request_id:request_id})).data)?
                                     ( image.map((img,index) => (
                                     <Carousel.Item>
-                                    <img className='admin-image' src={URL.createObjectURL(new Blob([img]))}
+                                    <img className='admin-image' loading='lazy' src={URL.createObjectURL(new Blob([img]))}
                                     />
                                     </Carousel.Item>))):"Not found"
                                     }
