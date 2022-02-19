@@ -1,5 +1,5 @@
 import React from 'react';
-import { Carousel } from 'react-bootstrap';
+import { Carousel,Col,Row} from 'react-bootstrap';
 
 const Home = () => {
     user=Meteor.user();
@@ -52,7 +52,7 @@ const Home = () => {
   </Carousel.Item>
 </Carousel>
 {/* <br><br><br> */}
-<br/>
+{/* <br/>
 <br/>
 <br/>
             <div className='home-image-container'>
@@ -62,27 +62,52 @@ const Home = () => {
 
               <br>
               </br>
-              </div>
+              </div> */}
               {/* <div tabindex="0" role="button" class="_2tdEn _1pXi6 _3K0Ka _220Ph"><div tabindex="0" role="button" class="_2tdEn _1pXi6"><img class="cKtiT" src="https://assets.pharmeasy.in/web-assets/dist/581b7351.svg" alt="ooc"/>
               </div><div class="qLCRa"><div>Call For Details</div>
               <strong>+91 9967705674</strong></div><div tabindex="0" role="button" class="_2tdEn _1pXi6 _1_5aQ">×</div></div> */}
               
-              
+              <div className='why-to-donate'><h1>Why medicines!?</h1></div>
+                <Row>
+                 <Col>
+               <img  className='why-med-img col-md-5' src="/images/whymed.png"></img></Col> 
+               
+               <Col><div className='why-med-text'><p>50 million Americans don’t take their prescribed medication because they can’t afford it. With soaring copays,
+                 deductibles, and insurance costs, many people are making impossible choices between medications, food and housing, gas to get to work, and more.</p>
+                <p>Not taking your medications, however, often leads to even worse outcomes—heart attacks, strokes, and even higher costs.
+                This is our nation’s most critical problem, but it doesn’t have to be.</p>
+              <p >That’s why we’re here.provides access so everyone gets the care they deserve.</p></div></Col> </Row>
+
+
               <div className='how-to-donate'><h1>How to donate!?</h1></div>
-  <div className="container-main">
+              <br>
+              </br>
+              <div className="container-main">
     <div className="container-new">
-        <img className="image-new" src="/images/donate.jpg" alt="Some Error" />
-        <div className="overlay-new">Text 1</div>
+        <img className="image-new" src="/images/todo1.png" alt="Some Error" />
+        <div className="overlay-new">Register<br></br><br></br>Answer a few simple questions and sign 
+        our agreement to donate or receive medicine.</div>
     </div>
     <div className="container-new">
-        <img className="image-new" src="/images/note.gif" alt="Some Error" />
-        <div className="overlay-new">Text 2</div>
+        <img className="image-new" src="/images/todo2.png" alt="Some Error" />
+        <div className="overlay-new">Box it up<br></br><br></br>We’ll send everything you need
+        to ship. Place medicines in the provided box,and we’ll schedule a pickup through FedEx.</div>
     </div>
     <div className="container-new">
-        <img className="image-new" src="/images/med.jpg" alt="Some Error" />
-        <div className="overlay-new">Text 3</div>
+        <img className="image-new" src="/images/todo3.png" alt="Some Error" />
+        <div className="overlay-new">Stay confidently complaint<br></br><br></br>We provide a full
+         record of the donation, along with the impact it had on the community.</div>
     </div>
 </div>
+<br>
+</br>
+        <div className='how-work'><h1>How Does it works?</h1></div>
+        <Row>
+        <Col>
+        <img className='work-img' src='/images/works.png'></img></Col>
+        <Col><div className='work-text'>
+        <p>We take surplus medications off of your hands and get them to the people who need them.
+          </p></div></Col></Row>
 
      
   <br>

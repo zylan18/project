@@ -26,6 +26,7 @@ function NavBar() {
                   <Link className="nav-link" to={"/donate"}>Donate</Link>
                   <Link className="nav-link" to={"/request"}>Request</Link>
                   <Link className="nav-link" to={"/aboutus"}>About Us</Link>
+                  <Link className="nav-link" to={"/contactus"}>Contact Us</Link>
                <div className='ms-auto'> 
                   <NavDropdown title={Meteor.user().username} id="navbarScrollingDropdown">
                   <NavDropdown.Item href="/profile">Profile</NavDropdown.Item>
@@ -52,19 +53,9 @@ function NavBar() {
       <meta name="viewport" content="width=device-width, initial-scale=1"/>
       <Navbar bg="primary" className="w-auto" variant="dark" expand='lg'>
             <Container>
-              <Navbar.Brand href="/">We Care For You</Navbar.Brand>    
-              <Navbar.Toggle aria-controls="basic-navbar-nav" />
-                <Navbar.Collapse id="basic-navbar-nav">    
+              <Navbar.Brand href="/">We Care For You</Navbar.Brand>        
                 <Nav className="container-fluid">
-                 
-                <Link className="nav-link" to={"/register"}>Donate</Link>
-                <Link className="nav-link" to={"/register"}>Request</Link>
-                <Link className="nav-link" to={"/register"}>Register</Link>
-                <div className='ms-auto'>
-                  <LoginForm/>
-                </div>  
               </Nav>
-              </Navbar.Collapse>
             </Container>
             </Navbar>
             </div>

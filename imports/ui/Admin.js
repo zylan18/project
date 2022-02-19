@@ -56,17 +56,25 @@ const Admin = () => {
     
     const [donation_id,setDonation_id]=useState('');
     const [status,handleStatus]=useState('');
-    const [medtype,handleMedType]=useState('');
     const [remark,handleRemark]=useState('');
     
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
     const handleShow = () => {setShow(true)};
-    const [donindex,setDonindex]=useState('');
     
+    const [donindex,setDonindex]=useState('');
+    const [tableindex,setTableIndex]=useState('0');
+    const [brand,setBrand]=useState('');
+    const [type,setType]=useState('');
+    const [composition,setComposition]=useState('');
+
     const [detailshow, setDetailShow] = useState(false);
     const handleDetailClose = () => setDetailShow(false);
     const handleDetailShow = () => {setDetailShow(true)};
+    
+    const [editmedshow, setEditMedShow] = useState(false);
+    const handleEditMedClose = () => setEditMedShow(false);
+    const handleEditMedShow = () => {setEditMedShow(true);}
     
     const [remarkshow,setRemarkShow]=useState(false);
     const handleRemarkClose = () => setRemarkShow(false);
@@ -82,22 +90,57 @@ const Admin = () => {
         console.log(donname)
         window.location.reload(false);
     }
-    setMedType=(index)=>{
-        if(medtype!=''){
-            DonationList.update(donname[index]._id,{$set:{type:medtype}});
+    setMedDetail=()=>{
+           
+            if(type!=''&& brand!='' && composition!=''){
+            DonationList.update(donation_id,{$set:{type:type,brand:brand,composition:composition}});
             console.log(donname)
             window.location.reload(false);//reload page
             }
             else{
-            alert('select a medtype');
+            alert('One or More Fields are empty');
             }
     }
+   
+    const search=(field)=>{
+        var fieldindex;
+        switch(field){
+            case 'medname':{
+                fieldindex=5;
+                break;
+            }
+            case 'donorname':{
+                fieldindex=2;
+                break;
+            }
+            case 'type':{
+                fieldindex=6;
+                break;
+            }
+
+        }
+        let filter=document.getElementById(field).value.toUpperCase();
+        let mytable=document.getElementById('table');
+        let tr=mytable.getElementsByTagName('tr');
+        for(var i=0;i<tr.length;i++)
+        {let td=tr[i].getElementsByTagName('td')[fieldindex];
+         if(td){
+                let textvalue=td.textContent || td.innerHTML;
+                if(textvalue.toUpperCase().indexOf(filter)>-1)
+                    {tr[i].style.display="";
+                    }
+                    else
+                    {tr[i].style.display="none";
+                    }
+                }
+        }
+    }
+
     useEffect(() => {
         console.log(donname.length)
         for(i=0;i<donname.length;i++){
             if('in collection'||'storage'||'in delivery'||'delivered'){
                 document.getElementById(`status${i}`).checked=donname[i].edit;
-                document.getElementById(`type${i}`).value=donname[i].type;
                 }
         }
         }, []);
@@ -106,17 +149,40 @@ const Admin = () => {
     //console.log(donname);
     return (
         <div className='admin-page'>
+          <div className='row row-cols-lg-auto g-3 p-3 search-row'>
+              <div className='col-12'>
+                <input type='text' id='medname' className='form-control form-control-sm' 
+                placeholder='search medicine name..' onKeyUp={()=>{search('medname')}}/>
+              </div>
+              <div className='col-12'>
+                <input type='text' id='donorname' className='form-control form-control-sm' 
+                placeholder='search donor name..' onKeyUp={()=>{search('donorname')}}/>
+              </div>
+              <div className='col-12'>
+              <Form.Select size="sm" id={`type`} onChange={()=>{search('type')}}>
+                                            <option value=''>All</option>
+                                            <option value='antipyretic'>antipyretic</option>
+                                            <option value='antibiotic'>antibiotic</option>
+                                            <option value='antiseptic'>antiseptic</option>
+                                        </Form.Select>
+              </div>
+
+            </div>
           <div className="table-scrollbar Flipped"> {/*used to flip the div to get horizontal scrollbar */}
           <div className='Flipped'> {/*used to flip back the table contents*/}
-            <table className="admin-table">
+            <table className="admin-table" id='table'>
                 <tbody>
                 <tr>
                     <th width="150px"></th>
                     <th width='100px'></th>
                     <th width="100px">Donor Name</th>
+                    <th width="100px">Phone Number</th>
+                    <th width="200px">Address</th>
                     <th width="100px">Medicine Name</th>
                     <th width="100px">Medicine Type</th>
-                    <th width='210px'>Set Medicine Type</th>
+                    <th width="100px">Medicine Brand</th>
+                    <th width="150px">Composition</th>
+                    <th width='100px'>Set Medicine detail</th>
                     <th width="100px">Expiry Date</th>
                     <th width="100px">Status</th>
                     <th width="210px">Set Edit</th>
@@ -149,23 +215,16 @@ const Admin = () => {
                     {/* {console.log(index)} */}
                     <td><Button variant='info' onClick={()=>{setDonindex(name._id);handleDetailShow();}}>detail</Button></td>
                     <td>{name.donor_name}</td>
+                    <td>{name.phone}</td>
+                    <td>{name.address}</td>
                     {/* {console.log(name.donor_name)} */}
                     <td>{name.medicine_name}</td>
                     <td>{name.type}</td>
-                    <td>
-                        <tr>{/*select for medicine type*/}
-                            <td>
-                                <Form.Select size="sm" id={`type${index}`} onChange={e=>handleMedType(e.target.value)}>
-                                    <option>select medicine type</option>
-                                    <option value='antipyretic'>antipyretic</option>
-                                    <option value='antibiotic'>antibiotic</option>
-                                    <option value='antiseptic'>antiseptic</option>
-                                </Form.Select>
-                            </td>
-                            <td>
-                                <Button variant='warning' onClick={()=>{setMedType(index)}}>set</Button>
-                            </td>
-                        </tr>
+                    <td>{name.brand}</td>
+                    <td>{name.composition}</td>
+                    <td style={{'padding':'0px'}}>
+                            <Button onClick={()=>{setBrand(name.brand);setComposition(name.composition);
+                            setType(name.type);setDonation_id(name._id);handleEditMedShow();console.log(tableindex)}}>Edit</Button>
                     </td>
                     <td>{name.exp_date}</td>
                     <td>{name.status}</td>
@@ -261,6 +320,22 @@ const Admin = () => {
                         <td>{(DonationList.findOne({_id:donindex})).medicine_name}</td>
                     </tr>
                     <tr>
+                        <td align='right'>phone:</td>
+                        <td>{(DonationList.findOne({_id:donindex})).phone}</td>
+                    </tr>
+                    <tr>
+                        <td align='right'>address:</td>
+                        <td>{(DonationList.findOne({_id:donindex})).address}</td>
+                    </tr>
+                    <tr>
+                        <td align='right'>brand:</td>
+                        <td>{(DonationList.findOne({_id:donindex})).brand}</td>
+                    </tr>
+                    <tr>
+                        <td align='right'>composition:</td>
+                        <td>{(DonationList.findOne({_id:donindex})).composition}</td>
+                    </tr>
+                    <tr>
                         <td align='right'>exp_date:</td>
                         <td>{(DonationList.findOne({_id:donindex})).exp_date}</td>
                     </tr>
@@ -287,7 +362,50 @@ const Admin = () => {
                     <Modal.Body>
                         <input type='text' onChange={e=>handleRemark(e.target.value)} className='form-control'/>
                         <br/>
-                        <Button className='btn-primary' onClick={()=>{setRemark(donation_id);console.log('click')}}>submit</Button>
+                        <Button className='btn-primary' onClick={()=>{setRemark(donindex);console.log('click')}}>submit</Button>
+                    </Modal.Body>
+              </Modal>
+
+              <Modal show={editmedshow} onHide={handleEditMedClose}>
+                    <Modal.Header closeButton>  
+                        Set Medicine Details
+                    </Modal.Header>
+                    <Modal.Body>
+                        <div className='row'>
+                            <div className='col-4 p-1'>
+                                Medicine type:
+                            </div>
+                            <div className='col-8 p-1'>
+                                        <Form.Select size="sm" id={`type${tableindex}`} value={type} 
+                                        onChange={e=>setType(e.target.value)} style={{'margin-left':'-8px','width':'95%'}}>
+                                            <option>select medicine type</option>
+                                            <option value='antipyretic'>antipyretic</option>
+                                            <option value='antibiotic'>antibiotic</option>
+                                            <option value='antiseptic'>antiseptic</option>
+                                        </Form.Select>
+                                    </div>
+                                <div className='row'> 
+                                    <div className='col-4 p-1'>
+                                       brand:
+                                    </div>   
+                                       <div className='col-8 p-1'>
+                                           <input className='form-control form-control-sm' value={brand} onChange={e=>setBrand(e.target.value)}
+                                        type='text'/>
+                                        </div>
+                                    </div>
+                                <div className='row'> 
+                                    <div className='col-4 p-1'>
+                                        composition:
+                                    </div>
+                                     <div className='col-8 p-1'>
+                                            <input className='form-control form-control-sm' value={composition} onChange={e=>setComposition(e.target.value)} 
+                                            type='text'/>
+                                        </div>
+                                    <div className='p-1'>
+                                <Button variant='warning' style={{'width':'100%'}} onClick={setMedDetail}>set</Button>
+                            </div>
+                                </div>
+                        </div>
                     </Modal.Body>
               </Modal>
         </div>

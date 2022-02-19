@@ -10,6 +10,7 @@ const DonationForm = () =>{
         var fileinput;
         const [donorname,handleDonornameChange]=useState(Meteor.user().profile.name);
         const [address,handleAddressChange]=useState(Meteor.user().profile.address);
+        const [phone,handlePhoneChange]=useState(Meteor.user().profile.phone)
         const [medname,handleMednameChange]=useState('');
         const [expdate,handleExpdateChange]=useState('');
         const [medfile,handleFileChange]=useState([]);
@@ -19,8 +20,8 @@ const DonationForm = () =>{
             `)){
             date=new Date;
             DonationList.insert({user_id:Meteor.user()._id,donatedat:date.toLocaleString(),
-            username:Meteor.user().username,donor_name:donorname,address:address, 
-            medicine_name:medname, exp_date:expdate,verify_status:false,verified_by:'',
+            username:Meteor.user().username,donor_name:donorname,address:address,phone:phone, 
+            medicine_name:medname,brand:'',composition:'',exp_date:expdate,verify_status:false,verified_by:'',
             status:'in verification',edit:true,remark:''})
 
             console.log(medfile);
@@ -98,6 +99,11 @@ const DonationForm = () =>{
                         <input type='date' className='form-control' onChange={e=>handleExpdateChange(e.target.value)}
                         required/>
                     </FloatingLabel>
+                    <FloatingLabel controlId="floatingInput" label="Phone Number" className="mb-3">
+                                <input type='tel' pattern='[0-9]{10}' value={phone} className="form-control" required onChange={e=>handlephoneChange(e.target.value)}
+                                placeholder="Phone Number"
+                                />        
+                        </FloatingLabel>
                     <FloatingLabel controlId="floatingInput" label="Address" className="mb-3">
                                 <textarea value={address} className="form-control" required onChange={e=>handleAddressChange(e.target.value)}
                                 placeholder="Address"

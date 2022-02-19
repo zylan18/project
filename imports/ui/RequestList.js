@@ -1,17 +1,13 @@
-import React,{useState,useCallback} from 'react';
+import React,{useState,useCallback,useEffect} from 'react';
 import {DonationList} from '../api/links'
 import {Files} from '../api/links'
 import {Spinner,Modal,Carousel,Alert,Button} from 'react-bootstrap'
 import {useNavigate} from 'react-router-dom';
-import { useParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom';
+import {FaSearch} from '@react-icons/all-files/fa/FaSearch';//to use icon
+
  
-
 const Antipyretics = () => {
-    const handleOnClick=()=>{
-        navigate(`/requestform/${med_id}`)
-    }
-
-    
     if(Meteor.user()){
     const [show, setShow] = useState(false);
     const [donation_id,setDonation_id]=useState('');
@@ -21,8 +17,49 @@ const Antipyretics = () => {
     let { type } = useParams();//used to get values from address bar
     var medicineList=DonationList.find({status:'storage',type:type},{fields:{}}).fetch();//used to fetch medicine in storage and of type antipyretic
     var image;
+    const handleOnClick=()=>{
+        navigate(`/requestform/${med_id}`)
+    }
+
+    const search=()=>{
+        
+        let filter=document.getElementById('search').value.toUpperCase();
+        let mytable=document.getElementById('table');
+        let tr=mytable.getElementsByTagName('tr');
+        for(var i=0;i<tr.length;i++){
+            let td=tr[i].getElementsByTagName('td')[1];//medicine name
+            let td1=tr[i].getElementsByTagName('td')[2];//brand
+            let td2=tr[i].getElementsByTagName('td')[3];//composition
+            if(td||td1){
+                    let textvalue=(td1.textContent || td1.innerHTML)+(td.textContent||td.innerHTML)+(td2.textContent||td2.innerHTML);
+                    //console.log(textvalue);
+                    if(textvalue.toUpperCase().indexOf(filter)>-1)
+                        {tr[i].style.display="";
+                        }
+                        else
+                        {tr[i].style.display="none";
+                        }
+                    }
+                }
+            }
+    useEffect(() => {
+        const script = document.createElement('script');
+        const script2=document.createElement('script');
+        script.src = " ";
+      
+        script.async = true;
+        
+        document.body.appendChild(script);
+
+
+        
+        return () => {
+            document.body.removeChild(script);
+        }
+        }, []);
+
     console.log(medicineList);
-        var med_id;//used to send medicine id to next page
+    var med_id;//used to send medicine id to next page
     // const handleOnClick = useCallback(() => navigate(`/requestform/${med_id}`, {replace: true}), [navigate]);//used to send to /requestform/med_id
     if(medicineList.length==0){
     return(<Alert variant='warning'>No Medicine Available &nbsp; 
@@ -31,12 +68,24 @@ const Antipyretics = () => {
     else{          
     return(
   <div className="form">
-      <h1>List of Available Medicine</h1>
-      <table className="admin-table request-table">
+        <h1>List of Available Medicine</h1>
+        <div className='row'>
+            <div className='col-10'>
+                <input type='text' id='search' className='form-control form-control-sm' 
+                            placeholder='search'/> 
+            </div>
+            <div className='col-2'>
+                <Button variant='warning' className='btn-sm' onClick={search}><FaSearch/></Button>    
+            </div>  
+      </div>    
+
+      <table className="admin-table request-table" id='table'>
                 <tbody>
                 <tr>
                     <th></th>
                     <th>Medicine Name</th>
+                    <th>Brand</th>
+                    <th>Composition</th>
                     <th>Expiry Date</th>
                     <th></th>
                 </tr>
@@ -59,8 +108,11 @@ const Antipyretics = () => {
                             }
                     </Carousel>)}
                     </td>
-                    <td>{medicine.medicine_name}</td>
-                    <td>{medicine.exp_date}</td>
+                    <td className='medicine-detail'>{medicine.medicine_name}</td>
+                    <td className='medicine-detail'>{medicine.brand}</td>
+                    <td className='medicine-detail'>{medicine.composition}</td>
+                    <td className='medicine-detail'>{medicine.exp_date}</td>
+                    
                     <td><Button className='btn-primary request-button' onClick={()=>{med_id=medicine._id;handleOnClick()}}>request</Button></td>
                 </tr>    
                 
