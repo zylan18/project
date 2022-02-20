@@ -13,7 +13,7 @@ const ContactUs = () => {
          <div class="container-contact">
            <span class="big-circle"></span>
            <img src="/images/shape.png" class="square" alt="" />
-           <div class="form-contactus">
+           <div class="form-contact">
              <div class="contact-info">
                <h3 class="title">Let's get in touch</h3>
                <p class="text">
@@ -62,7 +62,7 @@ const ContactUs = () => {
                <span class="circle one"></span>
                <span class="circle two"></span>
      
-               <form action="index.html" autocomplete="off">
+               <form className='contact-formtag' action="index.html" autocomplete="off">
                  <h3 class="title">Contact us</h3>
                  <div class="input-container focus">
                    <input type="text" name="name" class="input" />
@@ -84,7 +84,7 @@ const ContactUs = () => {
                    <label for="">Message</label>
                    <span>Message</span>
                  </div>
-                 <input type="submit" value="Send" class="btn-contactus" />
+                 <input type="submit" value="Send" class="btn-contact" />
                </form>
              </div>
            </div>
