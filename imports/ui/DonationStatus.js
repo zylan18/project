@@ -4,16 +4,23 @@ import { Files } from '../api/links';
 import {FaCheck} from '@react-icons/all-files/fa/FaCheck';
 import { Spinner ,Col,Row,Button,Carousel,Modal} from 'react-bootstrap';
 import { useParams } from 'react-router-dom'
+import {useTracker} from 'meteor/react-meteor-data'
 
 const DonationStatus = () => { 
  if(Meteor.user()){
     let { id } = useParams();
-    const donation=DonationList.findOne({_id:id})
-    if(Meteor.user().profile.admin||Meteor.user()._id==donation.user_id){ 
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
     const handleShow = () => {setShow(true)};
-    
+    const isLoadingData = useTracker(()=>{
+        const handle=Meteor.subscribe('donationStatus',id);//used useTracker to continuously check if subscribe is ready 
+        return(!handle.ready());
+        })
+
+    const isLoadingImg=useTracker(()=>{
+        const handle=Meteor.subscribe('donationStatusImages',id);
+        return(!handle.ready());
+    })    
     
     function cancelDonation(){
         if(confirm("Are you sure you want to cancel your donation?")){
@@ -22,6 +29,9 @@ const DonationStatus = () => {
         }   
     }
     useEffect(()=>{
+        if(!isLoadingData&&!isLoadingImg){
+        const donation=DonationList.findOne({_id:id})
+        if(Meteor.user().profile.admin||Meteor.user()._id==donation.user_id){ 
         console.log((DonationList.find({_id:id}).fetch())[0].status)
         switch(donation.status){
             case 'canceled':{
@@ -68,8 +78,14 @@ const DonationStatus = () => {
                 break;
             }
         }
-    },[])
+        console.log('useEffect');
+        }
+    }
+    })//removed the array parameter of useEffect as it makes it run useEffect only once
 
+  if(!isLoadingData&&!isLoadingImg){
+  const donation=DonationList.findOne({_id:id});
+  if(Meteor.user().profile.admin||Meteor.user()._id==donation.user_id){ 
   return( 
   <div className='form'>
       
@@ -153,7 +169,7 @@ const DonationStatus = () => {
             <Col></Col>
             <Col>{(donation.status!='rejected' && donation.status!='canceled')?(
                 <td>
-                    {(donation.status=='verified')?(<Button className="btn-danger" onClick={()=>cancelDonation()}>Cancel</Button>):(null)}
+                    {(donation.status=='verified' || donation.status=='in verification')?(<Button className="btn-danger" onClick={()=>cancelDonation()}>Cancel</Button>):(null)}
                 </td>):null}
             </Col>
             <Col></Col>
@@ -179,8 +195,16 @@ const DonationStatus = () => {
               </Modal>
     </div>
   );//return
- }else{
-     return(<div>You do not have permission to view this page</div>)
+}else{
+    return(
+        <div>You do not have permission to view this page</div>
+)  
+} 
+}else{
+    return(
+    <div>
+        <Spinner className="spinner" animation="grow" variant="primary" />
+    </div>);     
  }
 }
  else if(Meteor.loggingIn()){

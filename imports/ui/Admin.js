@@ -1,56 +1,15 @@
 import React,{useState,useEffect} from 'react'
 import { DonationList } from '../api/links'
 import { useTracker } from 'meteor/react-meteor-data';
-import {Alert,Modal,Spinner,Form,Row,Col,Button,Carousel} from 'react-bootstrap';
+import {Alert,Modal,Spinner,Form,Row,Col,Button,Carousel,Accordion} from 'react-bootstrap';
 import {Files} from '../api/links';
 import {GiConfirmed} from '@react-icons/all-files/gi/GiConfirmed';//to use icon
 import {GiCancel} from '@react-icons/all-files/gi/GiCancel';
-function verify(index){
-    
-    const user=Meteor.user();
-    const donname=DonationList.find({},{fields:{}}).fetch();
-    if(donname[index].verify_status == true){
-    DonationList.update(donname[index]._id,{$set:{verify_status:false}});
-    DonationList.update(donname[index]._id,{$set:{status:'not verified'}});
-    DonationList.update(donname[index]._id,{$set:{edit:true}});
-    console.log(donname[index].verify_status);
-    }
-    else if(donname[index].verify_status == "rejected"){
-        DonationList.update(donname[index]._id,{$set:{verify_status:false}});
-        DonationList.update(donname[index]._id,{$set:{status:'in verification'}});
-        DonationList.update(donname[index]._id,{$set:{verify_status:false}});
-        console.log(donname[index].verified_by);
-    }
-    else{
-        DonationList.update(donname[index]._id,{$set:{verify_status:true}});
-        DonationList.update(donname[index]._id,{$set:{status:'verified'}});
-        DonationList.update(donname[index]._id,{$set:{edit:false}});
-        console.log(donname[index].verified_by);
-    }
-    console.log("update");
-    DonationList.update(donname[index]._id,{$set:{verified_by:user.username}});
-    window.location.reload(false);
-}
-function rejectVerification(index){
-    const user=Meteor.user();
-    const donname=DonationList.find({},{fields:{}}).fetch();
-    DonationList.update(donname[index]._id,{$set:{verify_status:'rejected'}});
-    DonationList.update(donname[index]._id,{$set:{status:'rejected'}});
-    window.location.reload(false);
-}
-function verifyColor(t){
-    if(t==true){
-        return "verified";
-    }
-    else{
-        return "not-verified"
-    }
-}
 
 const Admin = () => {
     if(Meteor.user()){
     if(Meteor.user().profile.admin){
-    const donname=DonationList.find({},{fields:{}}).fetch();
+    
     let verifyIcon = { color: "#26bd00"};//used to change color of icon
     let cancelIcon = { color: "#ff2222"};//used to change color of icon
     
@@ -63,11 +22,12 @@ const Admin = () => {
     const handleShow = () => {setShow(true)};
     
     const [donindex,setDonindex]=useState('');
-    const [tableindex,setTableIndex]=useState('0');
+    const [tableindex,setTableIndex]=useState('');
     const [brand,setBrand]=useState('');
-    const [type,setType]=useState('');
+    const [medtype,setMedType]=useState('');
     const [composition,setComposition]=useState('');
-
+    const [reload,setReload]=useState(0);
+    
     const [detailshow, setDetailShow] = useState(false);
     const handleDetailClose = () => setDetailShow(false);
     const handleDetailShow = () => {setDetailShow(true)};
@@ -79,74 +39,129 @@ const Admin = () => {
     const [remarkshow,setRemarkShow]=useState(false);
     const handleRemarkClose = () => setRemarkShow(false);
     const handleRemarkShow = () => {setRemarkShow(true)};
-    
-    setRemark=(id)=>{
-        DonationList.update(id,{$set:{remark:remark,edit:true}});
-        console.log(donname);
-        window.location.reload(false);
-    }
-    setStatus=(index)=>{
-        DonationList.update(donname[index]._id,{$set:{edit:status}});
-        console.log(donname)
-        window.location.reload(false);
-    }
-    setMedDetail=()=>{
-           
-            if(type!=''&& brand!='' && composition!=''){
-            DonationList.update(donation_id,{$set:{type:type,brand:brand,composition:composition}});
-            console.log(donname)
-            window.location.reload(false);//reload page
-            }
-            else{
-            alert('One or More Fields are empty');
-            }
-    }
-   
-    const search=(field)=>{
-        var fieldindex;
-        switch(field){
-            case 'medname':{
-                fieldindex=5;
-                break;
-            }
-            case 'donorname':{
-                fieldindex=2;
-                break;
-            }
-            case 'type':{
-                fieldindex=6;
-                break;
-            }
+    const isLoadingData = useTracker(()=>{
+        const handle=Meteor.subscribe('donationAdmin');//used useTracker to continuously check if subscribe is ready 
+        console.log('isLoadingData')
+        return(!handle.ready());
+        })
 
-        }
-        let filter=document.getElementById(field).value.toUpperCase();
-        let mytable=document.getElementById('table');
-        let tr=mytable.getElementsByTagName('tr');
-        for(var i=0;i<tr.length;i++)
-        {let td=tr[i].getElementsByTagName('td')[fieldindex];
-         if(td){
-                let textvalue=td.textContent || td.innerHTML;
-                if(textvalue.toUpperCase().indexOf(filter)>-1)
-                    {tr[i].style.display="";
-                    }
-                    else
-                    {tr[i].style.display="none";
-                    }
-                }
-        }
-    }
+    const isLoadingImg = useTracker(()=>{
+        const handle=Meteor.subscribe('donationAdminImages');
+        return(!handle.ready());
+        })
+
+    
 
     useEffect(() => {
-        console.log(donname.length)
+        if(!isLoadingData&&!isLoadingImg){
+        console.log(reload);
+        const donname=DonationList.find({},{fields:{}}).fetch();
         for(i=0;i<donname.length;i++){
             if('in collection'||'storage'||'in delivery'||'delivered'){
                 document.getElementById(`status${i}`).checked=donname[i].edit;
                 }
         }
-        }, []);
+    }
+        }, [isLoadingImg,reload]);
     
     var image;
-    //console.log(donname);
+    if(!isLoadingData && !isLoadingImg){
+        const donname=DonationList.find({},{fields:{}}).fetch();
+        function verify(index){  
+            const user=Meteor.user();
+            if(donname[index].verify_status == true){
+            DonationList.update(donname[index]._id,{$set:{verify_status:false}});
+            DonationList.update(donname[index]._id,{$set:{status:'not verified'}});
+            DonationList.update(donname[index]._id,{$set:{edit:true}});
+            console.log(donname[index].verify_status);
+            }
+            else if(donname[index].verify_status == "rejected"){
+                DonationList.update(donname[index]._id,{$set:{verify_status:false}});
+                DonationList.update(donname[index]._id,{$set:{status:'in verification'}});
+                DonationList.update(donname[index]._id,{$set:{verify_status:false}});
+                console.log(donname[index].verified_by);
+            }
+            else{
+                DonationList.update(donname[index]._id,{$set:{verify_status:true}});
+                DonationList.update(donname[index]._id,{$set:{status:'verified'}});
+                DonationList.update(donname[index]._id,{$set:{edit:false}});
+                console.log(donname[index].verified_by);
+            }
+            console.log("update");
+            DonationList.update(donname[index]._id,{$set:{verified_by:user.username}});
+            setReload(reload+1);
+        }
+        function rejectVerification(index){
+            const user=Meteor.user();
+            DonationList.update(donname[index]._id,{$set:{verify_status:'rejected'}});
+            DonationList.update(donname[index]._id,{$set:{status:'rejected'}});
+            setReload(reload+1);
+        }
+        function verifyColor(t){
+            if(t==true){
+                return "verified";
+            }
+            else{
+                return "not-verified"
+            }
+        }
+
+        setRemark=(id)=>{
+            DonationList.update(id,{$set:{remark:remark,edit:true}});
+            console.log(donname);
+            setReload(reload+1);
+        }
+        setStatus=(index)=>{
+            DonationList.update(donname[index]._id,{$set:{edit:status}});
+            console.log(donname)
+            setReload(reload+1);
+        }
+        setMedDetail=()=>{
+                if(type!=''&& brand!='' && composition!=''){
+                DonationList.update(donation_id,{$set:{type:medtype,brand:brand,composition:composition}});
+                console.log(donname)
+                setReload(reload+1);//reload page
+                handleEditMedClose();
+
+                }
+                else{
+                alert('One or More Fields are empty');
+                }
+        }
+       
+        const search=(field)=>{
+            var fieldindex;
+            switch(field){
+                case 'medname':{
+                    fieldindex=5;
+                    break;
+                }
+                case 'donorname':{
+                    fieldindex=2;
+                    break;
+                }
+                case 'type':{
+                    fieldindex=6;
+                    break;
+                }
+    
+            }
+            let filter=document.getElementById(field).value.toUpperCase();
+            let mytable=document.getElementById('table');
+            let tr=mytable.getElementsByTagName('tr');
+            for(var i=0;i<tr.length;i++)
+            {let td=tr[i].getElementsByTagName('td')[fieldindex];
+             if(td){
+                    let textvalue=td.textContent || td.innerHTML;
+                    if(textvalue.toUpperCase().indexOf(filter)>-1)
+                        {tr[i].style.display="";
+                        }
+                        else
+                        {tr[i].style.display="none";
+                        }
+                    }
+            }
+        }
     return (
         <div className='admin-page'>
           <div className='row row-cols-lg-auto g-3 p-3 search-row'>
@@ -160,11 +175,11 @@ const Admin = () => {
               </div>
               <div className='col-12'>
               <Form.Select size="sm" id={`type`} onChange={()=>{search('type')}}>
-                                            <option value=''>All</option>
-                                            <option value='antipyretic'>antipyretic</option>
-                                            <option value='antibiotic'>antibiotic</option>
-                                            <option value='antiseptic'>antiseptic</option>
-                                        </Form.Select>
+                <option value=''>All</option>
+                <option value='antipyretic'>antipyretic</option>
+                <option value='antibiotic'>antibiotic</option>
+                <option value='antiseptic'>antiseptic</option>
+             </Form.Select>
               </div>
 
             </div>
@@ -182,21 +197,15 @@ const Admin = () => {
                     <th width="100px">Medicine Type</th>
                     <th width="100px">Medicine Brand</th>
                     <th width="150px">Composition</th>
-                    <th width='100px'>Set Medicine detail</th>
                     <th width="100px">Expiry Date</th>
                     <th width="100px">Status</th>
-                    <th width="210px">Set Edit</th>
-                    <th width="130px">Verification Status</th>
-                    <th width="100px">Verified by</th>
-                    <th width="100px">Verify</th>
-                    <th width="100px"></th>
-                    <th width="150px"></th>
                 </tr>
+            <Accordion>
             {
             donname.map((name,index) => (
-                
-                <tr data-index={index}  className={(verifyColor(name.verify_status))}>
-                     <td className="image-table">
+                <Accordion.Item eventKey={index} as='tr'>
+                <Accordion.Button as='div' data-index={index} className={(verifyColor(name.verify_status))}>
+                     <td className="image-table" >
                      {((Files.findOne({donation_id:name._id})).data.length == 1)?
                         ((image=(Files.findOne({donation_id:name._id})).data)?
                         (<img className='preview-image' loading='lazy' src={URL.createObjectURL(new Blob([image[0]]))}
@@ -213,63 +222,79 @@ const Admin = () => {
                             </Carousel>)}
                     </td>
                     {/* {console.log(index)} */}
-                    <td><Button variant='info' onClick={()=>{setDonindex(name._id);handleDetailShow();}}>detail</Button></td>
-                    <td>{name.donor_name}</td>
-                    <td>{name.phone}</td>
-                    <td>{name.address}</td>
+                    <td width='100px'><Button variant='info' onClick={()=>{setDonindex(name._id);handleDetailShow();}}>detail</Button></td>
+                    <td width='100px'>{name.donor_name}</td>
+                    <td width='100px'>{name.phone}</td>
+                    <td width='200px'>{name.address}</td>
                     {/* {console.log(name.donor_name)} */}
-                    <td>{name.medicine_name}</td>
-                    <td>{name.type}</td>
-                    <td>{name.brand}</td>
-                    <td>{name.composition}</td>
-                    <td style={{'padding':'0px'}}>
-                            <Button onClick={()=>{setBrand(name.brand);setComposition(name.composition);
-                            setType(name.type);setDonation_id(name._id);handleEditMedShow();console.log(tableindex)}}>Edit</Button>
-                    </td>
-                    <td>{name.exp_date}</td>
-                    <td>{name.status}</td>
-                    <td>{/*select for status*/}
+                    <td width='100px'>{name.medicine_name}</td>
+                    <td width='100px'>{name.type}</td>
+                    <td width='100px'>{name.brand}</td>
+                    <td width='150px'>{name.composition}</td>
+                    <td width='100px'>{name.exp_date}</td>
+                    <td width='100px'>{name.status}</td>
+                    </Accordion.Button>
+                    <Accordion.Body>    
+                    <tr>
+                    <th width='150px'>Set Medicine detail</th>
+                    <th width="210px">Set Edit</th>
+                    <th width="130px">Verification Status</th>
+                    <th width="100px">Verified by</th>
+                    <th width="100px">Verify</th>
+                    <th width="100px"></th>
+                    <th width="150px"></th> 
+                    </tr> 
+                    {/* <table>  */}
+                    <tr>               
+                    <th style={{'padding':'0px'}} width='150px'>
+                            <Button onClick={()=>{setDonation_id(name._id);setBrand(name.brand);setComposition(name.composition);setMedType(name.type);handleEditMedShow();}}>Edit</Button>
+                    </th>
+                    
+                    <th width='210px'>{/*radio for edit status*/}
                         <tr>
-                            <td>      
+                            <th>      
                                 <Form.Check 
                                 type="switch"
                                 id={`status${index}`}
                                 onChange={e=>{handleStatus(e.target.checked)}}
                                 label={(name.edit)?('Disable Edit'):('Enable Edit')}
                                 />
-                            </td>
-                            <td>
+                            </th>
+                            <th>
                                 <Button variant='warning' onClick={()=>{setStatus(index)}}>set</Button>
-                            </td>
+                            </th>
                         </tr>
-                    </td>
-                    <td>
+                    </th>
+                    <th width='130px'>
                     <span className={"status "+(verifyColor(name.verify_status))}>
                     {(name.verify_status==true)?(<span style={verifyIcon}><GiConfirmed style={verifyIcon}/> Verified</span>)
                     :(name.verify_status=="rejected")?(<span style={cancelIcon}><GiCancel style={cancelIcon}/> Rejected</span>)
                     :("Not Verified")}
                     </span>
-                    </td>
-                    <td>{name.verified_by}</td>
-                    <td>
+                    </th>
+                    <th width='100px'>{name.verified_by}</th>
+                    <th width='100px'>
                         <button id={index} className={(verifyColor(!name.verify_status))} onClick={()=>{verify(index)}}>
                             {(name.verify_status==true)?("Cancel")
                             :(name.verify_status=="rejected")?("Cancel Rejection")
                             :("Verify")}</button>
-                    </td> 
-                    <td>   
+                    </th> 
+                    <th width='100px'>   
                         <button style={{"color":"red"}} onClick={()=>rejectVerification(index)}>Reject</button>
-                    </td> 
-                    <td>
+                    </th> 
+                    <th width='150px'>
                         {(name.remark)?(name.remark):('no remarks yet')}<br/>
-                        <Button className='btn-danger' onClick={()=>{setDonation_id(name._id);handleRemarkShow()}}>Remark</Button>
-                    </td>
-                </tr>
+                        <Button className='btn-danger' onClick={()=>{setDonation_id(name._id);handleRemark(name.remark);handleRemarkShow()}}>Remark</Button>
+                    </th>
+                    </tr>
+                 {/* </table>    */}
+                </Accordion.Body>
+                </Accordion.Item>  
             )
          
         )
        
-    }
+    }       </Accordion>
             </tbody>
             </table>
             </div>
@@ -360,9 +385,9 @@ const Admin = () => {
                         Set Remark
                     </Modal.Header>
                     <Modal.Body>
-                        <input type='text' onChange={e=>handleRemark(e.target.value)} className='form-control'/>
+                        <input type='text' onChange={e=>handleRemark(e.target.value)} value={remark} className='form-control'/>
                         <br/>
-                        <Button className='btn-primary' onClick={()=>{setRemark(donindex);console.log('click')}}>submit</Button>
+                        <Button className='btn-primary' onClick={()=>{setRemark(donation_id);console.log('click')}}>submit</Button>
                     </Modal.Body>
               </Modal>
 
@@ -376,8 +401,8 @@ const Admin = () => {
                                 Medicine type:
                             </div>
                             <div className='col-8 p-1'>
-                                        <Form.Select size="sm" id={`type${tableindex}`} value={type} 
-                                        onChange={e=>setType(e.target.value)} style={{'margin-left':'-8px','width':'95%'}}>
+                                        <Form.Select size="sm" id={`type${tableindex}`} value={medtype} 
+                                        onChange={e=>setMedType(e.target.value)} style={{marginLeft:'-8px',width:'95%'}}>
                                             <option>select medicine type</option>
                                             <option value='antipyretic'>antipyretic</option>
                                             <option value='antibiotic'>antibiotic</option>
@@ -410,20 +435,26 @@ const Admin = () => {
               </Modal>
         </div>
         )
-    }//if admin
+        }//if isLoading
+        else{
+            return(<div>
+                <Spinner className="spinner" animation="grow" variant="primary" 
+               />
+            </div>)  
+        }
+    }//if admin 
     else{
         return(<div>you do not have permission to access this page</div>)
     }
-}//if user
-    else if(Meteor.loggingIn()){
-        return(<div>
-            <Spinner className="spinner" animation="border" variant="primary" 
-           />
-          
-        </div>)         
-      }
-      else{
-        return(<div>you do not have permission to access this page</div>)
-    }
+}//is user
+else if(Meteor.loggingIn()){
+    return(<div>
+        <Spinner className="spinner" animation="border" variant="primary" 
+       />
+    </div>)         
+  }
+  else{
+    return(<Alert variant='warning'>You need to be logged in to continue</Alert>);
+  }
 }
 export default Admin

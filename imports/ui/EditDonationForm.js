@@ -5,25 +5,50 @@ import { DonationList } from '../api/links';
 import {Files} from '../api/links';
 import { useParams } from 'react-router-dom';
 import {useNavigate} from 'react-router-dom';
+import {useTracker} from 'meteor/react-meteor-data';
 
 const DonationForm = () =>{
-    let { id } = useParams();
+
         if(Meteor.user()){
+        let { id } = useParams();
         const navigate = useNavigate();   
-        if((DonationList.findOne({_id:id})).edit){    
-        const donation=DonationList.findOne({_id:id});
+        const [donorname,handleDonornameChange]=useState();
+        const [address,handleAddressChange]=useState();
+        const [phone,handlePhoneChange]=useState();
+        const [medname,handleMednameChange]=useState();
+        const [expdate,handleExpdateChange]=useState();
+        const [medfile,handleFileChange]=useState();  
         var fileinput;
-        const [donorname,handleDonornameChange]=useState(donation.donor_name);
-        const [address,handleAddressChange]=useState(donation.address);
-        const [medname,handleMednameChange]=useState(donation.medicine_name);
-        const [expdate,handleExpdateChange]=useState(donation.exp_date);
-        const [medfile,handleFileChange]=useState((Files.findOne({donation_id:id}).data));
-        const [fileerror,handleFileError]=useState('');
+        var rerender;
+        const [fileerror,handleFileError]=useState();
+        const isLoadingData = useTracker(()=>{
+            const handle=Meteor.subscribe('donationStatus',id);//used useTracker to continuously check if subscribe is ready 
+            return(!handle.ready());
+            })
+    
+        const isLoadingImg=useTracker(()=>{
+            const handle=Meteor.subscribe('donationStatusImages',id);
+            return(!handle.ready());
+        })    
+        useEffect(()=>{
+            if(!isLoadingData && !isLoadingImg){
+               const donation=DonationList.findOne({_id:id});
+                if((DonationList.findOne({_id:id})).edit){
+                handleDonornameChange(donation.donor_name);
+                handleAddressChange(donation.address);
+                handlePhoneChange(donation.phone);
+                handleMednameChange(donation.medicine_name);
+                handleExpdateChange(donation.exp_date);
+                handleFileChange((Files.findOne({donation_id:id}).data));
+                }
+            }
+        },[(isLoadingImg)])//added is loadingImage as dependency to update state
+        
         handleSubmit=(event)=>{
             if(confirm(`Are you sure your details correct?\nDonor Name:${donorname}\nAddress:${address}\nMedicine Name:${medname}\nExpiry Date:${expdate}`)){
             date=new Date;
             DonationList.update(id,{$set:{user_id:Meteor.user()._id,donatedat:date.toLocaleString(),
-            username:Meteor.user().username,donor_name:donorname,address:address, 
+            username:Meteor.user().username,donor_name:donorname,address:address,phone:phone, 
             medicine_name:medname, exp_date:expdate,verify_status:false,verified_by:'',
             status:'in verification',edit:true}})
             
@@ -36,7 +61,8 @@ const DonationForm = () =>{
                 event.preventDefault();
             }
         }
-       
+        
+
         function fileInput(event){ 
             var file = event.target.files[0]; //assuming 1 file only
             if (!file) return;
@@ -78,33 +104,42 @@ const DonationForm = () =>{
             document.getElementById('file').value=null;
         }
       }
-    
         // var dbimg = Files.find({user_id:Meteor.user()._id},{fields:{}}).fetch();
         // dbimg=new Blob([dbimg[0].data]);
         // dbimg=URL.createObjectURL(dbimg);
         // console.log(img);
-        var img=URL.createObjectURL(new Blob([medfile]))
+        if(!isLoadingData && !isLoadingImg){
+        if((DonationList.findOne({_id:id})).edit){ 
+        
+            var img=URL.createObjectURL(new Blob([medfile]))
         return (
             <Form onSubmit={this.handleSubmit}>
                 
                 <div className="form">
-                 <Form.Label><h1>Donation Form</h1></Form.Label>              
+                 <Form.Label><h1 style={{'display':'inline'}}>Donation Form </h1>
+                 <h2 style={{'color':'#888','display':'inline'}}>Edit</h2>
+                 </Form.Label>              
                 <FloatingLabel controlId="floatingInput" label="Donor Name" className="mb-3">
-                        <input type='text' value={donorname} className="form-control" onChange={e=>handleDonornameChange(e.target.value)}
+                        <input id='donorname' type='text' value={donorname} className="form-control" onChange={e=>handleDonornameChange(e.target.value)}
                         placeholder="Donor Name" required
                         />
                     </FloatingLabel>
                     <FloatingLabel controlId="floatingInput" label="Medicine Name" className="mb-3">
-                        <input type='text' value={medname}className="form-control" onChange={e=>handleMednameChange(e.target.value)}
+                        <input id='medname' type='text' value={medname}className="form-control" onChange={e=>handleMednameChange(e.target.value)}
                         placeholder="Medicine Name" required
                         />
                     </FloatingLabel>
                     <FloatingLabel controlId="floatingInput" label="Expiry Date" className="mb-3">
-                        <input type='date' value={expdate} className='form-control' onChange={e=>handleExpdateChange(e.target.value)}
+                        <input type='date' id='expdate' value={expdate} className='form-control' onChange={e=>handleExpdateChange(e.target.value)}
                         required/>
                     </FloatingLabel>
+                    <FloatingLabel controlId="floatingInput" label="Phone Number" className="mb-3">
+                                <input type='tel' pattern='[0-9]{10}' value={phone} className="form-control" required onChange={e=>handlePhoneChange(e.target.value)}
+                                placeholder="Phone Number"
+                                />        
+                        </FloatingLabel>
                     <FloatingLabel controlId="floatingInput" label="Address" className="mb-3">
-                                <textarea value={address} className="form-control" required onChange={e=>handleAddressChange(e.target.value)}
+                                <textarea id='address' value={address} className="form-control" required onChange={e=>handleAddressChange(e.target.value)}
                                 placeholder="Address"
                                 />        
                         </FloatingLabel>
@@ -130,11 +165,17 @@ const DonationForm = () =>{
       
         }//if edit
         else{
-                return(
-                <Alert variant='warning'>You cannot edit this donation anymore. 
+            return(
+                <Alert variant='warning'>You cannot edit this donation. 
                     <Alert.Link href="/yourdonations" variant="warning"> Click here </Alert.Link>
                      to go back to your donations
                 </Alert>)
+    }
+        }//if !isLoading
+        else{
+            return(<div>
+                <Spinner className="spinner" animation="grow" variant="primary" />
+            </div>) 
         }
     }//if user
       else if(Meteor.loggingIn()){

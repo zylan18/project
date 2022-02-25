@@ -13,15 +13,6 @@ function verifyColor(t){
         return "not-verified"
     }
 }
-function cancelDonation(index){
-    if(confirm("Are you sure you want to cancel your donation?")){
-        const donationList=DonationList.find({username:Meteor.user().username},{fields:{}}).fetch();
-        DonationList.update(donationList[index]._id,{$set:{status:'canceled'}});
-        window.location.reload(false);
-    }
-    
-}
-
 
 const YourDonations = () => {  
     
@@ -31,7 +22,19 @@ const YourDonations = () => {
     const handleClose = () => setShow(false);
     const handleShow = () => {setShow(true)};
     const [show, setShow] = useState(false);
+    
+    const isLoadingData = useTracker(()=>{
+        const handle=Meteor.subscribe('yourDonations');//used useTracker to continuously check if subscribe is ready 
+        return(!handle.ready());
+        })
+
+    const isLoadingImg=useTracker(()=>{
+        const handle=Meteor.subscribe('yourDonationImages')
+        return(!handle.ready());
+    })    
+    if(!isLoadingData && !isLoadingImg){
     const donationList=DonationList.find({username:(Meteor.user()).username},{fields:{}}).fetch();
+        console.log(donationList)
         return (
             <div className="admin-page">
                 <h1>Your Donations</h1>
@@ -104,6 +107,12 @@ const YourDonations = () => {
               </Modal>
             </div>
         )
+    }else{
+        return(<div>
+            <Spinner className="spinner" animation="grow" variant="primary" 
+           />
+        </div>)  
+    }
     }
     else if(Meteor.loggingIn()){
         return(<div>

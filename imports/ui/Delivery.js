@@ -2,32 +2,31 @@ import React, { useEffect, useState } from "react";
 import { Nav, Spinner, Form, Button, Tab, Row, Col } from "react-bootstrap";
 import { DonationList } from "../api/links";
 import { Request } from "../api/links";
+import {useTracker} from 'meteor/react-meteor-data'
 
 const Delivery = () => {
-  const donation = DonationList.find({
-    status: {
-      $in: ["verified", "pickup in progress", "collected", "in transit"],
-    },
-  }).fetch(); //this will get all items with status as in array
-  const request = Request.find({
-    status: {
-      $in: [
-        "verified",
-        "dispatched",
-        "in transit",
-        "out for delivery",
-        "delivered",
-      ],
-    },
-  }).fetch();
 
   // Get the element with id="defaultOpen" and click on it
   if (Meteor.user()) {
     if(Meteor.user().profile.admin){
-    useEffect(() => {
-      document.getElementById("collect").click();
-    }, []);
     const [status, handleStatus] = useState("");
+    const [reload,setReload]=useState(0);
+    const isLoadingRequest = useTracker(()=>{
+      const handle=Meteor.subscribe('requestDelivery');//used useTracker to continuously check if subscribe is ready 
+      return(!handle.ready());
+      })
+
+    const isLoadingDonation = useTracker(()=>{
+      const handle=Meteor.subscribe('donationDelivery');
+      return(!handle.ready());
+      })
+    useEffect(() => {
+      if(!isLoadingDonation && !isLoadingRequest){
+      document.getElementById("collect").click();
+      }
+    }, [isLoadingRequest,reload]);
+
+    if(!isLoadingDonation && !isLoadingRequest){
     setCollectionStatus = (id) => {
       if (status != "") {
         DonationList.update(id, { $set: { status: status } });
@@ -39,12 +38,27 @@ const Delivery = () => {
     setDeliveryStatus = (id) => {
       if (status != "") {
         Request.update(id, { $set: { status: status } });
-        window.location.reload(false);
+        setReload(reload+1);
       } else {
         alert("select a status");
       }
     };
-
+    const donation = DonationList.find({
+      status: {
+        $in: ["verified", "pickup in progress", "collected", "in transit"],
+      }
+    }).fetch(); //this will get all items with status as in array
+    const request = Request.find({
+      status: {
+        $in: [
+          "verified",
+          "dispatched",
+          "in transit",
+          "out for delivery",
+          "delivered",
+        ],
+      },
+    }).fetch();
     return (
       <div>
         <Tab.Container id="left-tabs-example" defaultActiveKey="first">
@@ -170,6 +184,14 @@ const Delivery = () => {
       </div>
     );
   }else{
+    return (
+      <div>
+        <Spinner className="spinner" animation="grow" variant="primary" />
+      </div>
+    );
+}
+}
+  else{
     return(<div>You do not have permission to access this page</div>)
   }
   } else if (Meteor.loggingIn()) {

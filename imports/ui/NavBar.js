@@ -2,7 +2,6 @@ import React,{Component,Fragment,useState,useEffect}from 'react';
 import { Navbar,Container,Nav,NavDropdown } from 'react-bootstrap';
 import {Button,Modal} from 'react-bootstrap';
 import { LoginForm } from './LoginForm';
-import { useTracker } from 'meteor/react-meteor-data';
 import { BrowserRouter as Router, Switch, Route, Link,} from "react-router-dom";
 
 const logout = () => {
@@ -19,9 +18,13 @@ function NavBar() {
         <meta name="viewport" content="width=device-width, initial-scale=1"/>
         <Navbar bg="primary" className="w-auto" variant="dark" expand='lg'>
           <Container>
-            <Navbar.Brand href="/">We Care For You</Navbar.Brand>    
+            <Navbar.Brand  href="/">
+              <img src='/images/logo.svg' width="80" height="30" style={{'fill':'white'}} className="d-inline-block align-top logo"/>
+            </Navbar.Brand>
+          
             <Navbar.Toggle aria-controls="basic-navbar-nav" />
-              <Navbar.Collapse id="basic-navbar-nav">    
+              <Navbar.Collapse id="basic-navbar-nav">
+                    
                 <Nav className="container-fluid">{/*used container-fluid to get username div to left of navbar */}
                   <Link className="nav-link" to={"/donate"}>Donate</Link>
                   <Link className="nav-link" to={"/request"}>Request</Link>
@@ -53,7 +56,9 @@ function NavBar() {
       <meta name="viewport" content="width=device-width, initial-scale=1"/>
       <Navbar bg="primary" className="w-auto" variant="dark" expand='lg'>
             <Container>
-              <Navbar.Brand href="/">We Care For You</Navbar.Brand>        
+            <Navbar.Brand  href="/">
+              <img src='/images/logo.svg' width="80" height="30" style={{'fill':'white'}} className="d-inline-block align-top logo"/>
+            </Navbar.Brand>        
                 <Nav className="container-fluid">
               </Nav>
             </Container>
@@ -67,7 +72,9 @@ function NavBar() {
       <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <Navbar bg="primary" className="w-auto" variant="dark" expand='lg'>
           <Container>
-            <Navbar.Brand href="/">We Care For You</Navbar.Brand>    
+          <Navbar.Brand  href="/">
+              <img src='/images/logo.svg' width="80" height="30" style={{'fill':'white'}} className="d-inline-block align-top logo"/>
+            </Navbar.Brand>   
             <Navbar.Toggle aria-controls="basic-navbar-nav" />
               <Navbar.Collapse id="basic-navbar-nav">    
               <Nav className="container-fluid">

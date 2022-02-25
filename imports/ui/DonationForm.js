@@ -100,7 +100,7 @@ const DonationForm = () =>{
                         required/>
                     </FloatingLabel>
                     <FloatingLabel controlId="floatingInput" label="Phone Number" className="mb-3">
-                                <input type='tel' pattern='[0-9]{10}' value={phone} className="form-control" required onChange={e=>handlephoneChange(e.target.value)}
+                                <input type='tel' pattern='[0-9]{10}' value={phone} className="form-control" required onChange={e=>handlePhoneChange(e.target.value)}
                                 placeholder="Phone Number"
                                 />        
                         </FloatingLabel>

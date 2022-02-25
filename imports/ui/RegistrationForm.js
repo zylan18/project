@@ -10,6 +10,7 @@ const RegistrationForm = ()=>{
     const [username,handleUsernameChange]=useState('');
     const [email,handleEmailChange]=useState('');
     const [password,handlePasswordChange]=useState('');
+    const [phone,handlePhoneChange]=useState('')
     const [confpassword,handleConfPasswordChange]=useState('');
     const [usernameError,handleUsernameError]=useState('');
     const [passwordError,handlePasswordError]=useState('');
@@ -18,12 +19,12 @@ const RegistrationForm = ()=>{
       
        if(password == confpassword){   
            handlePasswordError('');
-       if(!Meteor.call('Account.create',username,password,email,name,address,
+       if(!Meteor.call('Account.create',username,password,email,name,address,phone,
             err=>{
                 handleUsernameError(`*${err.error}`);
             })){
                 Meteor.loginWithPassword(username,password)
-                alert(`Name:${name}\n Username: ${username}\n password:${password}\n email:${email}\n address:${address}`)
+                alert(`Name:${name}\n Username: ${username}\n password:${password}phone:${phone} \n email:${email}\n address:${address}`)
             }
          }
         else{
@@ -63,6 +64,11 @@ const RegistrationForm = ()=>{
                             <input type='password' className='form-control' onChange={e=>handleConfPasswordChange(e.target.value)} 
                             placeholder='Confirm Password'
                             />
+                        </FloatingLabel>
+                        <FloatingLabel controlId="floatingInput" label="Phone Number" className="mb-3">
+                                <input type='tel' pattern='[0-9]{10}' value={phone} className="form-control" required onChange={e=>handlephoneChange(e.target.value)}
+                                placeholder="Phone Number"
+                                />        
                         </FloatingLabel>
                             <Form.Label className="loginError">{passwordError}</Form.Label><br/>
                         <FloatingLabel controlId="floatingTextarea" label="Address" className="mb-3">

@@ -3,6 +3,7 @@ import { Request } from '../api/links';
 import {Alert,Spinner,Button,Modal,Carousel,} from 'react-bootstrap';
 import {Files} from '../api/links';
 import {useNavigate} from 'react-router-dom';
+import { useTracker } from 'meteor/react-meteor-data';
 function verifyColor(t){
     if(t==true){
         return "verified";
@@ -22,6 +23,16 @@ const YourRequests = () => {
     const handleClose = () => setShow(false);
     const handleShow = () => {setShow(true)};
     const [show, setShow] = useState(false);
+    const isLoadingData = useTracker(()=>{
+        const handle=Meteor.subscribe('yourRequests');//used useTracker to continuously check if subscribe is ready 
+        return(!handle.ready());
+        })
+
+    const isLoadingImg=useTracker(()=>{
+        const handle=Meteor.subscribe('yourRequestImages')
+        return(!handle.ready());
+    })    
+    if(!isLoadingData && !isLoadingImg){
     const requestList=Request.find({username:(Meteor.user()).username},{fields:{}}).fetch();
         return (
             <div className="admin-page">
@@ -93,7 +104,13 @@ const YourRequests = () => {
               </Modal>
             </div>
         )
+    }else{
+        return(<div>
+            <Spinner className="spinner" animation="grow" variant="primary" 
+           />
+        </div>)
     }
+}
     else if(Meteor.loggingIn()){
         return(<div>
             <Spinner className="spinner" animation="border" variant="primary" 

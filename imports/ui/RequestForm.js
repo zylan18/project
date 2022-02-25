@@ -4,6 +4,7 @@ import { useParams } from 'react-router-dom'
 import { DonationList } from '../api/links'
 import { Files } from '../api/links'
 import {Request} from '../api/links'
+import { useTracker } from 'meteor/react-meteor-data';
 
 const RequestForm = () => {
     
@@ -19,8 +20,19 @@ const RequestForm = () => {
     const handleClose = () => setShow(false);
     const handleShow = () => {setShow(true)};
     const [address,handleAddressChange]=useState(user.profile.address);
+    const [phone,handlePhoneChange]=useState(Meteor.user().profile.phone);
     const [fileerror,handleFileError]=useState('');
-    
+    const isLoadingData = useTracker(()=>{
+        const handle=Meteor.subscribe('donationStatus',id);//used useTracker to continuously check if subscribe is ready 
+        return(!handle.ready());
+        })
+
+    const isLoadingImg=useTracker(()=>{
+        const handle=Meteor.subscribe('donationStatusImages',id);
+        return(!handle.ready());
+    })    
+
+
     var img;
     
     function fileInput(event){ 
@@ -69,10 +81,12 @@ const handleAddMedfile = (file) => {
         //alert(`user_id:${Meteor.user()._id}\nrequestdate:${date.toLocaleString()}\nusername:${user.username}\nrequester_name:${user.profile.name}\ndonation_id:${id}\nmedicine_name:${medicine.medicine_name}\nexp_date:${medicine.exp_date}\nverify_status:${false}\nverified_by:${''}\nstatus:${'in verification'}\ntype:${medicine.type}`);
         Request.insert({user_id:Meteor.user()._id,requestdate:date.toLocaleString(),
         username:user.username,requester_name:user.profile.name,donation_id:id, 
-        medicine_name:medicine.medicine_name, exp_date:medicine.exp_date,verify_status:false,verified_by:'',status:'in verification',type:medicine.type,reason:reason,address:address,edit:false,remark:''})
+        medicine_name:medicine.medicine_name, exp_date:medicine.exp_date,verify_status:false,verified_by:'',
+        status:'in verification',type:medicine.type,reason:reason,address:address,phone:phone,edit:true,remark:''})
         Meteor.call('requestFormSaveFile',Meteor.user()._id,Meteor.user().username,medfile);    
     }
         var img=URL.createObjectURL(new Blob([medfile]))
+        if(!isLoadingData&&!isLoadingImg){
         return (
             <div className="form">
                 <Form onSubmit={handleSubmit}>
@@ -106,6 +120,11 @@ const handleAddMedfile = (file) => {
                                 placeholder="Reason for Requesting Medicine"
                                 />        
                         </FloatingLabel>   
+                        <FloatingLabel controlId="floatingInput" label="Phone Number" className="mb-3">
+                                <input type='tel' pattern='[0-9]{10}' value={phone} className="form-control" required onChange={e=>handlePhoneChange(e.target.value)}
+                                placeholder="Phone Number"
+                                />        
+                        </FloatingLabel>
                         <FloatingLabel controlId="floatingInput" label="Address" className="mb-3">
                                 <textarea value={address} className="form-control" required onChange={e=>handleAddressChange(e.target.value)}
                                 placeholder="Address"
@@ -144,6 +163,11 @@ const handleAddMedfile = (file) => {
                 </Modal>
             </div>
         )
+        }else{
+            return(<div>
+                <Spinner className="spinner" animation="grow" variant="primary" />
+            </div>) 
+        }
     }
     else if(Meteor.loggingIn()){
         return(<div>

@@ -4,22 +4,36 @@ import { Files } from '../api/links';
 import {FaCheck} from '@react-icons/all-files/fa/FaCheck';
 import { Spinner ,Col,Row,Button,Carousel,Modal} from 'react-bootstrap';
 import { useParams } from 'react-router-dom';
-
+import {useTracker} from 'meteor/react-meteor-data'
 const RequestStatus = () => { 
  if(Meteor.user()){
     let { id } = useParams();
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
     const handleShow = () => {setShow(true)};
-    const request=Request.findOne({_id:id});
-    if(Meteor.user().profile.admin||Meteor.user()._id==request.user_id){ 
-    function cancelRequest(){
+
+    const isLoadingData = useTracker(()=>{
+        const handle=Meteor.subscribe('requestStatus',id);//used useTracker to continuously check if subscribe is ready 
+        return(!handle.ready());
+        })
+
+    const isLoadingImg=useTracker(()=>{
+        const handle=Meteor.subscribe('requestStatusImages',id);
+        return(!handle.ready());
+    })    
+    
+    
+        function cancelRequest(){
         if(confirm("Are you sure you want to cancel your request?")){
             Request.update(id,{$set:{status:'canceled'}});
             window.location.reload(false);
         }   
     }
+    
     useEffect(()=>{
+        if(!isLoadingData&&!isLoadingImg){
+            const request=Request.findOne({_id:id});
+            if(Meteor.user().profile.admin||Meteor.user()._id==request.user_id){ 
         switch(request.status){
             case 'canceled':{
                 document.getElementById("verification").classList.add('not-done');
@@ -65,7 +79,13 @@ const RequestStatus = () => {
                 break;
             }
         }
-    },[])
+    }
+}
+    })
+    if(!isLoadingData&&!isLoadingImg){
+        const request=Request.findOne({_id:id});
+        console.log(request);
+        if(Meteor.user().profile.admin||Meteor.user()._id==request.user_id){   
   return( 
   <div className='form'>
       
@@ -171,7 +191,7 @@ const RequestStatus = () => {
             <Col></Col>
             <Col>{(request.status!='rejected' && request.status!='canceled')?(
                 <td>
-                    {(donation.status=='verified')?(<Button className="btn-danger" onClick={()=>cancelDonation()}>Cancel</Button>):(null)}
+                    {(request.status=='verified' || request.status=='in verification')?(<Button className="btn-danger" onClick={()=>cancelRequest()}>Cancel</Button>):(null)}
                 </td>):null}
             </Col>
             <Col></Col>
@@ -197,9 +217,15 @@ const RequestStatus = () => {
               </Modal>
     </div>
   );//return
+}else{
+    return(<div>you do not have permission to access this page</div>)
+    
+}
 }
 else{
-    return(<div>you do not have permission to access this page</div>)
+    return(<div>
+        <Spinner className="spinner" animation="grow" variant="primary" />
+    </div>)  
 }
 }
  else if(Meteor.loggingIn()){
