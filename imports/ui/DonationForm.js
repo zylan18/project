@@ -19,14 +19,29 @@ const DonationForm = () =>{
             if(confirm(`Are you sure your details correct?\nDonor Name:${donorname}\nAddress:${address}\nMedicine Name:${medname}\nExpiry Date:${expdate}
             `)){
             date=new Date;
-            DonationList.insert({user_id:Meteor.user()._id,donatedat:date.toLocaleString(),
-            username:Meteor.user().username,donor_name:donorname,address:address,phone:phone, 
-            medicine_name:medname,brand:'',composition:'',exp_date:expdate,verify_status:false,verified_by:'',
-            status:'in verification',edit:true,remark:''})
-
+            Meteor.call('submitDonationForm',Meteor.user()._id,Meteor.user().username,donorname,address,phone,medname,expdate,
+            (error,result)=>{
+                if(error){
+                    alert('Error in submiting donation form\nForm not submitted')
+                    event.preventDefault();
+                }
+                else{
+                    alert('form submitted successfully');
+                }
+            });
+            
             console.log(medfile);
-            Meteor.call('saveFile',Meteor.user()._id,Meteor.user().username,medfile);
-            alert('Donation form submitted');
+            Meteor.call('saveFile',Meteor.user()._id,Meteor.user().username,medfile,
+            (error,result)=>{
+                if(error){
+                    alert('error in uploading image\nImage not upladed')
+                    event.preventDefault();
+                }
+                else{
+                    alert('image uploaded successfully');
+                }
+            });
+            
             window.location.reload(false);
 
             }else{

@@ -67,35 +67,54 @@ const Admin = () => {
     var image;
     if(!isLoadingData && !isLoadingImg){
         const donname=DonationList.find({},{fields:{}}).fetch();
-        function verify(index){  
+        function verify(id){  
             const user=Meteor.user();
-            if(donname[index].verify_status == true){
-            DonationList.update(donname[index]._id,{$set:{verify_status:false}});
-            DonationList.update(donname[index]._id,{$set:{status:'not verified'}});
-            DonationList.update(donname[index]._id,{$set:{edit:true}});
-            console.log(donname[index].verify_status);
-            }
-            else if(donname[index].verify_status == "rejected"){
-                DonationList.update(donname[index]._id,{$set:{verify_status:false}});
-                DonationList.update(donname[index]._id,{$set:{status:'in verification'}});
-                DonationList.update(donname[index]._id,{$set:{verify_status:false}});
-                console.log(donname[index].verified_by);
-            }
-            else{
-                DonationList.update(donname[index]._id,{$set:{verify_status:true}});
-                DonationList.update(donname[index]._id,{$set:{status:'verified'}});
-                DonationList.update(donname[index]._id,{$set:{edit:false}});
-                console.log(donname[index].verified_by);
-            }
+            // if(donname[index].verify_status == true){
+            // DonationList.update(donname[index]._id,{$set:{verify_status:false}});
+            // DonationList.update(donname[index]._id,{$set:{status:'not verified'}});
+            // DonationList.update(donname[index]._id,{$set:{edit:true}});
+            // console.log(donname[index].verify_status);
+            // }
+            // else if(donname[index].verify_status == "rejected"){
+            //     DonationList.update(donname[index]._id,{$set:{verify_status:false}});
+            //     DonationList.update(donname[index]._id,{$set:{status:'in verification'}});
+            //     DonationList.update(donname[index]._id,{$set:{verify_status:false}});
+            //     console.log(donname[index].verified_by);
+            // }
+            // else{
+            //     DonationList.update(donname[index]._id,{$set:{verify_status:true}});
+            //     DonationList.update(donname[index]._id,{$set:{status:'verified'}});
+            //     DonationList.update(donname[index]._id,{$set:{edit:false}});
+            //     console.log(donname[index].verified_by);
+            // }
+            Meteor.call('adminVerify',id,Meteor.user().username,
+            (error,result)=>{
+                if(error){
+                    alert('error status not updated');
+                }else{
+                    alert(`verify status changed to ${(DonationList.findOne({_id:id})).status}`);
+                    setReload(reload+1);
+                }
+            });
+            
             console.log("update");
-            DonationList.update(donname[index]._id,{$set:{verified_by:user.username}});
-            setReload(reload+1);
+            // DonationList.update(donname[index]._id,{$set:{verified_by:user.username}});
+            
         }
-        function rejectVerification(index){
+        function rejectVerification(id){
             const user=Meteor.user();
-            DonationList.update(donname[index]._id,{$set:{verify_status:'rejected'}});
-            DonationList.update(donname[index]._id,{$set:{status:'rejected'}});
-            setReload(reload+1);
+            Meteor.call('rejectVerification',id,Meteor.user().username,
+            (error,result)=>{
+                if(error){
+                    alert('error status not updated');
+                }else{
+                    alert(`verify status changed to ${(DonationList.findOne({_id:id})).status}`);
+                    setReload(reload+1);
+                }
+            });
+            // DonationList.update(id,{$set:{verify_status:'rejected'}});
+            // DonationList.update(id,{$set:{status:'rejected'}});
+            
         }
         function verifyColor(t){
             if(t==true){
@@ -107,20 +126,48 @@ const Admin = () => {
         }
 
         setRemark=(id)=>{
-            DonationList.update(id,{$set:{remark:remark,edit:true}});
-            console.log(donname);
-            setReload(reload+1);
+            // DonationList.update(id,{$set:{remark:remark,edit:true}});
+            Meteor.call('setRemark',id,remark,
+            (error,result)=>{
+                if(error){
+                    alert(`Error remark not changed`);
+                }else{
+                    alert(`remark changed to ${(DonationList.findOne({_id:id})).remark}`);
+                    setReload(reload+1);
+                    handleRemarkClose();
+                }
+            })
         }
-        setStatus=(index)=>{
-            DonationList.update(donname[index]._id,{$set:{edit:status}});
+        setEditStatus=(id)=>{
+            // DonationList.update(id,{$set:{edit:status}});
+            Meteor.call('setEditStatus',id,status,
+            (error,result)=>{
+                if(error){
+                    alert('error edit status not updated');
+                }else{
+                    alert(`edit status changed to ${(DonationList.findOne({_id:id})).edit}`);
+                    setReload(reload+1);
+                }
+            })
             console.log(donname)
-            setReload(reload+1);
+            
         }
         setMedDetail=()=>{
-                if(type!=''&& brand!='' && composition!=''){
-                DonationList.update(donation_id,{$set:{type:medtype,brand:brand,composition:composition}});
+                if(medtype!=''&& brand!='' && composition!=''){
+                //DonationList.update(donation_id,{$set:{type:medtype,brand:brand,composition:composition}});
+                Meteor.call('setMedDetail',donation_id,medtype,brand,composition,
+                (error,result)=>{
+                    console.log('meteor.call')
+                    if(error){
+                        alert('error medicine details not updated');
+                    }else{
+                        alert(`Medicine details updated to ${(DonationList.findOne({_id:donation_id})).type}
+${(DonationList.findOne({_id:donation_id})).brand}\n${(DonationList.findOne({_id:donation_id})).composition}`);
+                        setReload(reload+1);
+                    }
+                }
+            );
                 console.log(donname)
-                setReload(reload+1);//reload page
                 handleEditMedClose();
 
                 }
@@ -261,7 +308,7 @@ const Admin = () => {
                                 />
                             </th>
                             <th>
-                                <Button variant='warning' onClick={()=>{setStatus(index)}}>set</Button>
+                                <Button variant='warning' onClick={()=>{setEditStatus(name._id)}}>set</Button>
                             </th>
                         </tr>
                     </th>
@@ -274,13 +321,13 @@ const Admin = () => {
                     </th>
                     <th width='100px'>{name.verified_by}</th>
                     <th width='100px'>
-                        <button id={index} className={(verifyColor(!name.verify_status))} onClick={()=>{verify(index)}}>
+                        <button id={index} className={(verifyColor(!name.verify_status))} onClick={()=>{verify(name._id)}}>
                             {(name.verify_status==true)?("Cancel")
                             :(name.verify_status=="rejected")?("Cancel Rejection")
                             :("Verify")}</button>
                     </th> 
                     <th width='100px'>   
-                        <button style={{"color":"red"}} onClick={()=>rejectVerification(index)}>Reject</button>
+                        <button style={{"color":"red"}} onClick={()=>rejectVerification(name._id)}>Reject</button>
                     </th> 
                     <th width='150px'>
                         {(name.remark)?(name.remark):('no remarks yet')}<br/>

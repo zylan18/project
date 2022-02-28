@@ -29,16 +29,32 @@ const Delivery = () => {
     if(!isLoadingDonation && !isLoadingRequest){
     setCollectionStatus = (id) => {
       if (status != "") {
-        DonationList.update(id, { $set: { status: status } });
-        window.location.reload(false);
+        // DonationList.update(id, { $set: { status: status } });
+        Meteor.call('setCollectionStatus',id,status,
+        (error,result)=>{
+          if(error){
+            alert('Error collection status not updated');
+          }else{
+            alert(`status changed successfully to ${status}`)
+            setReload(reload+1);
+          }
+        })
       } else {
         alert("select a status");
       }
     };
     setDeliveryStatus = (id) => {
       if (status != "") {
-        Request.update(id, { $set: { status: status } });
-        setReload(reload+1);
+        // Request.update(id, { $set: { status: status } });
+        Meteor.call('setDeliveryStatus',id,status,
+        (error,result)=>{
+          if(error){
+            alert('Error delivery status not updated');
+          }else{
+            alert(`status changed successfully to ${status}`)
+            setReload(reload+1);
+          }
+        })
       } else {
         alert("select a status");
       }

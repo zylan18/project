@@ -16,6 +16,7 @@ const RequestForm = () => {
     const [medfile,handleFileChange]=useState('');
     const [show, setShow] = useState(false);
     const [donation_id,setDonation_id]=useState('');
+    const [requestername,handleRequesterNameChange]=useState('');
     const [reason,handleReasonChange]=useState('');
     const handleClose = () => setShow(false);
     const handleShow = () => {setShow(true)};
@@ -77,13 +78,32 @@ const handleAddMedfile = (file) => {
   }
   
     var date=new Date;
-    handleSubmit=()=>{
+    handleSubmit=(event)=>{
         //alert(`user_id:${Meteor.user()._id}\nrequestdate:${date.toLocaleString()}\nusername:${user.username}\nrequester_name:${user.profile.name}\ndonation_id:${id}\nmedicine_name:${medicine.medicine_name}\nexp_date:${medicine.exp_date}\nverify_status:${false}\nverified_by:${''}\nstatus:${'in verification'}\ntype:${medicine.type}`);
-        Request.insert({user_id:Meteor.user()._id,requestdate:date.toLocaleString(),
-        username:user.username,requester_name:user.profile.name,donation_id:id, 
-        medicine_name:medicine.medicine_name, exp_date:medicine.exp_date,verify_status:false,verified_by:'',
-        status:'in verification',type:medicine.type,reason:reason,address:address,phone:phone,edit:true,remark:''})
-        Meteor.call('requestFormSaveFile',Meteor.user()._id,Meteor.user().username,medfile);    
+        Meteor.call('submitReuqestForm',Meteor.user()._id,Meteor.user().username,requestername,id,reason,address,phone,
+        (error,result)=>{
+            if(error){
+                alert('Error request form not submitted');
+                event.preventDefault();
+            }else{
+                alert('Form Submitted');
+                window.location.reload(false);
+            }
+        });
+        // Request.insert({user_id:Meteor.user()._id,requestdate:date.toLocaleString(),
+        // username:user.username,requester_name:user.profile.name,donation_id:id, 
+        // medicine_name:medicine.medicine_name, exp_date:medicine.exp_date,verify_status:false,verified_by:'',
+        // status:'in verification',type:medicine.type,reason:reason,address:address,phone:phone,edit:true,remark:''})
+        Meteor.call('requestFormSaveFile',Meteor.user()._id,Meteor.user().username,medfile,
+        (error,result)=>{
+            if(error){
+                alert('Error uploading image\nimage not uploaded');
+            }else{
+                alert('Image uploaded successfully');
+                window.location.reload(false);
+            }
+        });  
+        event.preventDefault();  
     }
         var img=URL.createObjectURL(new Blob([medfile]))
         if(!isLoadingData&&!isLoadingImg){
@@ -115,6 +135,11 @@ const handleAddMedfile = (file) => {
                             </tbody>
                         </table>
                         <br/>
+                        <FloatingLabel controlId="floatingInput" label="Requester Name" className="mb-3">
+                                <input type='text' value={requestername} className="form-control" required onChange={e=>handleRequesterNameChange(e.target.value)}
+                                placeholder="Requester Name"
+                                />        
+                        </FloatingLabel> 
                         <FloatingLabel controlId="floatingInput" label="Reason for Requesting Medicine" className="mb-3">
                                 <textarea value={reason} className="form-control" required onChange={e=>handleReasonChange(e.target.value)}
                                 placeholder="Reason for Requesting Medicine"

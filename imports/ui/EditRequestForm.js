@@ -16,6 +16,7 @@ const EditRequestForm = () => {
 
     const [medfile,handleFileChange]=useState();
     const [donation_id,setDonation_id]=useState();
+    const [requestername,handleRequseterNameChange]=useState();
     const [reason,handleReasonChange]=useState();
     const [address,handleAddressChange]=useState();
     const [phone,handlePhoneChange]=useState();
@@ -35,6 +36,7 @@ const EditRequestForm = () => {
             if((Request.findOne({_id:id})).edit){
             handleAddressChange(request.address);
             handleReasonChange(request.reason);
+            handleRequseterNameChange(request.requester_name);
             setDonation_id(request.donation_id);
             handlePhoneChange(request.phone);
             handleFileChange((Files.findOne({request_id:id}).data));
@@ -88,9 +90,26 @@ const handleAddMedfile = (file) => {
     handleSubmit=(event)=>{
         if(confirm(`Are you sure your details correct?\nAddress:${address}\nReason:${reason}`)){
         //alert(`user_id:${Meteor.user()._id}\nrequestdate:${date.toLocaleString()}\nusername:${user.username}\nrequester_name:${user.profile.name}\ndonation_id:${id}\nmedicine_name:${medicine.medicine_name}\nexp_date:${medicine.exp_date}\nverify_status:${false}\nverified_by:${''}\nstatus:${'in verification'}\ntype:${medicine.type}`);
-        Request.update(id,{$set:{reason:reason,address:address,status:'in verification',edit:true,phone:phone}})
-        Files.update(Files.findOne({request_id:id},{fields:{_id:1}})._id,{$set:{data:medfile}})
-        alert('request form updated');
+        Meteor.call('updateRequestForm',id,requestername,reason,address,phone,
+        (error,result)=>{
+            if(error){
+                alert('Error request form not updated');
+                event.preventDefault();
+            }else{
+                alert('Form Updated successfully');
+                window.location.reload(false);
+            }
+        });
+        // Request.update(id,{$set:{reason:reason,address:address,status:'in verification',edit:true,phone:phone}})
+        // 
+        Meteor.call('updateRequestImages',id,medfile,
+        (error,result)=>{
+            if(error){
+                alert('Error images not uploaded');
+            }else{
+                alert('Images uploaded successfully');
+            }
+        })
         window.location.reload(false);
         }else{
             event.preventDefault();
@@ -131,6 +150,11 @@ const handleAddMedfile = (file) => {
                             </tbody>
                         </table>
                         <br/>
+                        <FloatingLabel controlId="floatingInput" label="Requester Name" className="mb-3">
+                                <input type='input' value={requestername} className="form-control" required onChange={e=>handleRequseterNameChange(e.target.value)}
+                                placeholder="Requester Name"
+                                />        
+                        </FloatingLabel>
                         <FloatingLabel controlId="floatingInput" label="Reason for Requesting Medicine" className="mb-3">
                                 <textarea value={reason} className="form-control" required onChange={e=>handleReasonChange(e.target.value)}
                                 placeholder="Reason for Requesting Medicine"

@@ -25,7 +25,15 @@ const RequestStatus = () => {
     
         function cancelRequest(){
         if(confirm("Are you sure you want to cancel your request?")){
-            Request.update(id,{$set:{status:'canceled'}});
+            // Request.update(id,{$set:{status:'canceled'}});
+            Meteor.call('cancelRequest',id,
+            (error,result)=>{
+                if(error){
+                  alert('Error Request not cancelled');  
+                }else{
+                  alert('Request Cancelled')
+                }
+            });
             window.location.reload(false);
         }   
     }

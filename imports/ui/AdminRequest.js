@@ -56,50 +56,80 @@ const AdminRequest = () => {
         //console.log(reqname);
         if(!isLoadingData && !isLoadingImg && !isLoadingDonationData){
             const reqname=Request.find({},{fields:{}}).fetch();
-            setStatus=(id)=>{
-                Request.update(id,{$set:{edit:status}});
-                alert(`edit status changed to ${(Request.findOne({_id:id}).edit)}`)
-                setReload(reload+1);
+            setEditStatus=(id)=>{
+                // Request.update(id,{$set:{edit:status}});
+                Meteor.call('setRequestEditStatus',id,status,
+                (error,result)=>{
+                if(error){
+                    alert('error edit status not updated');
+                }else{
+                    alert(`edit status changed to ${(Request.findOne({_id:id})).edit}`);
+                    setReload(reload+1);
+                }
+            });
             }
     
             setRemark=(id)=>{
-                Request.update(id,{$set:{remark:remark,edit:true}});
+                // Request.update(id,{$set:{remark:remark,edit:true}});
+                Meteor.call('setRequestRemark',id,remark,
+                (error,result)=>{
+                if(error){
+                    alert('error remark not updated');
+                }else{
+                    alert(`remark changed to ${(Request.findOne({_id:id})).remark}`);
+                    setReload(reload+1);
+                }
+            });
                 handleRemarkClose();
-                setReload(reload+1);
+               
             }
-            function verify(index){
+            function verify(id){
                 const user=Meteor.user();
-                if(reqname[index].verify_status == true){
-                Request.update(reqname[index]._id,{$set:{verify_status:false}});
-                Request.update(reqname[index]._id,{$set:{status:'not verified'}});
-                Request.update(reqname[index]._id,{$set:{edit:true}});
-                DonationList.update(reqname[index].donation_id,{$set:{status:'storage'}})
-                console.log(reqname[index].verify_status);
-                }
-                else if(reqname[index].verify_status == "rejected"){
-                    Request.update(reqname[index]._id,{$set:{verify_status:false}});
-                    Request.update(reqname[index]._id,{$set:{status:'in verification'}});
-                    Request.update(reqname[index]._id,{$set:{edit:true}});
-                    console.log(reqname[index].verified_by);
-                }
-                else{
-                    Request.update(reqname[index]._id,{$set:{verify_status:true}});
-                    Request.update(reqname[index]._id,{$set:{status:'verified'}});
-                    Request.update(reqname[index]._id,{$set:{edit:false}});
-                    DonationList.update(reqname[index].donation_id,{$set:{status:'request verified'}})
-                    console.log(reqname[index].verified_by);
-                }
+                Meteor.call('adminRequestVerify',id,user.username,
+                (error,result)=>{
+                    if(error){
+                        alert('error status not updated');
+                    }else{
+                        alert(`verify status changed to ${(Request.findOne({_id:id})).status}`);
+                        setReload(reload+1);
+                    }
+                });
+                // if(reqname[index].verify_status == true){
+                // Request.update(reqname[index]._id,{$set:{verify_status:false}});
+                // Request.update(reqname[index]._id,{$set:{status:'not verified'}});
+                // Request.update(reqname[index]._id,{$set:{edit:true}});
+                // DonationList.update(reqname[index].donation_id,{$set:{status:'storage'}})
+                // console.log(reqname[index].verify_status);
+                // }
+                // else if(reqname[index].verify_status == "rejected"){
+                //     Request.update(reqname[index]._id,{$set:{verify_status:false}});
+                //     Request.update(reqname[index]._id,{$set:{status:'in verification'}});
+                //     Request.update(reqname[index]._id,{$set:{edit:true}});
+                //     console.log(reqname[index].verified_by);
+                // }
+                // else{
+                //     Request.update(reqname[index]._id,{$set:{verify_status:true}});
+                //     Request.update(reqname[index]._id,{$set:{status:'verified'}});
+                //     Request.update(reqname[index]._id,{$set:{edit:false}});
+                //     DonationList.update(reqname[index].donation_id,{$set:{status:'request verified'}})
+                //     console.log(reqname[index].verified_by);
+                // }
                 console.log("update");
-                Request.update(reqname[index]._id,{$set:{verified_by:user.username}});
-                alert(`request ${Request.findOne({_id:(reqname[index]._id)}).status}`);
-               setReload(reload+1);
+               
             }
-            function rejectVerification(index){
+            function rejectVerification(id){
                 const user=Meteor.user();
-                Request.update(reqname[index]._id,{$set:{verify_status:'rejected'}});
-                Request.update(reqname[index]._id,{$set:{status:'rejected'}});
-                alert(`request ${Request.findOne({_id:(reqname[index]._id)}).status}`);
-                setReload(reload+1);
+                Meteor.call('rejectRequestVerification',id,
+                (error,result)=>{
+                    if(error){
+                        alert('error status not updated');
+                    }else{
+                        alert(`verify status changed to ${(Request.findOne({_id:id})).status}`);
+                        setReload(reload+1);
+                    }
+                })
+                // Request.update(reqname[index]._id,{$set:{verify_status:'rejected'}});
+                // Request.update(reqname[index]._id,{$set:{status:'rejected'}});
             }
             function verifyColor(t){
                 if(t==true){
@@ -178,7 +208,7 @@ const AdminRequest = () => {
                                     />
                                 </th>
                                     <th>
-                                        <Button variant='warning' onClick={()=>{setStatus(medicine._id)}}>set</Button>
+                                        <Button variant='warning' onClick={()=>{setEditStatus(medicine._id)}}>set</Button>
                                     </th>
                                 </tr>
                             </th>
@@ -191,13 +221,13 @@ const AdminRequest = () => {
                             </th>
                             <th width="100px">{medicine.verified_by}</th>
                             <th width="100px">
-                                <button id={index} className={(verifyColor(!medicine.verify_status))} onClick={()=>{verify(index)}}>
+                                <button id={index} className={(verifyColor(!medicine.verify_status))} onClick={()=>{verify(medicine._id)}}>
                                     {(medicine.verify_status==true)?("Cancel")
                                     :(medicine.verify_status=="rejected")?("Cancel Rejection")
                                     :("Verify")}</button>
                             </th> 
                             <th width="100px" >   
-                                <button style={{"color":"red"}} onClick={()=>rejectVerification(index)}>Reject</button>
+                                <button style={{"color":"red"}} onClick={()=>rejectVerification(medicine._id)}>Reject</button>
                             </th>
                             <th width="150px">
                                 <tr>

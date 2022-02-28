@@ -24,8 +24,17 @@ const DonationStatus = () => {
     
     function cancelDonation(){
         if(confirm("Are you sure you want to cancel your donation?")){
-            DonationList.update(id,{$set:{status:'canceled'}});
-            window.location.reload(false);
+            // DonationList.update(id,{$set:{status:'canceled'}});
+            Meteor.call('cancelDonation',id,
+            (error,result)=>{
+                if(error){
+                    alert('error donation not cancelled');
+                }else{
+                    alert('donation cancelled');
+                    window.location.reload(false);
+                }
+            });
+            
         }   
     }
     useEffect(()=>{

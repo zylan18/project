@@ -59,6 +59,7 @@ const RegistrationForm = ()=>{
                             <input type='password' className='form-control' onChange={e=>handlePasswordChange(e.target.value)} 
                             placeholder='Password'
                             />
+                            <Form.Label className="loginError">{passwordError}</Form.Label><br/>
                         </FloatingLabel>
                         <FloatingLabel controlId="floatingInput" label="Confirm Password" className="mb-3">
                             <input type='password' className='form-control' onChange={e=>handleConfPasswordChange(e.target.value)} 
@@ -70,7 +71,6 @@ const RegistrationForm = ()=>{
                                 placeholder="Phone Number"
                                 />        
                         </FloatingLabel>
-                            <Form.Label className="loginError">{passwordError}</Form.Label><br/>
                         <FloatingLabel controlId="floatingTextarea" label="Address" className="mb-3">
                             <Form.Control as="textarea" className="form-control" onChange={e=>handleAddressChange(e.target.value)}
                             placeholder="Enter address" />

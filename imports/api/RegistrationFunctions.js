@@ -126,5 +126,118 @@ Meteor.methods({
        },
        'getDonationImage'(id){
         return((Files.findOne({donation_id:id})).data);
-       }
+       },
+       'submitDonationForm'(user_id,username,donorname,address,phone,medname,expdate){
+        date=new Date;
+        DonationList.insert({user_id:user_id,donatedat:date.toLocaleString(),
+          username:username,donor_name:donorname,address:address,phone:phone, 
+          medicine_name:medname,brand:'',composition:'',exp_date:expdate,verify_status:false,verified_by:'',
+          status:'in verification',edit:true,remark:''})
+       },
+        'submitReuqestForm'(user_id,username,reqname,donation_id,reason,address,phone){
+          var date=new Date;
+          const medicine=DonationList.findOne({_id:donation_id});
+          Request.insert({user_id:user_id,requestdate:date.toLocaleString(),
+            username:username,requester_name:reqname,donation_id:donation_id, 
+            medicine_name:medicine.medicine_name, exp_date:medicine.exp_date,verify_status:false,verified_by:'',
+            status:'in verification',type:medicine.type,reason:reason,address:address,phone:phone,edit:true,remark:''})
+        },
+        'updateDonationForm'(id,donorname,address,phone,medname,expdate){
+          date=new Date;
+          DonationList.update(id,{$set:{donor_name:donorname,address:address,phone:phone, 
+            medicine_name:medname,exp_date:expdate,updatedon:date.toLocaleString()}});
+         },
+         'updateDonationImages'(id,data){
+          Files.update((Files.findOne({donation_id:id})._id),{$set:{data:data}});
+        },
+        'updateRequestForm'(id,reqname,reason,address,phone){
+          var date=new Date;
+          Request.update(id,{$set:{requester_name:reqname, 
+            reason:reason,address:address,phone:phone,updatedon:date.toLocaleString()}})
+        },
+        'updateRequestImages'(id,data){
+          Files.update((Files.findOne({request_id:id},{fields:{_id:1}}))._id,{$set:{data:data}})
+        },
+        'cancelRequest'(id){
+          Request.update(id,{$set:{status:'canceled'}});
+        },
+        'cancelDonation'(id){
+          DonationList.update(id,{$set:{status:'canceled'}});
+        },
+        'setCollectionStatus'(id,status){
+          DonationList.update(id, { $set: { status: status } });
+        },
+        'setDeliveryStatus'(id,status){
+          Request.update(id, { $set: { status: status } });
+        },
+        'adminVerify'(id,username){
+          var verify_status=(DonationList.findOne({_id:id})).verify_status;
+          console.log(verify_status)
+          if(verify_status == true){
+            DonationList.update(id,{$set:{verify_status:false}});
+            DonationList.update(id,{$set:{status:'not verified'}});
+            DonationList.update(id,{$set:{edit:true}});
+            console.log(verify_status);
+            }
+            else if(verify_status == "rejected"){
+                DonationList.update(id,{$set:{verify_status:false}});
+                DonationList.update(id,{$set:{status:'in verification'}});
+                DonationList.update(id,{$set:{verify_status:false}});
+                // console.log(verified_by);
+            }
+            else{
+                DonationList.update(id,{$set:{verify_status:true}});
+                DonationList.update(id,{$set:{status:'verified'}});
+                DonationList.update(id,{$set:{edit:false}});
+                // console.log(verified_by);
+            }
+            DonationList.update(id,{$set:{verified_by:username}});
+        },
+        'rejectVerification'(id,username){
+          DonationList.update(id,{$set:{verify_status:'rejected'}});
+          DonationList.update(id,{$set:{status:'rejected'}});
+          DonationList.update(id,{$set:{verified_by:username}});
+        },
+        'setRemark'(id,remark){
+          DonationList.update(id,{$set:{remark:remark,edit:true}});
+        },
+        'setEditStatus'(id,status){
+          DonationList.update(id,{$set:{edit:status}});
+        },
+        'setMedDetail'(id,medtype,brand,composition){
+          DonationList.update(id,{$set:{type:medtype,brand:brand,composition:composition}});
+        },
+        'adminRequestVerify'(id,username){
+          var verify_status=(Request.findOne({_id:id})).verify_status;
+          if(verify_status == true){
+            Request.update(id,{$set:{verify_status:false}});
+            Request.update(id,{$set:{status:'not verified'}});
+            Request.update(id,{$set:{edit:true}});
+            DonationList.update((Request.findOne({_id:id})).donation_id,{$set:{status:'storage'}})
+            }
+            else if(verify_status == "rejected"){
+                Request.update(id,{$set:{verify_status:false}});
+                Request.update(id,{$set:{status:'in verification'}});
+                Request.update(id,{$set:{edit:true}});
+                
+            }
+            else{
+                Request.update(id,{$set:{verify_status:true}});
+                Request.update(id,{$set:{status:'verified'}});
+                Request.update(id,{$set:{edit:false}});
+                DonationList.update((Request.findOne({_id:id})).donation_id,{$set:{status:'request verified'}}) 
+            }
+            Request.update(id,{$set:{verified_by:username}});
+        },
+        'rejectRequestVerification'(id){
+          Request.update(id,{$set:{verify_status:'rejected'}});
+                Request.update(id,{$set:{status:'rejected'}});
+        },
+        'setRequestEditStatus'(id,status){
+          Request.update(id,{$set:{edit:status}});
+        },
+        'setRequestRemark'(id,remark){
+          Request.update(id,{$set:{remark:remark,edit:true}});
+        }
+
 });

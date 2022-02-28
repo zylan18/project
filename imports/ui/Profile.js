@@ -9,6 +9,7 @@ const Profile = () => {
         const [name,handleNameChange]=useState(user.profile.name);
         const [email,handleEmailChange]=useState(user.emails[0].address);
         const [address,handleAddressChange]=useState(user.profile.address);
+        const [phone,handlePhoneChange]=useState(user.profile.phone);
         handleSubmit=()=>{
             const user=Meteor.user();
             Meteor.call("updateProfile",user._id,name,email,address);
@@ -25,6 +26,8 @@ const Profile = () => {
                         <Form.Control type="text" value={name} onChange={e=>handleNameChange(e.target.value)}/>
                         <Form.Label>E-Mail</Form.Label>
                         <Form.Control type="text" value={email} onChange={e=>handleEmailChange(e.target.value)}/>
+                        <Form.Label>Phone Number</Form.Label>
+                        <Form.Control type="text" value={phone} onChange={e=>handlePhoneChange(e.target.value)}/>
                         <Form.Label>Address</Form.Label>
                         <textarea className='form-control' value={address} onChange={e=>handleAddressChange(e.target.value)}/>
                         <Form.Text muted>

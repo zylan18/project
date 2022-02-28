@@ -19,7 +19,6 @@ const DonationForm = () =>{
         const [expdate,handleExpdateChange]=useState();
         const [medfile,handleFileChange]=useState();  
         var fileinput;
-        var rerender;
         const [fileerror,handleFileError]=useState();
         const isLoadingData = useTracker(()=>{
             const handle=Meteor.subscribe('donationStatus',id);//used useTracker to continuously check if subscribe is ready 
@@ -47,15 +46,28 @@ const DonationForm = () =>{
         handleSubmit=(event)=>{
             if(confirm(`Are you sure your details correct?\nDonor Name:${donorname}\nAddress:${address}\nMedicine Name:${medname}\nExpiry Date:${expdate}`)){
             date=new Date;
-            DonationList.update(id,{$set:{user_id:Meteor.user()._id,donatedat:date.toLocaleString(),
-            username:Meteor.user().username,donor_name:donorname,address:address,phone:phone, 
-            medicine_name:medname, exp_date:expdate,verify_status:false,verified_by:'',
-            status:'in verification',edit:true}})
+            Meteor.call('updateDonationForm',id,donorname,address,phone,medname,expdate,
+            (error,result)=>{
+                if(error){
+                    alert('Error in updating donation form\nForm not submitted')
+                    event.preventDefault();
+                }
+                else{
+                    alert('form updated successfully');
+                    window.location.reload(false);
+                }
+            });
             
             console.log(medfile);
-            Files.update((Files.findOne({donation_id:id})._id),{$set:{data:medfile}});
-            alert('Donation form updated');
-            window.location.reload(false);
+            // Files.update((Files.findOne({donation_id:id})._id),{$set:{data:medfile}});
+            Meteor.call('updateDonationImages',id,medfile,
+            (error,result)=>{
+                if(error){
+                    alert('Error! images not updated');
+                }else{
+                    alert('Images updated successfully');
+                }
+            });
 
             }else{
                 event.preventDefault();
