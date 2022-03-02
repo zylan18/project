@@ -23,3 +23,4 @@ fourseven:scss
 accounts-ui@1.4.2
 accounts-password@2.2.0
 jquery
+session

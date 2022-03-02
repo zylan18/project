@@ -1,9 +1,10 @@
-import React,{useState} from 'react';
+import React,{useState,useEffect} from 'react';
 import { Request } from '../api/links';
-import {Alert,Spinner,Button,Modal,Carousel,} from 'react-bootstrap';
+import {Alert,Spinner,Button,Modal,Carousel,Toast} from 'react-bootstrap';
 import {Files} from '../api/links';
 import {useNavigate} from 'react-router-dom';
 import { useTracker } from 'meteor/react-meteor-data';
+import {MdWarning} from '@react-icons/all-files/md/MdWarning'
 function verifyColor(t){
     if(t==true){
         return "verified";
@@ -20,9 +21,24 @@ const YourRequests = () => {
         
     const [request_id,setRequest_id]=useState('');
     const navigate = useNavigate();
+
+    const [showtoast, setShowToast] = useState([]);
+    const handleAdd = (toast) => {
+        const newtoast = showtoast.slice();
+        newtoast.push(toast);
+        setShowToast(newtoast);
+      }
+      
+      const handleUpdate = (index, toast) => {
+        const newtoast = [...showtoast];
+        newtoast[index] = toast;
+        console.log(showtoast);
+        setShowToast(newtoast);
+      }
+
+    const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
     const handleShow = () => {setShow(true)};
-    const [show, setShow] = useState(false);
     const isLoadingData = useTracker(()=>{
         const handle=Meteor.subscribe('yourRequests');//used useTracker to continuously check if subscribe is ready 
         return(!handle.ready());
@@ -31,12 +47,34 @@ const YourRequests = () => {
     const isLoadingImg=useTracker(()=>{
         const handle=Meteor.subscribe('yourRequestImages')
         return(!handle.ready());
-    })    
+    }) 
+    useEffect(()=>{
+        if(!isLoadingData && !isLoadingImg){
+            const request=Request.find({username:(Meteor.user()).username},{fields:{}}).fetch();
+            for(i=0;i<request.length;i++){
+                handleAdd(true);
+            }
+        }
+    },[isLoadingImg])   
     if(!isLoadingData && !isLoadingImg){
     const requestList=Request.find({username:(Meteor.user()).username},{fields:{}}).fetch();
         return (
             <div className="admin-page">
                 <h1>Your Requests</h1>
+                <div className='toast-notification'>
+                {requestList.map((request,index) => (
+                (request.remark)?
+                        (<Toast show={showtoast[index]} position='top-center' onClose={()=>{handleUpdate(index,false);}}>
+                            <Toast.Header>
+                            <MdWarning/>    
+                            <strong className="me-auto">Remarks on your request {request.medicine_name}</strong>
+                            <small></small>
+                            </Toast.Header>
+                            <Toast.Body>{request.remark}&nbsp;<a href={`/editrequest/${request._id}`}>click here to edit</a></Toast.Body>
+                        </Toast>)
+                        :(null)))
+                        }
+                    </div>
                 <table className="admin-table">
                     <tbody>
                     
@@ -74,6 +112,7 @@ const YourRequests = () => {
                        
                         <td>{request.status}</td>
                         <td>{request.remark}</td>
+                        
                         {/* {(request.status!='rejected' && request.status!='canceled')?(
                         <td>
                             <Button className="btn-danger" onClick={()=>cancelrequest(index)}>Cancel</Button>

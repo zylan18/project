@@ -1,8 +1,8 @@
-import React from 'react';
-import { Carousel,Col,Row,Spinner} from 'react-bootstrap';
+import React,{useEffect} from 'react';
+import {Carousel,Col,Row,Spinner} from 'react-bootstrap';
 
 const Home = () => {
-    
+
     //console.log(user.username);
     if(Meteor.user()){
       user=Meteor.user();
@@ -23,12 +23,8 @@ const Home = () => {
 
     else{
       return (
+        
           <div className="Home">
-          <div className='parallax' style={{'backgroundImage':'url("/images/s2.jpg")'}}>
-              <div style={{'margin':'auto','width':'30%'}}>
-                <a className='request-now' style={{'text-align':'center'}} >Suraj Ramesh Pal</a>
-              </div>
-          </div>
             <Carousel>
 <Carousel.Item>
   <img
@@ -88,8 +84,12 @@ const Home = () => {
             {/* <div tabindex="0" role="button" class="_2tdEn _1pXi6 _3K0Ka _220Ph"><div tabindex="0" role="button" class="_2tdEn _1pXi6"><img class="cKtiT" src="https://assets.pharmeasy.in/web-assets/dist/581b7351.svg" alt="ooc"/>
             </div><div class="qLCRa"><div>Call For Details</div>
             <strong>+91 9967705674</strong></div><div tabindex="0" role="button" class="_2tdEn _1pXi6 _1_5aQ">×</div></div> */}
+            <div className='parallax' style={{'backgroundImage':'url("/images/s2.jpg")'}}>
+              <div style={{'margin':'auto','width':'30%'}}>
+                <div className='why-to-donate'><h1>Why medicines!?</h1></div>
+              </div>
+          </div>
             
-            <div className='why-to-donate'><h1>Why medicines!?</h1></div>
               <Row>{/**over flow issue is here */}
                <Col>
              <img  className='why-med-img col-md-5' src="/images/whymed.png"></img></Col> 
@@ -145,7 +145,7 @@ const Home = () => {
             
              <div className='contact-text'>
                <h2>Contact Us</h2>
-  <p>We’d love to connect with anyone interested in learning more about our work. Simply fill out the form below.</p>
+  <p>We'd love to connect with anyone interested in learning more about our work. Simply fill out the form below.</p>
   
   </div>
   

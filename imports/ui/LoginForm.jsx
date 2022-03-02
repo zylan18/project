@@ -35,7 +35,6 @@ export const LoginForm = () => {
       </Modal.Header>
       <Modal.Body>
       <Form onSubmit={submit} className="login-form">
-
       <FloatingLabel controlId="floatingInput" label="Username" className="mb-3">
       <Form.Control
         type="text"
@@ -58,7 +57,7 @@ export const LoginForm = () => {
       />
       </FloatingLabel>
       <Form.Label className="loginError">{loginError}</Form.Label>
-      <a href='/register'>if you are new click here to register now</a><br/>
+      <a href='/register'>register</a><br/>
       <Button type="submit" className={"btn-primary"}>Log In</Button>
     </Form>
       </Modal.Body>

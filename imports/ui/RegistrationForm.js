@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import {Form, FloatingLabel,Button,Alert} from 'react-bootstrap';
 import { Meteor } from 'meteor/meteor';
-import { DonationList } from '../api/links';
+//import { DonationList } from '../api/links';
 //import {useNavigate} from 'react-router-dom';
 
 
@@ -19,13 +19,16 @@ const RegistrationForm = ()=>{
       
        if(password == confpassword){   
            handlePasswordError('');
-       if(!Meteor.call('Account.create',username,password,email,name,address,phone,
-            err=>{
-                handleUsernameError(`*${err.error}`);
-            })){
-                Meteor.loginWithPassword(username,password)
-                alert(`Name:${name}\n Username: ${username}\n password:${password}phone:${phone} \n email:${email}\n address:${address}`)
-            }
+            Meteor.call('Account.create',username,password,email,name,address,phone,
+            (error,result)=>{
+                if(error){
+                    handleUsernameError(`*${error.error}`);
+                    alert('username already taken')
+                }else{
+                    alert(`Name:${name}\n Username: ${username}\n password:${password}phone:${phone} \n email:${email}\n address:${address}`)
+                    Meteor.loginWithPassword(username,password)
+                }
+            })   
          }
         else{
             handlePasswordError('*Passwords do not match');
@@ -59,15 +62,16 @@ const RegistrationForm = ()=>{
                             <input type='password' className='form-control' onChange={e=>handlePasswordChange(e.target.value)} 
                             placeholder='Password'
                             />
-                            <Form.Label className="loginError">{passwordError}</Form.Label><br/>
+                            
                         </FloatingLabel>
+                        <Form.Label className="loginError">{passwordError}</Form.Label><br/>
                         <FloatingLabel controlId="floatingInput" label="Confirm Password" className="mb-3">
                             <input type='password' className='form-control' onChange={e=>handleConfPasswordChange(e.target.value)} 
                             placeholder='Confirm Password'
                             />
                         </FloatingLabel>
                         <FloatingLabel controlId="floatingInput" label="Phone Number" className="mb-3">
-                                <input type='tel' pattern='[0-9]{10}' value={phone} className="form-control" required onChange={e=>handlephoneChange(e.target.value)}
+                                <input type='tel' pattern='[0-9]{10}' value={phone} className="form-control" required onChange={e=>handlePhoneChange(e.target.value)}
                                 placeholder="Phone Number"
                                 />        
                         </FloatingLabel>

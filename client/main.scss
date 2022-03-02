@@ -248,6 +248,9 @@ body{
   ::-webkit-scrollbar {
     width: 10px;
 }
+::-webkit-scrollbar:horizontal{
+   height: 10px;
+}
 
 /* Track */
 ::-webkit-scrollbar-track {
@@ -967,6 +970,7 @@ margin-left: 80px;
     margin-top: 11%;
     margin-left: -10%;
     border: lightblue;
+    opacity: 1 !important;
   }
 //how does it works
 .how-work{
@@ -1480,7 +1484,7 @@ textarea.input {
 .parallax {
   /* The image used */
   /* Set a specific height */
-  min-height: 500px; 
+  min-height: 100px; 
   /* Create the parallax scrolling effect */
   background-attachment: fixed;
   background-position: center;
@@ -1488,4 +1492,17 @@ textarea.input {
   background-size: cover;
   opacity: 0.65;
   position:relative;
+}
+.nav-home{
+  background-color: rgba(0, 0, 0, 0) !important;
+  color:red !important;
+}
+.toast-notification{
+  z-index:100;
+  position: absolute;
+  width: 50%;
+  margin-left: 25%;
+}
+.toast{
+  width:100% !important;
 }

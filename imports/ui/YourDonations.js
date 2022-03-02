@@ -1,9 +1,10 @@
-import React,{useState} from 'react';
+import React,{useState,useEffect} from 'react';
 import { DonationList } from '../api/links';
-import {Alert,Spinner,Button,Modal,Carousel,} from 'react-bootstrap';
+import {Alert,Spinner,Button,Modal,Carousel,Toast} from 'react-bootstrap';
 import { useTracker } from 'meteor/react-meteor-data';
 import {Files} from '../api/links';
 import {useNavigate} from 'react-router-dom';
+import {MdWarning} from '@react-icons/all-files/md/MdWarning';
 
 function verifyColor(t){
     if(t==true){
@@ -14,6 +15,7 @@ function verifyColor(t){
     }
 }
 
+
 const YourDonations = () => {  
     
     if(Meteor.user()){  
@@ -22,6 +24,20 @@ const YourDonations = () => {
     const handleClose = () => setShow(false);
     const handleShow = () => {setShow(true)};
     const [show, setShow] = useState(false);
+
+    const [showtoast, setShowToast] = useState([]);
+    const handleAdd = (toast) => {
+    const newtoast = showtoast.slice();
+        newtoast.push(toast);
+        setShowToast(newtoast);
+      }
+      
+    const handleUpdate = (index, toast) => {
+        const newtoast = [...showtoast];
+        newtoast[index] = toast;
+        console.log(showtoast);
+        setShowToast(newtoast);
+      }
     
     const isLoadingData = useTracker(()=>{
         const handle=Meteor.subscribe('yourDonations');//used useTracker to continuously check if subscribe is ready 
@@ -31,13 +47,37 @@ const YourDonations = () => {
     const isLoadingImg=useTracker(()=>{
         const handle=Meteor.subscribe('yourDonationImages')
         return(!handle.ready());
-    })    
+    })   
+
+    useEffect(()=>{
+        if(!isLoadingData && !isLoadingImg){
+            const donor=DonationList.find({username:(Meteor.user()).username},{fields:{}}).fetch();
+            for(i=0;i<donor.length;i++){
+                handleAdd(true);
+            }
+        }
+    },[isLoadingImg]) 
+
     if(!isLoadingData && !isLoadingImg){
     const donationList=DonationList.find({username:(Meteor.user()).username},{fields:{}}).fetch();
         console.log(donationList)
         return (
             <div className="admin-page">
                 <h1>Your Donations</h1>
+                <div className='toast-notification'>
+                {donationList.map((donor,index) => (
+                (donor.remark)?
+                        (<Toast show={showtoast[index]} position='top-center' onClose={()=>{handleUpdate(index,false);}}>
+                            <Toast.Header>
+                            <MdWarning/>    
+                            <strong className="me-auto">Remarks on your donation of {donor.medicine_name}</strong>
+                            <small></small>
+                            </Toast.Header>
+                            <Toast.Body>{donor.remark}&nbsp;<a href={`/editdonation/${donor._id}`}>click here to edit</a></Toast.Body>
+                        </Toast>)
+                        :(null)))
+                        }
+                    </div>
                 <table className="admin-table">
                     <tbody>
                     
