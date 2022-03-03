@@ -96,7 +96,7 @@ const Request = () => {
                     <p className="small">
                     This includes other medcines and medical items like suppliments, masks, etc. &nbsp;<br/><br/><br/>
                    </p>
-                   <a className='request-now' href={`/requestlist/antibiotic`}>Request Now</a>
+                   <a className='request-now' href={`/requestlist/others`}>Request Now</a>
                         <div class="go-corner" href="#">
                             <div class="go-arrow">
                                 →

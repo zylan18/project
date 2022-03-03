@@ -226,6 +226,9 @@ ${(DonationList.findOne({_id:donation_id})).brand}\n${(DonationList.findOne({_id
                 <option value='antipyretic'>antipyretic</option>
                 <option value='antibiotic'>antibiotic</option>
                 <option value='antiseptic'>antiseptic</option>
+                <option value='analgesic'>analgesic</option>
+                <option value='mood_stabilizer'>mood stabilizer</option>
+                <option value='others'>others</option>
              </Form.Select>
               </div>
 
@@ -454,6 +457,9 @@ ${(DonationList.findOne({_id:donation_id})).brand}\n${(DonationList.findOne({_id
                                             <option value='antipyretic'>antipyretic</option>
                                             <option value='antibiotic'>antibiotic</option>
                                             <option value='antiseptic'>antiseptic</option>
+                                            <option value='analgesic'>analgesic</option>
+                                            <option value='mood_stabilizer'>mood stabilizer</option>
+                                            <option value='others'>others</option>
                                         </Form.Select>
                                     </div>
                                 <div className='row'> 

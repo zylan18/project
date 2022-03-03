@@ -2,7 +2,7 @@ import React,{useState,useEffect} from 'react'
 import { Request } from '../api/links'
 import { DonationList } from '../api/links';
 import { useTracker } from 'meteor/react-meteor-data';
-import {Alert,Modal,Spinner,Carousel,Form,Button,Accordion} from 'react-bootstrap';
+import {Alert,Modal,Spinner,Carousel,Row,Col,Form,Button,Accordion,OverlayTrigger,Popover} from 'react-bootstrap';
 import {Files} from '../api/links';
 import {GiConfirmed} from '@react-icons/all-files/gi/GiConfirmed';//to use icon
 import {GiCancel} from '@react-icons/all-files/gi/GiCancel';
@@ -139,11 +139,66 @@ const AdminRequest = () => {
                     return "not-verified"
                 }
             }
+            const search=(field)=>{
+                var fieldindex;
+                switch(field){
+                    case 'medname':{
+                        fieldindex=2;
+                        break;
+                    }
+                    case 'requestername':{
+                        fieldindex=1;
+                        break;
+                    }
+                    case 'type':{
+                        fieldindex=3;
+                        break;
+                    }
+        
+                }
+                let filter=document.getElementById(field).value.toUpperCase();
+                let mytable=document.getElementById('table');
+                let tr=mytable.getElementsByTagName('tr');
+                for(var i=0;i<tr.length;i++)
+                {let td=tr[i].getElementsByTagName('td')[fieldindex];
+                 if(td){
+                        let textvalue=td.textContent || td.innerHTML;
+                        if(textvalue.toUpperCase().indexOf(filter)>-1)
+                            {tr[i].style.display="";
+                            }
+                            else
+                            {tr[i].style.display="none";
+                            }
+                        }
+                }
+            }
             return (
                 <div className='admin-page'>
+                    <div className='row row-cols-lg-auto g-3 p-3 search-row'>
+              <div className='col-12'>
+                <input type='text' id='medname' className='form-control form-control-sm' 
+                placeholder='search medicine name..' onKeyUp={()=>{search('medname')}}/>
+              </div>
+              <div className='col-12'>
+                <input type='text' id='requestername' className='form-control form-control-sm' 
+                placeholder='search requester name..' onKeyUp={()=>{search('requestername')}}/>
+              </div>
+              <div className='col-12'>
+              <Form.Select size="sm" id={`type`} onChange={()=>{search('type')}}>
+                <option value=''>All</option>
+                <option value='antipyretic'>antipyretic</option>
+                <option value='antibiotic'>antibiotic</option>
+                <option value='antiseptic'>antiseptic</option>
+                <option value='analgesic'>analgesic</option>
+                <option value='mood_stabilizer'>mood stabilizer</option>
+                <option value='others'>others</option>
+             </Form.Select>
+              </div>
+
+            </div>
                 <div className="table-scrollbar Flipped"> {/*used to flip the div to get horizontal scrollbar */}
                 <div className='Flipped'> {/*used to flip back the table contents*/}
-                    <table className="admin-table">
+                    <table className="admin-table" id='table'>
                         <tbody>
                         <tr>
                             <th width="150px"></th>
@@ -178,9 +233,34 @@ const AdminRequest = () => {
                                         }
                                 </Carousel>)}
                             </td>
-                            <td width='100px'>{medicine.requester_name}</td>
+                            <td width='100px'>{medicine.requester_name} / {medicine.username}</td>
                             {/* {console.log(medicine.donor_name)} */}
-                            <td width='100px'><a href={`/donationstatus/${medicine.donation_id}`}>{medicine.medicine_name}</a></td>
+                            <td width='100px'>
+                            <OverlayTrigger
+                            trigger="hover"
+                            key={index}
+                            placement='top'
+                            overlay={
+                                <Popover id={`popover${index}`}>
+                                <Popover.Header as="h3">{medicine.medicine_name}</Popover.Header>
+                                <Popover.Body>
+                                    <Row style={{'color':'red'}}>
+                                        <Col>Type:</Col><Col>{medicine.type}</Col>
+                                    </Row>
+                                    <Row style={{'color':'blue'}}>    
+                                        <Col>Status:</Col><Col >{(DonationList.findOne({_id:medicine.donation_id})).status}</Col>
+                                    </Row>   
+                                    <Row style={{'color':'green'}}>
+                                        <Col>Donor:</Col><Col>{(DonationList.findOne({_id:medicine.donation_id})).username}</Col>
+                                    </Row>    
+                                    
+                                </Popover.Body>
+                                </Popover>
+                            }
+                            >   
+                                <a href={`/donationstatus/${medicine.donation_id}`}>{medicine.medicine_name}</a>
+                            </OverlayTrigger>    
+                            </td>
                             <td width='100px'>{medicine.type}</td>
                             <td width='100px'>{medicine.requestdate}</td>
                             <td width='100px'>{medicine.exp_date}</td>
