@@ -3,6 +3,7 @@ import {DonationList} from './links';
 import {Meteor} from 'meteor/meteor'
 import {Files} from './links'
 import {Request} from './links'
+import {ContactUs} from './links'
 
 
 Meteor.publish('requestList',(type)=>{
@@ -80,7 +81,9 @@ Meteor.publish('donationDelivery',()=>{
 Meteor.publish('requestDelivery',()=>{
   return( Request.find({status:{$in: ["verified","dispatched","in transit","out for delivery","delivered",],}}))
 })
-
+Meteor.publish('contactus',()=>{
+  return(ContactUs.find({}))
+})
 
 Meteor.methods({
     'Account.create'(username,password,email,nameofuser,address,phone){
@@ -238,6 +241,9 @@ Meteor.methods({
         },
         'setRequestRemark'(id,remark){
           Request.update(id,{$set:{remark:remark,edit:true}});
+        },
+        'contactUsSubmit'(name,email,phone,message){
+          ContactUs.insert({name:name,email:email,phone:phone,message:message});
         }
 
 });

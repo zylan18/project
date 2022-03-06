@@ -1,10 +1,25 @@
-import React from 'react';
+import React,{useState} from 'react';
 import '../../client/main.scss'
 import {FaInstagram} from '@react-icons/all-files/fa/FaInstagram'
 import {FaFacebookSquare} from '@react-icons/all-files/fa/FaFacebookSquare'
 import {FaTwitterSquare} from '@react-icons/all-files/fa/FaTwitterSquare'
 
 const ContactUs = () => {
+  const [email,handleEmail]=useState('');
+  const [name,handleName]=useState('');
+  const [phone,handlePhone]=useState('');
+  const [message,handleMessage]=useState('');
+  handleSubmit=()=>{
+    Meteor.call('contactUsSubmit',name,email,phone,message,
+    (error,result)=>{
+      if(error){
+        alert('Error Not Submitted')
+      }
+      else{
+        alert('submitted Successfully')
+      }
+    })
+  }
   return(
         //  <div className='about-us'><h1>About Us!!!</h1>
         //  <div className='aboutus-title'><h1>Support our work</h1></div>
@@ -23,15 +38,15 @@ const ContactUs = () => {
                <div class="info">
                  <div class="information">
                    <img src="/images/location.png" class="icon" alt="" />
-                   <p>Ramesh ka ghar</p>
+                   <p>SIES College of Arts, Science and Commerce, Jain Society, Sion West, Mumbai 400 022</p>
                  </div>
                  <div class="information">
                    <img src="/images/email.png" class="icon" alt="" />
-                   <p>ramesh.com</p>
+                   <p>example.com</p>
                  </div>
                  <div class="information">
                    <img src="/images/phone.png" class="icon" alt="" />
-                   <p>000-6969-000</p>
+                   <p>000000000</p>
                  </div>
                </div>
      
@@ -44,16 +59,10 @@ const ContactUs = () => {
                    <a href="#">
                    <FaTwitterSquare/>
                    </a>
-                   <a href="https://instagram.com/zylan.18?utm_medium=copy_link">
+                   <a href="#">
                      <FaInstagram/>
                    </a>
-                   <svg preserveAspectRatio="none" data-bbox="20.045 51 159.91 98.001" viewBox="20.045 51 159.91 98.001" 
-        height="50" width="50" xmlns="http://www.w3.org/2000/svg" data-type="shape" role="presentation" aria-hidden="true">
-    <g>
-        <path d="M179.222 129.111c-.655-.409-1.555-.164-2.046.491l-8.43 14.078c-9.494-37.323-27.583-63.924-53.856-78.902-42.89-24.391-93.308-9.003-93.799-8.84-.737.246-1.228 1.064-.982 1.801.246.737 1.064 1.228 1.801.982.491-.164 49.764-15.224 91.588 8.676 25.619 14.569 43.216 40.515 52.465 77.101l-14.16-8.021c-.737-.409-1.637-.164-1.964.573-.409.737-.164 1.637.573 1.964l17.188 9.74c.082 0 .082.082.164.082s.082 0 .164.082a.88.88 0 0 0 .408.082h.327c.164 0 .327-.082.491-.246l.082-.082.327-.327 10.231-17.106c.328-.819.164-1.719-.572-2.128z"></path>
-    </g>
-</svg>
-<p style={{'margin-top':'15%'}}>@zylan18</p>
+                   
                  </div>
                </div>
              </div>
@@ -62,25 +71,25 @@ const ContactUs = () => {
                <span class="circle one"></span>
                <span class="circle two"></span>
      
-               <form className='contact-formtag' action="index.html" autocomplete="off">
+               <form className='contact-formtag' onSubmit={handleSubmit}  autocomplete="off">
                  <h3 class="title">Contact us</h3>
                  <div class="input-container focus">
-                   <input type="text" name="name" class="input" />
+                   <input type="text" value={name} name="name" class="input" required onChange={e=>handleName(e.target.value)} />
                    <label for="">Username</label>
                    <span>Username</span>
                  </div>
                  <div class="input-container focus">
-                   <input type="email" name="email" class="input" />
+                   <input type="email" value={email} name="email" class="input" required onChange={e=>handleEmail(e.target.value)} />
                    <label for="">Email</label>
                    <span>Email</span>
                  </div>
                  <div class="input-container focus">
-                   <input type="tel" name="phone" class="input" />
+                   <input type="tel" value={phone} name="phone" class="input" required onChange={e=>handlePhone(e.target.value)} />
                    <label for="">Phone</label>
                    <span>Phone</span>
                  </div>
                  <div class="input-container textarea focus">
-                   <textarea name="message" class="input"></textarea>
+                   <textarea value={message} name="message" class="input" required onChange={e=>handleMessage(e.target.value)}></textarea>
                    <label for="">Message</label>
                    <span>Message</span>
                  </div>

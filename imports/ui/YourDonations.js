@@ -68,9 +68,8 @@ const YourDonations = () => {
                 {donationList.map((donor,index) => (
                 (donor.remark)?
                         (<Toast show={showtoast[index]} position='top-center' onClose={()=>{handleUpdate(index,false);}}>
-                            <Toast.Header>
-                            <MdWarning/>    
-                            <strong className="me-auto">Remarks on your donation of {donor.medicine_name}</strong>
+                            <Toast.Header>    
+                            <strong className="me-auto">Remarks on your donation {donor.medicine_name}</strong>
                             <small></small>
                             </Toast.Header>
                             <Toast.Body>{donor.remark}&nbsp;<a href={`/editdonation/${donor._id}`}>click here to edit</a></Toast.Body>
@@ -78,7 +77,7 @@ const YourDonations = () => {
                         :(null)))
                         }
                     </div>
-                <table className="admin-table">
+                <table className="admin-table your-donation-table">
                     <tbody>
                     
                     <tr>
@@ -94,7 +93,7 @@ const YourDonations = () => {
                     </tr>
                 {donationList.map((donor,index) => (
                     <tr data-index={index} className={(verifyColor(donor.verify_status))}>
-                        <td>
+                        <td >
                         {((Files.findOne({donation_id:donor._id})).data.length == 1)?//it checks if one image is uploaded then display one image else display carousel
                         ((image=(Files.findOne({donation_id:donor._id})).data)?
                         (<img className='preview-image' src={URL.createObjectURL(new Blob([image[0]]))}
@@ -111,17 +110,17 @@ const YourDonations = () => {
                         </Carousel>)
                         }
                         </td>
-                        <td>{donor.medicine_name}</td>
-                        <td>{donor.donatedat}</td>
+                        <td className='medicine-detail'>{donor.medicine_name}</td>
+                        <td className='medicine-detail'>{donor.donatedat}</td>
                        
-                        <td>{donor.status}</td>
-                        <td>{donor.remark}</td>
+                        <td className='medicine-detail'>{donor.status}</td>
+                        <td className='medicine-detail'>{(donor.remark)?(donor.remark):('no remarks yet')}</td>
                         {/* {(donor.status!='rejected' && donor.status!='canceled')?(
                         <td>
                             <Button className="btn-danger" onClick={()=>cancelDonation(index)}>Cancel</Button>
                         </td>):null}  */}
-                        <td><a href={`/donationstatus/${donor._id}`}>click here for more details</a></td>
-                        <td>{(donor.edit)?(<Button onClick={()=>navigate(`/editdonation/${donor._id}`)}>edit</Button>):(null)}</td>
+                        <td className='medicine-detail'><a href={`/donationstatus/${donor._id}`}>click here for more details</a></td>
+                        <td className='request-button'>{(donor.edit)?(<Button onClick={()=>navigate(`/editdonation/${donor._id}`)}>edit</Button>):(null)}</td>
                     </tr>
                     
                     )

@@ -7,7 +7,8 @@ import { useTracker } from 'meteor/react-meteor-data';
 import { Navbar,Nav,Container} from 'react-bootstrap';
 import Home from './Home.js';
 import NavBar from './NavBar';
-import Admin from './Admin';
+import Admin from './Admin'
+import AdminDonation from './AdminDonation';
 import Request from'./Request';
 import RequestForm from './RequestForm';
 import Profile from './Profile';
@@ -36,7 +37,7 @@ const App = () => {
           <Route exact path="/donate" element={<DonationForm/>}/>
           <Route exact path='/contactus' element={<ContactUs/>}/>
           <Route exact path="/editdonation/:id" element={<EditDonationForm/>}/>
-          <Route exact path="/admin" element={<Admin/>}/>
+          <Route exact path="/admindonation" element={<AdminDonation/>}/>
           <Route exact path="/request" element={<Request/>}/>
           <Route exact path="/requestform/:id" element={<RequestForm/>}/>{/*here :id is used for sending any value to the requestform*/}
           <Route exact path="/editrequest/:id" element={<EditRequestForm/>}/>
@@ -49,6 +50,7 @@ const App = () => {
           <Route exact path='/delivery' element={<Delivery/>}/>
           <Route exact path='/donationstatus/:id' element={<DonationStatus/>}/>
           <Route exact path='/requeststatus/:id' element={<RequestStatus/>}/>
+          <Route exact path='/admin' element={<Admin/>}/>
         </Routes>
       </Router>
     </div>

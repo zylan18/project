@@ -62,7 +62,7 @@ const Request = () => {
                     <p className="small">
                     An analgesic drug, also called simply an analgesic, pain reliever, or painkiller,
                      is any member of the group of drugs used to achieve relief from pain&nbsp; 
-                    <a href='https://en.wikipedia.org/wiki/Analgestic'>more</a>
+                    <a href='https://en.wikipedia.org/wiki/Analgesic'>more</a>
                    </p>
                    <a className='request-now' href={`/requestlist/analgestic`}>Request Now</a>
                         <div class="go-corner" href="#">

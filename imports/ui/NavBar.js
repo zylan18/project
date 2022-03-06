@@ -19,7 +19,7 @@ function NavBar() {
         <Navbar bg="primary" className="w-auto" variant="dark" expand='lg'>
           <Container>
             <Navbar.Brand  href="/">
-              <img src='/images/logo.svg' width="80" height="30" style={{'fill':'white'}} className="d-inline-block align-top logo"/>
+              <img src='/images/logo.png' width="110" style={{'object-fit':'contain'}} className="d-inline-block align-top logo"/>
             </Navbar.Brand>
           
             <Navbar.Toggle aria-controls="basic-navbar-nav" />
@@ -35,6 +35,7 @@ function NavBar() {
                   <NavDropdown.Item href="/profile">Profile</NavDropdown.Item>
                   <NavDropdown.Item href="/yourdonations">Your Donations</NavDropdown.Item>
                   <NavDropdown.Item href="/yourrequests">Your Requests</NavDropdown.Item>
+                  {(Meteor.user().profile.admin)?(<NavDropdown.Item href="/admin">Admin</NavDropdown.Item>):null}
                   <NavDropdown.Divider />
                   <NavDropdown.Item onClick={logout}>
                     <span className="red-text">Signout</span>
@@ -45,7 +46,6 @@ function NavBar() {
             </Navbar.Collapse>
           </Container>
           </Navbar>
-          
         </div>
  
     )
@@ -57,7 +57,7 @@ function NavBar() {
       <Navbar bg="primary" className="w-auto" variant="dark" expand='lg'>
             <Container>
             <Navbar.Brand  href="/">
-              <img src='/images/logo.svg' width="80" height="30" style={{'fill':'white'}} className="d-inline-block align-top logo"/>
+              <img src='/images/logo.png' width="110" style={{'object-fit':'contain'}} className="d-inline-block align-top logo"/>
             </Navbar.Brand>        
                 <Nav className="container-fluid">
               </Nav>
@@ -73,7 +73,7 @@ function NavBar() {
     <Navbar bg="primary" className="w-auto" variant="dark" expand='lg'>
           <Container>
           <Navbar.Brand  href="/">
-              <img src='/images/logo.svg' width="80" height="30" style={{'fill':'white'}} className="d-inline-block align-top logo"/>
+              <img src='/images/logo.png' width="110" style={{'object-fit':'contain'}} className="d-inline-block align-top logo"/>
             </Navbar.Brand>   
             <Navbar.Toggle aria-controls="basic-navbar-nav" />
               <Navbar.Collapse id="basic-navbar-nav">    
@@ -82,6 +82,8 @@ function NavBar() {
               <Link className="nav-link" to={"/register"}>Donate</Link>
               <Link className="nav-link" to={"/register"}>Request</Link>
               <Link className="nav-link" to={"/register"}>Register</Link>
+              <Link className="nav-link" to={"/aboutus"}>About Us</Link>
+              <Link className="nav-link" to={"/contactus"}>Contact Us</Link>
               <div className='ms-auto'>
                 <LoginForm/>
               </div>  

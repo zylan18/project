@@ -66,7 +66,6 @@ const YourRequests = () => {
                 (request.remark)?
                         (<Toast show={showtoast[index]} position='top-center' onClose={()=>{handleUpdate(index,false);}}>
                             <Toast.Header>
-                            <MdWarning/>    
                             <strong className="me-auto">Remarks on your request {request.medicine_name}</strong>
                             <small></small>
                             </Toast.Header>
@@ -75,9 +74,8 @@ const YourRequests = () => {
                         :(null)))
                         }
                     </div>
-                <table className="admin-table">
+                <table className="admin-table your-donation-table">
                     <tbody>
-                    
                     <tr>
                         <th width='100px'></th>
                         <th width='100px'>Medicine Name</th>
@@ -86,7 +84,6 @@ const YourRequests = () => {
                         <th width='100px'>Remarks</th>
                         <th width='100px'></th>
                         <th width='75px'></th>
-                      
                     </tr>
                 {requestList.map((request,index) => (
                     <tr data-index={index} className={(verifyColor(request.verify_status))}>
@@ -107,18 +104,18 @@ const YourRequests = () => {
                         </Carousel>)
                         }
                         </td>
-                        <td>{request.medicine_name}</td>
-                        <td>{request.requestdate}</td>
+                        <td className='medicine-detail'>{request.medicine_name}</td>
+                        <td className='medicine-detail'>{request.requestdate}</td>
                        
-                        <td>{request.status}</td>
-                        <td>{request.remark}</td>
+                        <td className='medicine-detail'>{request.status}</td>
+                        <td className='medicine-detail'>{(request.remark)?(request.remark):('no remarks yet')}</td>
                         
                         {/* {(request.status!='rejected' && request.status!='canceled')?(
                         <td>
                             <Button className="btn-danger" onClick={()=>cancelrequest(index)}>Cancel</Button>
                         </td>):null}  */}
                         <td><a href={`/requeststatus/${request._id}`}>click here for more details</a></td>
-                        <td>{(request.edit)?(<Button onClick={()=>navigate(`/editrequest/${request._id}`)}>edit</Button>):(null)}</td>
+                        <td className='request-button'>{(request.edit)?(<Button onClick={()=>navigate(`/editrequest/${request._id}`)}>edit</Button>):(null)}</td>
                     </tr>
                     )
                     )

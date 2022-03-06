@@ -583,7 +583,7 @@ footer{
   height: auto;
   width: 100%;
   font-family: "Open Sans";
-  padding-top: 40px;
+  padding-top: 10px;
   color: #fff;}
   .footer-content{
     display: flex;
@@ -591,6 +591,7 @@ footer{
     justify-content: center;
     flex-direction: column;
     text-align: center;
+    padding-bottom: 5px;
 }
 .footer-content h3{
     font-size: 1.8rem;
@@ -616,7 +617,6 @@ footer{
   }
   .footer-bottom span{
       text-transform: uppercase;
-      opacity: .4;
       font-weight: 200;}
      .phone{
        background-color: rgb(135, 136, 137);
@@ -832,10 +832,142 @@ footer{
     td:nth-of-type(4):before { content: "Composition:"; }
     td:nth-of-type(5):before { content: "Expiry Date:"; }
   }
+  .your-donation-table{
+    th{
+      display: none !important;
+    }
+    table, thead, tbody, th, td, tr { 
+      display: block; 
+    }
+    
+    /* Hide table headers (but not display: none;, for accessibility) */
+    thead tr { 
+      position: absolute;
+      top: -9999px;
+      left: -9999px;
+    }
+    
+    tr { 
+      border: 0.5px solid #fff !important; 
+      margin-top: 10px;
+    }
+    
+    td { 
+      /* Behave  like a "row" */
+      border: none;
+      border-bottom: 1px solid #eee; 
+      position: relative;
+      //text-align: right !important;
+    }
+    .medicine-detail{
+      margin-left: 50%;
+    }
+    
+    td:before { 
+      /* Now like a table header */
+      position: absolute;
+      /* Top/left values mimic padding */
+      top: 6px;
+      left: 6px;
+      width: 45%; 
+      padding-right: 10px;
+      margin-left: -100%; 
+      text-align: left;
+      white-space: nowrap;
+    }
+    .request-button{
+     margin-left: 35% !important;//center align request button when screen small
+    }
+    
+    /*
+    Label the data
+    */
+    td:nth-of-type(1):before { content: ""; }
+    td:nth-of-type(2):before { content: "Medicine Name:"; }
+    td:nth-of-type(3):before { content: "Donated at:"; }
+    td:nth-of-type(4):before { content: "Status:"; }
+    td:nth-of-type(5):before { content: "Remarks:"; }
+    td:nth-of-type(6):before { content: ""; }
+  }
+  .your-request-table{
+    th{
+      display: none !important;
+    }
+    table, thead, tbody, th, td, tr { 
+      display: block; 
+    }
+    
+    /* Hide table headers (but not display: none;, for accessibility) */
+    thead tr { 
+      position: absolute;
+      top: -9999px;
+      left: -9999px;
+    }
+    
+    tr { 
+      border: 0.5px solid #fff !important; 
+      margin-top: 10px;
+    }
+    
+    td { 
+      /* Behave  like a "row" */
+      border: none;
+      border-bottom: 1px solid #eee; 
+      position: relative;
+      //text-align: right !important;
+    }
+    .medicine-detail{
+      margin-left: 50%;
+    }
+    
+    td:before { 
+      /* Now like a table header */
+      position: absolute;
+      /* Top/left values mimic padding */
+      top: 6px;
+      left: 6px;
+      width: 45%; 
+      padding-right: 10px;
+      margin-left: -100%; 
+      text-align: left;
+      white-space: nowrap;
+    }
+    .request-button{
+     margin-left: 35% !important;//center align request button when screen small
+    }
+    
+    /*
+    Label the data
+    */
+    td:nth-of-type(1):before { content: ""; }
+    td:nth-of-type(2):before { content: "Medicine Name:"; }
+    td:nth-of-type(3):before { content: "requested at:"; }
+    td:nth-of-type(4):before { content: "Status:"; }
+    td:nth-of-type(5):before { content: "Remarks:"; }
+    td:nth-of-type(6):before { content: ""; }
+  }
+
     
     .admin-image {
       margin-top: 30%;
       width: 100%;
+    }
+    .toast-notification{
+      width:90% !important;
+      margin-left: 0% !important;
+    }
+    .toast{
+      margin-left: 0% !important;
+    }
+    .homepage-positive-img{
+    width: 28% !important;
+    margin-left: -25% !important;
+    margin-top: 20% !important;
+    }
+    .homepage-tiny-impact-img{
+    margin-left: 75% !important;
+    width: 25% !important;
+    margin-top: -20% !important;
     }
   }
   .card1 {
@@ -908,6 +1040,7 @@ footer{
   .request-now{
     background-color: $primary;
     text-decoration: none;
+    border: solid 1px $primary;
     color:white;
     padding:7px;
     border-radius: 4px;
@@ -915,6 +1048,7 @@ footer{
   .request-now:hover{
     background-color: white;
     color:$primary !important;
+    border: solid 1px $primary;
   }
   .request-container {
     margin-bottom: 10px;
@@ -1196,7 +1330,7 @@ textarea.input {
   display: flex;
   color: #555;
   margin: 0.7rem 0;
-  align-items: center;
+  align-items: flex-start;
   font-size: 0.95rem;
 }
 
@@ -1434,7 +1568,6 @@ textarea.input {
   align-items: flex-start;
   flex-direction: column;
   font-size: 22px;
-
 }
 .text-container h1{
   font-size: 70px;
@@ -1505,4 +1638,22 @@ textarea.input {
 }
 .toast{
   width:100% !important;
+}
+.accordion{
+  margin: auto;
+  width: 95%;
+}
+.homepage-quotes{
+  display: block;
+  height:150px;
+  font-size: 16px;
+}
+.homepage-quotes-carousel{
+  .carousel-indicators [data-bs-target] {
+    background-color: $primary !important;
+    margin-bottom: -20px;
+    border-radius: 50%;
+    height:25px;
+    width: 25px;
+}
 }

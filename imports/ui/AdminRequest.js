@@ -142,7 +142,7 @@ const AdminRequest = () => {
             const search=(field)=>{
                 var fieldindex;
                 switch(field){
-                    case 'medname':{
+                    case 'medname request':{
                         fieldindex=2;
                         break;
                     }
@@ -150,19 +150,20 @@ const AdminRequest = () => {
                         fieldindex=1;
                         break;
                     }
-                    case 'type':{
+                    case 'type request':{
                         fieldindex=3;
                         break;
                     }
         
                 }
                 let filter=document.getElementById(field).value.toUpperCase();
-                let mytable=document.getElementById('table');
+                let mytable=document.getElementById('table request');
                 let tr=mytable.getElementsByTagName('tr');
                 for(var i=0;i<tr.length;i++)
                 {let td=tr[i].getElementsByTagName('td')[fieldindex];
                  if(td){
                         let textvalue=td.textContent || td.innerHTML;
+                        console.log(textvalue)
                         if(textvalue.toUpperCase().indexOf(filter)>-1)
                             {tr[i].style.display="";
                             }
@@ -176,15 +177,15 @@ const AdminRequest = () => {
                 <div className='admin-page'>
                     <div className='row row-cols-lg-auto g-3 p-3 search-row'>
               <div className='col-12'>
-                <input type='text' id='medname' className='form-control form-control-sm' 
-                placeholder='search medicine name..' onKeyUp={()=>{search('medname')}}/>
+                <input type='text' id='medname request' className='form-control form-control-sm' 
+                placeholder='search medicine name..' onKeyUp={()=>{search('medname request')}}/>
               </div>
               <div className='col-12'>
                 <input type='text' id='requestername' className='form-control form-control-sm' 
                 placeholder='search requester name..' onKeyUp={()=>{search('requestername')}}/>
               </div>
               <div className='col-12'>
-              <Form.Select size="sm" id={`type`} onChange={()=>{search('type')}}>
+              <Form.Select size="sm" id={`type request`} onChange={()=>{search('type request')}}>
                 <option value=''>All</option>
                 <option value='antipyretic'>antipyretic</option>
                 <option value='antibiotic'>antibiotic</option>
@@ -198,9 +199,13 @@ const AdminRequest = () => {
             </div>
                 <div className="table-scrollbar Flipped"> {/*used to flip the div to get horizontal scrollbar */}
                 <div className='Flipped'> {/*used to flip back the table contents*/}
-                    <table className="admin-table" id='table'>
+                    <table className="admin-table" id='table request'>
                         <tbody>
-                        <tr>
+                        <Accordion>
+                    {
+                    reqname.map((medicine,index) => (
+                        <Accordion.Item as='tr' eventKey={index} >
+                        <tr style={{'font-size':'12px'}}>
                             <th width="150px"></th>
                             <th width="100px">Requester Name</th>
                             <th width="100px">Medicine Name</th>
@@ -208,14 +213,9 @@ const AdminRequest = () => {
                             <th width="100px">Requested date</th>
                             <th width="100px">Expiry Date</th>
                             <th width="200px">Reason</th>
-                            <th width="250px">Address</th>
                             <th width="130px">Status</th>
                         </tr>
-                        <Accordion>
-                    {
-                    reqname.map((medicine,index) => (
-                        <Accordion.Item as='tr' eventKey={index} >
-                            <Accordion.Button as='div' data-index={index} className={(verifyColor(medicine.verify_status))}>
+                            <Accordion.Button as='tr' data-index={index} className={(verifyColor(medicine.verify_status))}>
                             {/* {console.log(index)} */}
                             <td width="150px" className="image-table">
                             {((Files.findOne({request_id:medicine._id})).data.length == 1)?//it checks if one image is uploaded then display one image else display carousel
@@ -233,7 +233,25 @@ const AdminRequest = () => {
                                         }
                                 </Carousel>)}
                             </td>
-                            <td width='100px'>{medicine.requester_name} / {medicine.username}</td>
+                            <td width='100px'>
+                            <OverlayTrigger trigger="hover" key={index} placement='top' 
+                             overlay={
+                                <Popover id={`popover${index}`}>
+                                <Popover.Header as="h3">User Details</Popover.Header>
+                                <Popover.Body>
+                                    <Row style={{'color':'red'}}>
+                                        <Col>Phone Number:</Col><Col>{medicine.phone}</Col>
+                                    </Row>
+                                    <Row style={{'color':'blue'}}>    
+                                        <Col>Address:</Col><Col >{medicine.address}</Col>
+                                    </Row>       
+                                </Popover.Body>
+                                </Popover>
+                            }
+                            >       
+                               <p>{medicine.requester_name} / {medicine.username}</p> 
+                            </OverlayTrigger>       
+                            </td>
                             {/* {console.log(medicine.donor_name)} */}
                             <td width='100px'>
                             <OverlayTrigger
@@ -265,11 +283,10 @@ const AdminRequest = () => {
                             <td width='100px'>{medicine.requestdate}</td>
                             <td width='100px'>{medicine.exp_date}</td>
                             <td width='200px'>{medicine.reason}</td>
-                            <td width='250px'>{medicine.address}</td>
                             <td width='130px' id={`medstatus${index}`}>{medicine.status}</td>
                             </Accordion.Button>
                             <Accordion.Body>
-                                <tr>
+                                <tr style={{'font-size':'12px'}}>
                                 <th width='210px'>Set Edit</th>
                                 <th width="130px">Verify Status</th>
                                 <th width="100px">Verified by</th>

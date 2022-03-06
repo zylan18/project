@@ -29,7 +29,7 @@ const DonationForm = () =>{
                     alert('form submitted successfully');
                 }
             });
-            
+
             console.log(medfile);
             Meteor.call('saveFile',Meteor.user()._id,Meteor.user().username,medfile,
             (error,result)=>{
@@ -96,9 +96,10 @@ const DonationForm = () =>{
         // console.log(img);
         var img=URL.createObjectURL(new Blob([medfile]))
         return (
+            <div className="form">
             <Form onSubmit={this.handleSubmit}>
                 
-                <div className="form">
+                
                  <Form.Label><h1>Donation Form</h1></Form.Label>              
                 <FloatingLabel controlId="floatingInput" label="Donor Name" className="mb-3">
                         <input type='text' value={donorname} className="form-control" onChange={e=>handleDonornameChange(e.target.value)}
@@ -140,8 +141,9 @@ const DonationForm = () =>{
                    <br/><br/>     
 
                 <Button className="btn-primary" variant="primary" type="submit">Submit</Button>
-                </div>
+                
                 </Form>
+                </div>
         )
       }//if
       else if(Meteor.loggingIn()){

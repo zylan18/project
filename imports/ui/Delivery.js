@@ -78,7 +78,7 @@ const Delivery = () => {
     return (
       <div>
         <Tab.Container id="left-tabs-example" defaultActiveKey="first">
-          <Nav variant="pills">
+          <Nav variant="pills" className='justify-content-center' style={{'cursor':'pointer'}}>
             <Nav.Item>
               <Nav.Link eventKey="first">Collect</Nav.Link>
             </Nav.Item>
