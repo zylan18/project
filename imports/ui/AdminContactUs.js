@@ -29,7 +29,7 @@ const AdminContactUs = () => {
                     <tr>
                         <td>{contact.name}</td>
                         <td>{contact.email}</td>
-                        <td>{contact.email}</td>
+                        <td>{contact.phone}</td>
                         <td>{contact.message}</td>
                     </tr>
                 )

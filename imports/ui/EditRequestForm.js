@@ -193,7 +193,7 @@ const handleAddMedfile = (file) => {
                         >X</button>
                         </div>))):(null)
                         }
-                        <input type='file' id='file' className="file-input" onChange={fileInput}/>
+                        <input type='file' id='file' accept="image/png, image/jpeg, image/jpg" className="file-input" onChange={fileInput}/>
                         <Form.Label className="loginError">{fileerror}</Form.Label>
                         <br/>
                          <Button type='submit'>Submit</Button>   

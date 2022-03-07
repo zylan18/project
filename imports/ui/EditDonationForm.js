@@ -166,7 +166,7 @@ const DonationForm = () =>{
                         >X</button>
                         </div>))):(null)
                         }
-                        <input className='file-input' type='file' id='file' onChange={fileInput}/>
+                        <input className='file-input' type='file' accept="image/png, image/jpeg, image/jpg" id='file' onChange={fileInput}/>
                         <Form.Label className="loginError" style={{'display':'inline-block'}}>{fileerror}</Form.Label>
                    <br/><br/>     
 
