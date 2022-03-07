@@ -106,26 +106,6 @@ const ContactUs = () => {
          </div>
          <br>
          </br>
-         <footer>
-        <div class="footer-content">
-            <h3>About us </h3>
-            <p>Started in 2022 Sharemeds an initiative by SIES Collage Students grows exponentially through its research in technology and Social Care 
-              .Sharemeds works towards development of Healthy Society.
-              We take surplus medications off of your hands and get them to the people who need them. .</p>
-            {/* <ul class="socials">
-                <li><a href="#"><i class="fa fa-facebook"></i></a></li>
-                <li><a href="#"><FaTwitterSquare/></a></li>
-                <li><a href="#"><i class="fa fa-google-plus"></i></a></li>
-                <li><a href="#"><i class="fa fa-youtube"></i></a></li>
-                <li><a href="#"><i class="fa fa-linkedin-square"></i></a></li>
-            </ul> */}
-        </div>
-        <div class="footer-bottom">
-            <p>copyright &copy;2022 Sorojini. designed by <span>Yash & Manoj with </span></p>
-        </div>
-    </footer>
-    
-
          </div>
          
         
