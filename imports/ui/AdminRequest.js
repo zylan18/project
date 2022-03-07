@@ -45,7 +45,7 @@ const AdminRequest = () => {
 
         useEffect(() => {
             if(!isLoadingData && !isLoadingImg && !isLoadingDonationData){
-                const reqname=Request.find({}).fetch()
+                const reqname=Request.find({}).fetch().reverse()
                 for(i=0;i<reqname.length;i++){
                     document.getElementById(`status${i}`).checked=reqname[i].edit;
                     }
@@ -55,7 +55,7 @@ const AdminRequest = () => {
         var image;
         //console.log(reqname);
         if(!isLoadingData && !isLoadingImg && !isLoadingDonationData){
-            const reqname=Request.find({},{fields:{}}).fetch();
+            const reqname=Request.find({},{fields:{}}).fetch().reverse();
             setEditStatus=(id)=>{
                 // Request.update(id,{$set:{edit:status}});
                 Meteor.call('setRequestEditStatus',id,status,

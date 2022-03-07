@@ -62,7 +62,7 @@ Meteor.publish('requestStatusImages',(id)=>{
 })
 
 Meteor.publish('donationAdmin',()=>{
-  return(DonationList.find({}))
+  return(DonationList.find({}));
 })
 Meteor.publish('donationAdminImages',()=>{
   return(Files.find({donation_id:{$exists:true}}));
@@ -189,9 +189,8 @@ Meteor.methods({
                 // console.log(verified_by);
             }
             else{
-                DonationList.update(id,{$set:{verify_status:true}});
-                DonationList.update(id,{$set:{status:'verified'}});
-                DonationList.update(id,{$set:{edit:false}});
+                DonationList.update(id,{$set:{verify_status:true,status:'verified',edit:false
+              ,remark:''}});
                 // console.log(verified_by);
             }
             DonationList.update(id,{$set:{verified_by:username}});

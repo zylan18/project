@@ -55,7 +55,7 @@ const AdminDonation = () => {
     useEffect(() => {
         if(!isLoadingData&&!isLoadingImg){
         console.log(reload);
-        const donname=DonationList.find({},{fields:{}}).fetch();
+        const donname=DonationList.find({},{fields:{}}).fetch().reverse();
         for(i=0;i<donname.length;i++){
             if('in collection'||'storage'||'in delivery'||'delivered'){
                 document.getElementById(`status${i}`).checked=donname[i].edit;
@@ -66,7 +66,7 @@ const AdminDonation = () => {
     
     var image;
     if(!isLoadingData && !isLoadingImg){
-        const donname=DonationList.find({},{fields:{}}).fetch();
+        const donname=DonationList.find({},{fields:{}}).fetch().reverse();
         function verify(id){  
             const user=Meteor.user();
             // if(donname[index].verify_status == true){

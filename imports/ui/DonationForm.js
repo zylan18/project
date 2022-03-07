@@ -41,8 +41,6 @@ const DonationForm = () =>{
                     alert('image uploaded successfully');
                 }
             });
-            
-            window.location.reload(false);
 
             }else{
                 event.preventDefault();
@@ -75,6 +73,7 @@ const DonationForm = () =>{
             document.getElementById("file").value=null;
         } 
     }
+
     const handleAddMedfile = (file) => {
         const newmedfile = [...medfile];
         newmedfile.push(file);
