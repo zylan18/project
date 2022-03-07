@@ -12,7 +12,7 @@ const Profile = () => {
         const [phone,handlePhoneChange]=useState(user.profile.phone);
         handleSubmit=()=>{
             const user=Meteor.user();
-            Meteor.call("updateProfile",user._id,name,email,address);
+            Meteor.call("updateProfile",user._id,name,email,address,phone);
         }
        
         console.log(user.profile.name);
@@ -27,7 +27,7 @@ const Profile = () => {
                         <Form.Label>E-Mail</Form.Label>
                         <Form.Control type="text" value={email} onChange={e=>handleEmailChange(e.target.value)}/>
                         <Form.Label>Phone Number</Form.Label>
-                        <Form.Control type="text" value={phone} onChange={e=>handlePhoneChange(e.target.value)}/>
+                        <Form.Control type="tel" pattern='[0-9]{10}' value={phone} onChange={e=>handlePhoneChange(e.target.value)}/>
                         <Form.Label>Address</Form.Label>
                         <textarea className='form-control' value={address} onChange={e=>handleAddressChange(e.target.value)}/>
                         <Form.Text muted>

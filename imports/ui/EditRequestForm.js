@@ -89,7 +89,7 @@ const handleAddMedfile = (file) => {
     var date=new Date;
     handleSubmit=(event)=>{
         if(confirm(`Are you sure your details correct?\nAddress:${address}\nReason:${reason}`)){
-        //alert(`user_id:${Meteor.user()._id}\nrequestdate:${date.toLocaleString()}\nusername:${user.username}\nrequester_name:${user.profile.name}\ndonation_id:${id}\nmedicine_name:${medicine.medicine_name}\nexp_date:${medicine.exp_date}\nverify_status:${false}\nverified_by:${''}\nstatus:${'in verification'}\ntype:${medicine.type}`);
+        //alert(`user_id:${Meteor.user()._id}\nrequestdate:${date.toLocaleString()}\nusername:${user.username}\nrequester_name:${user.profile.name}\ndonation_id:${id}\nmedicine_name:${request.medicine_name}\nexp_date:${request.exp_date}\nverify_status:${false}\nverified_by:${''}\nstatus:${'in verification'}\ntype:${request.type}`);
         Meteor.call('updateRequestForm',id,requestername,reason,address,phone,
         (error,result)=>{
             if(error){
@@ -130,8 +130,11 @@ const handleAddMedfile = (file) => {
                             <tbody>
                             <tr padding='1px'><b>Medicine Details:</b></tr>
                             <tr>
-                                <td rowspan="2">
-                                <Carousel variant="dark">
+                                <td rowspan="4">
+                                {   (((Files.findOne({donation_id:request.donation_id})).data).length==1)?
+                            (<img className='request-preview-image' src={URL.createObjectURL(new Blob((Files.findOne({donation_id:request.donation_id})).data))}
+                                    onClick={()=>{setDonation_id(request.donation_id);{console.log(donation_id)};handleShow()}}/>)
+                            :(<Carousel variant="dark">
                                     {(image=(Files.findOne({donation_id:request.donation_id})).data)?
                                     ( image.map((img,index) => (
                                     <Carousel.Item>
@@ -139,12 +142,21 @@ const handleAddMedfile = (file) => {
                                     onClick={()=>{setDonation_id(request.donation_id);{console.log(donation_id)};handleShow()}}/>
                                     </Carousel.Item>))):"Not found"
                                     }
-                            </Carousel></td>
+                            </Carousel>)}
+                            </td>
                                 <td><b>Medicine Name: </b></td>
                                 <td>{request.medicine_name}</td>
                             </tr>
                             <tr>
-                                <td><b>Expiry Date: </b></td>
+                                <td><b>Brand:   </b></td>
+                                <td>{request.brand}</td>
+                            </tr>
+                            <tr>
+                                <td><b>composition:   </b></td>
+                                <td>{request.composition}</td>
+                            </tr>
+                            <tr>
+                                <td><b>Expiry Date:   </b></td>
                                 <td>{request.exp_date}</td>
                             </tr>
                             </tbody>

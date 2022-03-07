@@ -234,7 +234,7 @@ const AdminRequest = () => {
                                 </Carousel>)}
                             </td>
                             <td width='100px'>
-                            <OverlayTrigger trigger="hover" key={index} placement='top' 
+                            <OverlayTrigger  key={index} placement='top' 
                              overlay={
                                 <Popover id={`popover${index}`}>
                                 <Popover.Header as="h3">User Details</Popover.Header>
@@ -255,7 +255,7 @@ const AdminRequest = () => {
                             {/* {console.log(medicine.donor_name)} */}
                             <td width='100px'>
                             <OverlayTrigger
-                            trigger="hover"
+                            
                             key={index}
                             placement='top'
                             overlay={

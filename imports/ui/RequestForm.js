@@ -115,8 +115,12 @@ const handleAddMedfile = (file) => {
                             <tbody>
                             <tr padding='1px'><b>Medicine Details:</b></tr>
                             <tr>
-                                <td rowspan="2">
-                                <Carousel variant="dark">
+                                <td rowspan="4">
+
+                         {   (((Files.findOne({donation_id:medicine._id})).data).length==1)?
+                            (<img className='request-preview-image' src={URL.createObjectURL(new Blob((Files.findOne({donation_id:medicine._id})).data))}
+                                    onClick={()=>{setDonation_id(medicine._id);{console.log(donation_id)};handleShow()}}/>)
+                            :(<Carousel variant="dark">
                                     {(image=(Files.findOne({donation_id:medicine._id})).data)?
                                     ( image.map((img,index) => (
                                     <Carousel.Item>
@@ -124,9 +128,18 @@ const handleAddMedfile = (file) => {
                                     onClick={()=>{setDonation_id(medicine._id);{console.log(donation_id)};handleShow()}}/>
                                     </Carousel.Item>))):"Not found"
                                     }
-                            </Carousel></td>
+                            </Carousel>)}
+                            </td>
                                 <td><b>Medicine Name: </b></td>
                                 <td>{medicine.medicine_name}</td>
+                            </tr>
+                            <tr>
+                                <td><b>Brand:   </b></td>
+                                <td>{medicine.brand}</td>
+                            </tr>
+                            <tr>
+                                <td><b>composition:   </b></td>
+                                <td>{medicine.composition}</td>
                             </tr>
                             <tr>
                                 <td><b>Expiry Date:   </b></td>

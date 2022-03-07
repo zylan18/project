@@ -22,8 +22,9 @@ const RegistrationForm = ()=>{
             Meteor.call('Account.create',username,password,email,name,address,phone,
             (error,result)=>{
                 if(error){
-                    handleUsernameError(`*${error.error}`);
-                    alert('username already taken')
+                    console.log(error.reason);
+                    handleUsernameError(`*${error.reason}`);
+                    alert(error.reason);
                 }else{
                     alert(`Name:${name}\n Username: ${username}\n password:${password}phone:${phone} \n email:${email}\n address:${address}`)
                     Meteor.loginWithPassword(username,password)
@@ -57,14 +58,13 @@ const RegistrationForm = ()=>{
                                 placeholder="Username"
                                 /> 
                         </FloatingLabel>
-                        <Form.Label className="loginError">{usernameError}</Form.Label>
+                        
                         <FloatingLabel controlId="floatingInput" label="Password" className="mb-3">
                             <input type='password' className='form-control' onChange={e=>handlePasswordChange(e.target.value)} 
                             placeholder='Password'
                             />
                             
                         </FloatingLabel>
-                        <Form.Label className="loginError">{passwordError}</Form.Label><br/>
                         <FloatingLabel controlId="floatingInput" label="Confirm Password" className="mb-3">
                             <input type='password' className='form-control' onChange={e=>handleConfPasswordChange(e.target.value)} 
                             placeholder='Confirm Password'
@@ -78,7 +78,9 @@ const RegistrationForm = ()=>{
                         <FloatingLabel controlId="floatingTextarea" label="Address" className="mb-3">
                             <Form.Control as="textarea" className="form-control" onChange={e=>handleAddressChange(e.target.value)}
                             placeholder="Enter address" />
-                        </FloatingLabel>
+                       </FloatingLabel>
+                       <Form.Label className="loginError">{usernameError}</Form.Label>
+                        <Form.Label className="loginError">{passwordError}</Form.Label><br/>
                         <Button variant="primary" type="submit">Submit</Button>
                     </div>
                 </Form>

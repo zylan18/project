@@ -102,7 +102,7 @@ Meteor.methods({
           }
           else
           {
-            throw new Meteor.Error(`username ${username} already taken`);
+            throw new Meteor.Error('username already taken',`username ${username} already taken`);
           }
     },
     'fetchfrommedicine'(key,value){
@@ -111,8 +111,8 @@ Meteor.methods({
       console.log(donname[i].donor_name);
       }
     },
-    'updateProfile'(id,name,email,address){
-      Meteor.users.update(id,{$set:{profile:{name:name,address:address}}});
+    'updateProfile'(id,name,email,address,phone){
+      Meteor.users.update(id,{$set:{profile:{name:name,address:address,phone:phone,admin:false}}});
       Meteor.users.update(id,{$set:{emails:[{address:email,verified:false}]}});
     },
       'saveFile'(id,username,buffer){
@@ -227,6 +227,7 @@ Meteor.methods({
                 Request.update(id,{$set:{verify_status:true}});
                 Request.update(id,{$set:{status:'verified'}});
                 Request.update(id,{$set:{edit:false}});
+                Request.update(id,{$set:{remark:''}});
                 DonationList.update((Request.findOne({_id:id})).donation_id,{$set:{status:'request verified'}}) 
             }
             Request.update(id,{$set:{verified_by:username}});

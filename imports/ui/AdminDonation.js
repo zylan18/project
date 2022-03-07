@@ -274,9 +274,79 @@ ${(DonationList.findOne({_id:donation_id})).brand}\n${(DonationList.findOne({_id
                             </Carousel>)}
                     </td>
                     {/* {console.log(index)} */}
-                    <td width='120px'><Button variant='info' onClick={()=>{setDonindex(name._id);handleDetailShow();}}>detail</Button></td>
                     <td width='120px'>
-                    <OverlayTrigger trigger="hover" key={index} placement='top' 
+                    <OverlayTrigger trigger="click" key={index} placement='right' 
+                    overlay={
+                                <Popover id={`popoverdetail${index}`}>
+                                <Popover.Header as="h3">Donation Details</Popover.Header>
+                                <Popover.Body>
+                                <table>
+                    <tr>
+                        <td align='right'>_id:</td>
+                        <td>{name._id}</td>
+                    </tr>
+                    <tr>
+                        <td align='right'>user_id:</td>
+                        <td>{(name.user_id)?(name.user_id):('not found')}</td>
+                    </tr>
+                    <tr>
+                        <td align='right'>donatdeat:</td>
+                        <td>{name.donatedat}</td>
+                    </tr>
+                    <tr>
+                        <td align='right'>username:</td>
+                        <td>{name.username}</td>
+                    </tr>
+                    <tr>
+                        <td align='right'>donor_name:</td>
+                        <td>{name.donor_name}</td>
+                    </tr>
+                    <tr>
+                        <td align='right'>medicine_name:</td>
+                        <td>{name.medicine_name}</td>
+                    </tr>
+                    <tr>
+                        <td align='right'>phone:</td>
+                        <td>{name.phone}</td>
+                    </tr>
+                    <tr>
+                        <td align='right'>address:</td>
+                        <td>{name.address}</td>
+                    </tr>
+                    <tr>
+                        <td align='right'>brand:</td>
+                        <td>{name.brand}</td>
+                    </tr>
+                    <tr>
+                        <td align='right'>composition:</td>
+                        <td>{name.composition}</td>
+                    </tr>
+                    <tr>
+                        <td align='right'>exp_date:</td>
+                        <td>{name.exp_date}</td>
+                    </tr>
+                    <tr>
+                        <td align='right'>verify_status:</td>
+                        <td>{(name.verify_status)?('true'):('false')}</td>
+                    </tr>
+                    <tr>
+                        <td align='right'>status:</td>
+                        <td>{name.status}</td>
+                    </tr>
+                    <tr>
+                        <td align='right'>verified_by:</td>
+                        <td>{name.verified_by}</td>
+                    </tr>
+                    </table>
+                                </Popover.Body>
+                                </Popover>
+                            }
+                            >
+                        <Button variant='info'>detail</Button>
+                        </OverlayTrigger>
+                    </td>
+                    <td width='120px'>
+                    <OverlayTrigger key={index} placement='top' 
                     overlay={
                                 <Popover id={`popover${index}`}>
                                 <Popover.Header as="h3">User Details</Popover.Header>
