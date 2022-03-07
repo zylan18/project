@@ -5,6 +5,7 @@ import { DonationList } from '../api/links'
 import { Files } from '../api/links'
 import {Request} from '../api/links'
 import { useTracker } from 'meteor/react-meteor-data';
+import {useNavigate} from 'react-router-dom';
 
 const RequestForm = () => {
     
@@ -16,13 +17,14 @@ const RequestForm = () => {
     const [medfile,handleFileChange]=useState('');
     const [show, setShow] = useState(false);
     const [donation_id,setDonation_id]=useState('');
-    const [requestername,handleRequesterNameChange]=useState('');
+    const [requestername,handleRequesterNameChange]=useState(Meteor.user().profile.address);
     const [reason,handleReasonChange]=useState('');
     const handleClose = () => setShow(false);
     const handleShow = () => {setShow(true)};
     const [address,handleAddressChange]=useState(user.profile.address);
     const [phone,handlePhoneChange]=useState(Meteor.user().profile.phone);
     const [fileerror,handleFileError]=useState('');
+    const navigate=useNavigate();
     const isLoadingData = useTracker(()=>{
         const handle=Meteor.subscribe('donationStatus',id);//used useTracker to continuously check if subscribe is ready 
         return(!handle.ready());
@@ -87,7 +89,6 @@ const handleAddMedfile = (file) => {
                 event.preventDefault();
             }else{
                 alert('Form Submitted');
-                window.location.reload(false);
             }
         });
         // Request.insert({user_id:Meteor.user()._id,requestdate:date.toLocaleString(),
@@ -100,7 +101,7 @@ const handleAddMedfile = (file) => {
                 alert('Error uploading image\nimage not uploaded');
             }else{
                 alert('Image uploaded successfully');
-                window.location.reload(false);
+                navigate(`/yourrequests`);         
             }
         });  
         event.preventDefault();  

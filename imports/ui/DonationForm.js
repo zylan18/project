@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
 import {Form, FloatingLabel,Button,Alert,Spinner} from 'react-bootstrap';
+import {useNavigate} from 'react-router-dom';
 import { DonationList } from '../api/links';
 //import {Meteor} from 'meteor/meteor';
 import {Files} from '../api/links';
@@ -15,6 +16,7 @@ const DonationForm = () =>{
         const [expdate,handleExpdateChange]=useState('');
         const [medfile,handleFileChange]=useState([]);
         const [fileerror,handleFileError]=useState('');
+        const navigate = useNavigate();
         handleSubmit=(event)=>{
             if(confirm(`Are you sure your details correct?\nDonor Name:${donorname}\nAddress:${address}\nMedicine Name:${medname}\nExpiry Date:${expdate}
             `)){
@@ -27,7 +29,8 @@ const DonationForm = () =>{
                 }
                 else{
                     alert('form submitted successfully');
-                }
+                    event.preventDefault();
+                   }
             });
 
             console.log(medfile);
@@ -35,17 +38,22 @@ const DonationForm = () =>{
             (error,result)=>{
                 if(error){
                     alert('error in uploading image\nImage not upladed')
-                    event.preventDefault();
+                    event.preventDefault();   
                 }
                 else{
                     alert('image uploaded successfully');
+                    if(confirm('Do you want to donate again?')){
+                        window.location.reload();
+                    }else{
+                        navigate(`/yourdonations`);
+                    } 
                 }
             });
-
-            }else{
-                event.preventDefault();
-            }
+        event.preventDefault();
+        }else{
+            event.preventDefault();
         }
+    }
        
         function fileInput(event){ 
             var file = event.target.files[0]; //assuming 1 file only

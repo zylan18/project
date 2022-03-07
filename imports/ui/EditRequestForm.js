@@ -1,6 +1,6 @@
 import React,{useState,useEffect} from 'react'
 import {Alert,Form,FloatingLabel,Modal,Spinner,Col,Row,Carousel,Button} from 'react-bootstrap'
-import { useParams } from 'react-router-dom'
+import { useParams,useNavigate } from 'react-router-dom'
 import { DonationList } from '../api/links'
 import { Files } from '../api/links'
 import {Request} from '../api/links'
@@ -13,7 +13,6 @@ const EditRequestForm = () => {
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
     const handleShow = () => {setShow(true)};
-
     const [medfile,handleFileChange]=useState();
     const [donation_id,setDonation_id]=useState();
     const [requestername,handleRequseterNameChange]=useState();
@@ -21,6 +20,7 @@ const EditRequestForm = () => {
     const [address,handleAddressChange]=useState();
     const [phone,handlePhoneChange]=useState();
     const [fileerror,handleFileError]=useState();
+    const navigate=useNavigate();
     const isLoadingData = useTracker(()=>{
         const handle=Meteor.subscribe('requestStatus',id);//used useTracker to continuously check if subscribe is ready 
         return(!handle.ready());
@@ -97,7 +97,6 @@ const handleAddMedfile = (file) => {
                 event.preventDefault();
             }else{
                 alert('Form Updated successfully');
-                window.location.reload(false);
             }
         });
         // Request.update(id,{$set:{reason:reason,address:address,status:'in verification',edit:true,phone:phone}})
@@ -108,12 +107,12 @@ const handleAddMedfile = (file) => {
                 alert('Error images not uploaded');
             }else{
                 alert('Images uploaded successfully');
+                navigate(`/yourrequests`);         
             }
         })
-        window.location.reload(false);
+        event.preventDefault()
         }else{
             event.preventDefault();
-            alert('error request form was not updated');
         }
     }
     if(!isLoadingData && !isLoadingImg){

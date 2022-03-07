@@ -54,7 +54,6 @@ const DonationForm = () =>{
                 }
                 else{
                     alert('form updated successfully');
-                    window.location.reload(false);
                 }
             });
             
@@ -66,8 +65,10 @@ const DonationForm = () =>{
                     alert('Error! images not updated');
                 }else{
                     alert('Images updated successfully');
+                    navigate(`/yourdonations`);         
                 }
             });
+            event.preventDefault()
 
             }else{
                 event.preventDefault();
