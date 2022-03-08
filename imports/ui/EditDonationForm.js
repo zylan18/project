@@ -1,5 +1,5 @@
 import React, {useState,useEffect} from 'react';
-import {Form, FloatingLabel,Button,Alert,Spinner} from 'react-bootstrap';
+import {Form, FloatingLabel,Button,Alert,Spinner,Modal} from 'react-bootstrap';
 import { DonationList } from '../api/links';
 //import {Meteor} from 'meteor/meteor';
 import {Files} from '../api/links';
@@ -18,6 +18,12 @@ const DonationForm = () =>{
         const [medname,handleMednameChange]=useState();
         const [expdate,handleExpdateChange]=useState();
         const [medfile,handleFileChange]=useState();  
+
+        const [modalmessage,handleModalMessage]=useState('');
+        const [showsubmit, setShowSubmit] = useState(false);
+        const handleSubmitClose = () => setShowSubmit(false);
+        const handleSubmitShow = () => {setShowSubmit(true)};
+
         var fileinput;
         const [fileerror,handleFileError]=useState();
         const isLoadingData = useTracker(()=>{
@@ -44,35 +50,36 @@ const DonationForm = () =>{
         },[(isLoadingImg)])//added is loadingImage as dependency to update state
         
         handleSubmit=(event)=>{
-            if(confirm(`Are you sure your details correct?\nDonor Name:${donorname}\nAddress:${address}\nMedicine Name:${medname}\nExpiry Date:${expdate}`)){
             date=new Date;
+            handleSubmitShow();
+            handleModalMessage('Updating details.....');
             Meteor.call('updateDonationForm',id,donorname,address,phone,medname,expdate,
             (error,result)=>{
                 if(error){
-                    alert('Error in updating donation form\nForm not submitted')
+                    handleModalMessage('Error in updating donation form\nForm not submitted');
+                    document.querySelector('#modalokayerror').style.display='inline';
                     event.preventDefault();
                 }
                 else{
-                    alert('form updated successfully');
+                    handleModalMessage('\nform updated successfully');
                 }
             });
             
             console.log(medfile);
             // Files.update((Files.findOne({donation_id:id})._id),{$set:{data:medfile}});
+            handleModalMessage('\nUpdating images.....');
             Meteor.call('updateDonationImages',id,medfile,
             (error,result)=>{
                 if(error){
-                    alert('Error! images not updated');
+                    handleModalMessage('Error! images not updated');
+                    document.querySelector('#modalokayerror').style.display='inline';
                 }else{
-                    alert('Images updated successfully');
-                    navigate(`/yourdonations`);         
+                    handleModalMessage('\nForm and Images updated successfully');
+                    document.querySelector('#modalokay').style.display='inline';
+                    console.log(modalmessage);
                 }
             });
-            event.preventDefault()
-
-            }else{
-                event.preventDefault();
-            }
+            event.preventDefault();
         }
         
 
@@ -173,6 +180,21 @@ const DonationForm = () =>{
 
                 <Button className="btn-primary" variant="primary" type="submit">Update</Button>
                 </div>
+                    <Modal show={showsubmit} onHide={handleSubmitClose} backdrop="static" centered keyboard={false}>
+                        <Modal.Header>  
+                        </Modal.Header>
+                        <Modal.Body>
+                            <p style={{'textAlign':'center'}}>{modalmessage}</p>
+                        <div style={{'width': '15%','margin': 'auto'}}>
+                            <Button id='modalokay' style={{'display':'none'}}
+                            onClick={()=>{console.log(modalmessage);navigate('/yourdonations')}}
+                            >Okay</Button>
+                            <Button variant='danger' id='modalokayerror' style={{'display':'none'}}
+                            onClick={()=>{console.log(modalmessage);window.location.reload()}}
+                            >Retry</Button>
+                        </div>    
+                        </Modal.Body>
+                </Modal> 
                 </Form>
         )
       

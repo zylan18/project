@@ -13,6 +13,12 @@ const EditRequestForm = () => {
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
     const handleShow = () => {setShow(true)};
+
+    const [modalmessage,handleModalMessage]=useState('');
+    const [showsubmit, setShowSubmit] = useState(false);
+    const handleSubmitClose = () => setShowSubmit(false);
+    const handleSubmitShow = () => {setShowSubmit(true)};
+
     const [medfile,handleFileChange]=useState();
     const [donation_id,setDonation_id]=useState();
     const [requestername,handleRequseterNameChange]=useState();
@@ -88,32 +94,32 @@ const handleAddMedfile = (file) => {
   
     var date=new Date;
     handleSubmit=(event)=>{
-        if(confirm(`Are you sure your details correct?\nAddress:${address}\nReason:${reason}`)){
         //alert(`user_id:${Meteor.user()._id}\nrequestdate:${date.toLocaleString()}\nusername:${user.username}\nrequester_name:${user.profile.name}\ndonation_id:${id}\nmedicine_name:${request.medicine_name}\nexp_date:${request.exp_date}\nverify_status:${false}\nverified_by:${''}\nstatus:${'in verification'}\ntype:${request.type}`);
+        handleSubmitShow();
+        handleModalMessage('Updating details.....');
         Meteor.call('updateRequestForm',id,requestername,reason,address,phone,
         (error,result)=>{
             if(error){
-                alert('Error request form not updated');
+                handleModalMessage('Error request form not updated');
                 event.preventDefault();
             }else{
-                alert('Form Updated successfully');
+                handleModalMessage('Form Updated successfully');
             }
         });
+        handleModalMessage('Updating images.....');
         // Request.update(id,{$set:{reason:reason,address:address,status:'in verification',edit:true,phone:phone}})
         // 
         Meteor.call('updateRequestImages',id,medfile,
         (error,result)=>{
             if(error){
-                alert('Error images not uploaded');
+                handleModalMessage('Error images not uploaded');
             }else{
-                alert('Images uploaded successfully');
-                navigate(`/yourrequests`);         
+                handleModalMessage('Form and Images uploaded successfully');
+                document.querySelector('#modalokay').style.display='inline'
             }
         })
         event.preventDefault()
-        }else{
-            event.preventDefault();
-        }
+        
     }
     if(!isLoadingData && !isLoadingImg){
         const request=Request.findOne({});
@@ -212,6 +218,21 @@ const handleAddMedfile = (file) => {
                             </Carousel>):null}
                     </Modal.Body>
                 </Modal>
+                <Modal show={showsubmit} onHide={handleSubmitClose} backdrop="static" centered keyboard={false}>
+                    <Modal.Header>  
+                    </Modal.Header>
+                    <Modal.Body>
+                        <p style={{'textAlign':'center'}}>{modalmessage}</p>
+                    <div style={{'width': '15%','margin': 'auto'}}>
+                        <Button id='modalokay' style={{'display':'none'}}
+                        onClick={()=>{navigate('/yourrequests')}}
+                        >Okay</Button>
+                         <Button variant='danger' id='modalokayerror' style={{'display':'none'}}
+                            onClick={()=>{console.log(modalmessage);window.location.reload()}}
+                            >Retry</Button>
+                    </div>    
+                    </Modal.Body>
+              </Modal>            
             </div>
         )
         }//if edit

@@ -1,5 +1,5 @@
 import React,{useState} from 'react'
-import {Alert,Form,FloatingLabel,Modal,Spinner,Col,Row,Carousel,Button} from 'react-bootstrap'
+import { Alert,Form,FloatingLabel,Modal,Spinner,Col,Row,Carousel,Button} from 'react-bootstrap'
 import { useParams } from 'react-router-dom'
 import { DonationList } from '../api/links'
 import { Files } from '../api/links'
@@ -18,9 +18,16 @@ const RequestForm = () => {
     const [show, setShow] = useState(false);
     const [donation_id,setDonation_id]=useState('');
     const [requestername,handleRequesterNameChange]=useState(Meteor.user().profile.address);
+
     const [reason,handleReasonChange]=useState('');
     const handleClose = () => setShow(false);
     const handleShow = () => {setShow(true)};
+    
+    const [modalmessage,handleModalMessage]=useState('');
+    const [showsubmit, setShowSubmit] = useState(false);
+    const handleSubmitClose = () => setShowSubmit(false);
+    const handleSubmitShow = () => {setShowSubmit(true)};
+    
     const [address,handleAddressChange]=useState(user.profile.address);
     const [phone,handlePhoneChange]=useState(Meteor.user().profile.phone);
     const [fileerror,handleFileError]=useState('');
@@ -82,15 +89,19 @@ const handleAddMedfile = (file) => {
     var date=new Date;
     handleSubmit=(event)=>{
         //alert(`user_id:${Meteor.user()._id}\nrequestdate:${date.toLocaleString()}\nusername:${user.username}\nrequester_name:${user.profile.name}\ndonation_id:${id}\nmedicine_name:${medicine.medicine_name}\nexp_date:${medicine.exp_date}\nverify_status:${false}\nverified_by:${''}\nstatus:${'in verification'}\ntype:${medicine.type}`);
+        handleSubmitShow()
+        handleModalMessage('Submitting details.....');
         Meteor.call('submitReuqestForm',Meteor.user()._id,Meteor.user().username,requestername,id,reason,address,phone,
         (error,result)=>{
             if(error){
-                alert('Error request form not submitted');
+                handleModalMessage('Error request form not submitted');
+                document.querySelector("#modalokayerror").style.display = "inline";
                 event.preventDefault();
             }else{
-                alert('Form Submitted');
+                handleModalMessage('Form Submitted');
             }
         });
+        handleModalMessage('Submitting images.....');
         // Request.insert({user_id:Meteor.user()._id,requestdate:date.toLocaleString(),
         // username:user.username,requester_name:user.profile.name,donation_id:id, 
         // medicine_name:medicine.medicine_name, exp_date:medicine.exp_date,verify_status:false,verified_by:'',
@@ -98,10 +109,11 @@ const handleAddMedfile = (file) => {
         Meteor.call('requestFormSaveFile',Meteor.user()._id,Meteor.user().username,medfile,
         (error,result)=>{
             if(error){
-                alert('Error uploading image\nimage not uploaded');
+                handleModalMessage('Error uploading image\nimage not uploaded');
+                document.querySelector("#modalokayerror").style.display = "inline";
             }else{
-                alert('Image uploaded successfully');
-                navigate(`/yourrequests`);         
+                handleModalMessage('Form and Images Submitted Successfully'); 
+                document.querySelector("#modalokay").style.display = "inline";
             }
         });  
         event.preventDefault();  
@@ -129,7 +141,8 @@ const handleAddMedfile = (file) => {
                                     onClick={()=>{setDonation_id(medicine._id);{console.log(donation_id)};handleShow()}}/>
                                     </Carousel.Item>))):"Not found"
                                     }
-                            </Carousel>)}
+                            </Carousel>)
+                            }
                             </td>
                                 <td><b>Medicine Name: </b></td>
                                 <td>{medicine.medicine_name}</td>
@@ -200,6 +213,23 @@ const handleAddMedfile = (file) => {
                             </Carousel>):null}
                     </Modal.Body>
                 </Modal>
+
+                <Modal show={showsubmit} onHide={handleSubmitClose} backdrop="static" centered keyboard={false}>
+                    <Modal.Header>  
+                    </Modal.Header>
+                    <Modal.Body>
+                        <p style={{'textAlign':'center'}}>{modalmessage}</p>
+                    <div style={{'width': '15%','margin': 'auto'}}>
+                        <Button id='modalokay' style={{'display':'none'}}
+                        onClick={()=>{navigate('/yourrequests')}}
+                        >Okay</Button>
+                         <Button variant='danger' id='modalokayerror' style={{'display':'none'}}
+                            onClick={()=>{console.log(modalmessage);window.location.reload()}}
+                            >Retry</Button>
+                    </div>    
+                    </Modal.Body>
+              </Modal>                    
+
             </div>
         )
         }else{

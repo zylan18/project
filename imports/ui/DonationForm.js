@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {Form, FloatingLabel,Button,Alert,Spinner} from 'react-bootstrap';
+import {Form, FloatingLabel,Button,Alert,Spinner,Modal,Row,Col} from 'react-bootstrap';
 import {useNavigate} from 'react-router-dom';
 import { DonationList } from '../api/links';
 //import {Meteor} from 'meteor/meteor';
@@ -16,43 +16,50 @@ const DonationForm = () =>{
         const [expdate,handleExpdateChange]=useState('');
         const [medfile,handleFileChange]=useState([]);
         const [fileerror,handleFileError]=useState('');
+
+        const [modalmessage,handleModalMessage]=useState('');
+        const [show, setShow] = useState(false);
+        const handleClose = () => setShow(false);
+        const handleShow = () => {setShow(true)};
         const navigate = useNavigate();
         handleSubmit=(event)=>{
-            if(confirm(`Are you sure your details correct?\nDonor Name:${donorname}\nAddress:${address}\nMedicine Name:${medname}\nExpiry Date:${expdate}
-            `)){
+            // if(confirm(`Are you sure your details correct?\nDonor Name:${donorname}\nAddress:${address}\nMedicine Name:${medname}\nExpiry Date:${expdate}
             date=new Date;
+            handleShow();
+            handleModalMessage('Submitting please wait ....');
             Meteor.call('submitDonationForm',Meteor.user()._id,Meteor.user().username,donorname,address,phone,medname,expdate,
             (error,result)=>{
                 if(error){
-                    alert('Error in submiting donation form\nForm not submitted')
+                    handleModalMessage('Error in submiting donation form\nForm not submitted');
+                    document.querySelector("#modalokayerror").style.display = "inline";
                     event.preventDefault();
                 }
                 else{
-                    alert('form submitted successfully');
+                    handleModalMessage('form submitted successfully');
                     event.preventDefault();
                    }
             });
 
+            handleModalMessage('Submitting image please wait ....');
             console.log(medfile);
             Meteor.call('saveFile',Meteor.user()._id,Meteor.user().username,medfile,
             (error,result)=>{
                 if(error){
-                    alert('error in uploading image\nImage not upladed')
+                    handleModalMessage('error in uploading image\nImage not upladed');
+                    document.querySelector("#modalokayerror").style.display = "inline";
                     event.preventDefault();   
                 }
                 else{
-                    alert('image uploaded successfully');
-                    if(confirm('Do you want to donate again?')){
-                        window.location.reload();
-                    }else{
-                        navigate(`/yourdonations`);
-                    } 
+                    handleModalMessage('Form and Images Submitted successfully');
+                    document.querySelector("#modalokay").style.display = "inline";
+                    // if(confirm('Do you want to donate again?')){
+                    //     window.location.reload();
+                    // }else{
+                    //     navigate(`/yourdonations`);
+                    // } 
                 }
             });
         event.preventDefault();
-        }else{
-            event.preventDefault();
-        }
     }
        
         function fileInput(event){ 
@@ -148,8 +155,35 @@ const DonationForm = () =>{
                    <br/><br/>     
 
                 <Button className="btn-primary" variant="primary" type="submit">Submit</Button>
-                
                 </Form>
+                <Modal show={show} onHide={handleClose} backdrop="static" centered keyboard={false}>
+                    <Modal.Header>  
+                    </Modal.Header>
+                    <Modal.Body>
+                        <p style={{'textAlign':'center'}}>{modalmessage}</p>
+                    <Row style={{'width': '50%','margin': 'auto'}}>
+                        <Col ><Button id='modalyes' style={{'display':'none'}} 
+                        onClick={()=>{window.location.reload()}}
+                        >Yes</Button></Col>
+                        
+                        <Col id='modalokay' style={{'display':'none'}}><Button 
+                        onClick={()=>{document.getElementById("modalokay").style.display = "none";
+                        handleModalMessage('Do you want donate again?');
+                        document.querySelector("#modalyes").style.display = "inline";
+                        document.querySelector("#modalno").style.display = "inline";}}
+                        >Okay</Button>
+                         <Button variant='danger' id='modalokayerror' style={{'display':'none'}}
+                            onClick={()=>{console.log(modalmessage);window.location.reload()}}
+                            >Retry</Button>
+                        </Col>
+                        
+                        <Col><Button id='modalno' style={{'display':'none'}}
+                        onClick={()=>{navigate(`/yourdonations`);}}
+                        >No</Button></Col>
+                    </Row>
+                        
+                    </Modal.Body>
+              </Modal>
                 </div>
         )
       }//if
@@ -168,5 +202,4 @@ const DonationForm = () =>{
           </div>)
       }
     }
-
 export default DonationForm

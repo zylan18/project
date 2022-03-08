@@ -12,6 +12,10 @@ const RequestStatus = () => {
     const handleClose = () => setShow(false);
     const handleShow = () => {setShow(true)};
 
+    const [donationshow, setDonationShow] = useState(false);
+    const handleDonationClose = () => setDonationShow(false);
+    const handleDonationShow = () => {setDonationShow(true)};
+
     const isLoadingData = useTracker(()=>{
         const handle=Meteor.subscribe('requestStatus',id);//used useTracker to continuously check if subscribe is ready 
         return(!handle.ready());
@@ -135,14 +139,14 @@ const RequestStatus = () => {
             <Col> {((Files.findOne({donation_id:request.donation_id})).data.length == 1)?//it checks if one image is uploaded then display one image else display carousel
                         ((image=(Files.findOne({donation_id:request.donation_id})).data)?
                         (<img className='preview-image' src={URL.createObjectURL(new Blob([image[0]]))}
-                        onClick={()=>{handleShow()}}/>)
+                        onClick={()=>{handleDonationShow()}}/>)
                         :"Not found")
                         :(<Carousel variant="dark">
                                     {(image=(Files.findOne({donation_id:request.donation_id})).data)?
                                     ( image.map((img,index) => (
                                     <Carousel.Item>
                                     <img className='preview-image' src={URL.createObjectURL(new Blob([img]))}
-                                    onClick={()=>{handleShow()}}/>
+                                    onClick={()=>{handleDonationShow()}}/>
                                     </Carousel.Item>))):"Not found"
                                     }
                         </Carousel>)
@@ -214,6 +218,23 @@ const RequestStatus = () => {
                 {id?
                 (<Carousel variant="dark">
                     {(image=(Files.findOne({request_id:id})).data)?
+                    ( image.map((img,index) => (
+                    <Carousel.Item>
+                    <img className='admin-image' src={URL.createObjectURL(new Blob([img]))}
+                    />
+                     </Carousel.Item>))):"Not found"
+                    }
+                </Carousel> ):null}
+                </Modal.Body>
+              </Modal>
+
+              <Modal show={donationshow} onHide={handleDonationClose} fullscreen={true}>
+                <Modal.Header closeButton>
+                </Modal.Header>
+                <Modal.Body>
+                {(request.donation_id)?
+                (<Carousel variant="dark">
+                    {(image=(Files.findOne({donation_id:request.donation_id})).data)?
                     ( image.map((img,index) => (
                     <Carousel.Item>
                     <img className='admin-image' src={URL.createObjectURL(new Blob([img]))}

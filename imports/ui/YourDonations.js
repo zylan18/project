@@ -96,14 +96,14 @@ const YourDonations = () => {
                         <td >
                         {((Files.findOne({donation_id:donor._id})).data.length == 1)?//it checks if one image is uploaded then display one image else display carousel
                         ((image=(Files.findOne({donation_id:donor._id})).data)?
-                        (<img className='preview-image' src={URL.createObjectURL(new Blob([image[0]]))}
+                        (<img loading='lazy' className='preview-image' src={URL.createObjectURL(new Blob([image[0]]))}
                         onClick={()=>{setDonation_id(donor._id);handleShow()}}/>)
                         :"Not found")
                         :(<Carousel variant="dark">
                                     {(image=(Files.findOne({donation_id:donor._id})).data)?
                                     ( image.map((img,index) => (
                                     <Carousel.Item>
-                                    <img className='preview-image' src={URL.createObjectURL(new Blob([img]))}
+                                    <img loading='lazy' className='preview-image' src={URL.createObjectURL(new Blob([img]))}
                                     onClick={()=>{setDonation_id(donor._id);handleShow()}}/>
                                     </Carousel.Item>))):"Not found"
                                     }
@@ -137,7 +137,7 @@ const YourDonations = () => {
                             {(image=(Files.findOne({donation_id:donation_id})).data)?
                             ( image.map((img,index) => (
                             <Carousel.Item>
-                            <img className='admin-image' src={URL.createObjectURL(new Blob([img]))}
+                            <img loading='lazy' className='admin-image' src={URL.createObjectURL(new Blob([img]))}
                             />
                             </Carousel.Item>))):"Not found"
                             }

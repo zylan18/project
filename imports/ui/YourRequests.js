@@ -90,14 +90,14 @@ const YourRequests = () => {
                         <td>
                         {((Files.findOne({request_id:request._id})).data.length == 1)?//it checks if one image is uploaded then display one image else display carousel
                         ((image=(Files.findOne({request_id:request._id})).data)?
-                        (<img className='preview-image' src={URL.createObjectURL(new Blob([image[0]]))}
+                        (<img loading='lazy' className='preview-image' src={URL.createObjectURL(new Blob([image[0]]))}
                         onClick={()=>{setRequest_id(request._id);handleShow()}}/>)
                         :"Not found")
                         :(<Carousel variant="dark">
                                     {(image=(Files.findOne({request_id:request._id})).data)?
                                     ( image.map((img,index) => (
                                     <Carousel.Item>
-                                    <img className='preview-image' src={URL.createObjectURL(new Blob([img]))}
+                                    <img loading='lazy' className='preview-image' src={URL.createObjectURL(new Blob([img]))}
                                     onClick={()=>{setRequest_id(request._id);handleShow()}}/>
                                     </Carousel.Item>))):"Not found"
                                     }
@@ -131,7 +131,7 @@ const YourRequests = () => {
                             {(image=(Files.findOne({request_id:request_id})).data)?
                             ( image.map((img,index) => (
                             <Carousel.Item>
-                            <img className='admin-image' src={URL.createObjectURL(new Blob([img]))}
+                            <img loading='lazy' className='admin-image' src={URL.createObjectURL(new Blob([img]))}
                             />
                             </Carousel.Item>))):"Not found"
                             }
