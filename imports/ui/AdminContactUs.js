@@ -1,7 +1,7 @@
-import React from 'react'
+import React, { useState } from 'react'
 import {ContactUs} from '../api/links';
 import {useTracker} from 'meteor/react-meteor-data';
-import { Spinner,Alert } from 'react-bootstrap';
+import { Spinner,Alert,Button,Stack } from 'react-bootstrap';
 
 
 const AdminContactUs = () => {
@@ -9,14 +9,23 @@ const AdminContactUs = () => {
         if(Meteor.user().profile.admin){
     const isLoadingData = useTracker(()=>{
         const handle=Meteor.subscribe('contactus');//used useTracker to continuously check if subscribe is ready 
-        
         return(!handle.ready());
         })
+        const [reload,setReload]=useState(0);
+        useState(()=>{
+
+        },[reload]);
         if(!isLoadingData){   
-            const contactUs= ContactUs.find({}).fetch();
+            const contactUs= ContactUs.find({}).fetch().reverse();
             console.log(contactUs)
     return (
         <div className='admin-page'>
+            <Stack direction="horizontal">
+            <div className='ms-auto'>
+                <Button onClick={()=>{setReload(reload+1)}}>&#x21bb;</Button>
+            </div>
+            </Stack>
+            
             <table className='admin-table'>
                 <tr>
                     <th>Name</th>

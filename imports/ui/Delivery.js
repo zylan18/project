@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Nav, Spinner, Form, Button, Tab, Row, Col } from "react-bootstrap";
+import { Nav, Spinner, Form, Button, Tab, Row, Col,Stack } from "react-bootstrap";
 import { DonationList } from "../api/links";
 import { Request } from "../api/links";
 import {useTracker} from 'meteor/react-meteor-data'
@@ -76,8 +76,13 @@ const Delivery = () => {
       },
     }).fetch();
     return (
-      <div>
-        <Tab.Container id="left-tabs-example" defaultActiveKey="first">
+      <div className={'admin-page'}>
+        <Stack direction="horizontal">
+            <div className='ms-auto'>
+                <Button onClick={()=>{setReload(reload+1)}}>&#x21bb;</Button>
+            </div>
+            </Stack>
+        <Tab.Container defaultActiveKey="first">
           <Nav variant="pills" className='justify-content-center' style={{'cursor':'pointer'}}>
             <Nav.Item>
               <Nav.Link eventKey="first">Collect</Nav.Link>

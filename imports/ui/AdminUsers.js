@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import {useTracker} from 'meteor/react-meteor-data';
-import { Spinner,Alert,Button } from 'react-bootstrap';
+import { Spinner,Alert,Button,Stack } from 'react-bootstrap';
 import {FaTrashAlt} from '@react-icons/all-files/fa/FaTrashAlt'
 
 const AdminUsers = () => {
@@ -14,27 +14,36 @@ const AdminUsers = () => {
         useState(()=>{
             console.log(reload);
         },[reload])
+
         if(!isLoadingData){   
             const users= Meteor.users.find({}).fetch();
             console.log(users)
         deleteUser=(id,admin)=>{
-            if(!admin){
-                Meteor.call('deleteUser',id,
-                (error,result)=>{
-                    if(error){
-                        alert('could not delete user');
-                    }else{
-                        alert('deleted user successfully');
-                        setReload(reload+1);
-                    }
-                })
-            }else{
-                alert('cannot delete admin user');
+            if(confirm('Are your sure you want do delete')){
+                if(!admin){
+                    Meteor.call('deleteUser',id,
+                    (error,result)=>{
+                        if(error){
+                            alert('could not delete user');
+                        }else{
+                            alert('deleted user successfully');
+                            setReload(reload+1);
+                        }
+                    })
+                }else{
+                    alert('cannot delete admin user');
+                }
             }
+        
         }
         
     return (
         <div className='admin-page'>
+            <Stack direction="horizontal">
+            <div className='ms-auto'>
+                <Button onClick={()=>{setReload(reload+1)}}>&#x21bb;</Button>
+            </div>
+            </Stack>
             <table className='admin-table'>
                 <tr>
                     <th></th>

@@ -1,7 +1,8 @@
 import React,{useState,useEffect} from 'react'
 import { DonationList } from '../api/links'
 import { useTracker } from 'meteor/react-meteor-data';
-import {Alert,Modal,Spinner,Form,Row,Col,Button,Carousel,Accordion,OverlayTrigger,Popover} from 'react-bootstrap';
+import {Alert,Modal,Spinner,Form,Row,Col,Button,Carousel,Accordion,OverlayTrigger,Popover,Stack} 
+from 'react-bootstrap';
 import {Files} from '../api/links';
 import {GiConfirmed} from '@react-icons/all-files/gi/GiConfirmed';//to use icon
 import {GiCancel} from '@react-icons/all-files/gi/GiCancel';
@@ -148,16 +149,17 @@ const AdminDonation = () => {
         }
 
         deleteDonation=(id)=>{
-            Meteor.call('deleteDonation',id,
-            (error,result)=>{
-                if(error){
-                    alert('error deleting donation')
-                }else{
-                    alert('deleted successfully');
-                    setReload(reload+1);
-                }
-            })
-           
+            if(confirm('Are you sure you want to delete donation?')){
+                Meteor.call('deleteDonation',id,
+                (error,result)=>{
+                    if(error){
+                        alert('error deleting donation')
+                    }else{
+                        alert('deleted successfully');
+                        setReload(reload+1);
+                    }
+                })
+            }
         }
 
         setEditStatus=(id,status)=>{
@@ -234,16 +236,16 @@ ${(DonationList.findOne({_id:donation_id})).brand}\n${(DonationList.findOne({_id
         }
     return (
         <div className='admin-page'>
-          <div className='row row-cols-lg-auto g-3 p-3 search-row'>
-              <div className='col-12'>
+          <Stack direction="horizontal" gap={5} className='search-row'>
+              <div>
                 <input type='text' id='medname' className='form-control form-control-sm' 
                 placeholder='search medicine name..' onKeyUp={()=>{search('medname')}}/>
               </div>
-              <div className='col-12'>
+              <div>
                 <input type='text' id='donorname' className='form-control form-control-sm' 
                 placeholder='search donor name..' onKeyUp={()=>{search('donorname')}}/>
               </div>
-              <div className='col-12'>
+              <div>
               <Form.Select size="sm" id={`type`} onChange={()=>{search('type')}}>
                 <option value=''>All</option>
                 <option value='antipyretic'>antipyretic</option>
@@ -253,9 +255,11 @@ ${(DonationList.findOne({_id:donation_id})).brand}\n${(DonationList.findOne({_id
                 <option value='mood_stabilizer'>mood stabilizer</option>
                 <option value='others'>others</option>
              </Form.Select>
-              </div>
-
             </div>
+            <div className='ms-auto'>
+                 <Button onClick={()=>{setReload(reload+1)}}>&#x21bb;</Button>
+             </div>
+            </Stack>
           <div className="table-scrollbar Flipped"> {/*used to flip the div to get horizontal scrollbar */}
           <div className='Flipped'> {/*used to flip back the table contents*/}
             <table className="admin-table" id='table'>

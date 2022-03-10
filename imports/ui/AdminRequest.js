@@ -2,7 +2,8 @@ import React,{useState,useEffect} from 'react'
 import { Request } from '../api/links'
 import { DonationList } from '../api/links';
 import { useTracker } from 'meteor/react-meteor-data';
-import {Alert,Modal,Spinner,Carousel,Row,Col,Form,Button,Accordion,OverlayTrigger,Popover} from 'react-bootstrap';
+import {Alert,Modal,Spinner,Carousel,Row,Col,Form,Button,Accordion,OverlayTrigger,Popover,Stack} 
+from 'react-bootstrap';
 import {Files} from '../api/links';
 import {GiConfirmed} from '@react-icons/all-files/gi/GiConfirmed';//to use icon
 import {GiCancel} from '@react-icons/all-files/gi/GiCancel';
@@ -71,16 +72,17 @@ const AdminRequest = () => {
             }
             
             deleteRequest=(id)=>{
-                Meteor.call('deleteRequest',id,
-                (error,result)=>{
-                    if(error){
-                        alert('error deleting Request')
-                    }else{
-                        alert('deleted request successfully');
-                        setReload(reload+1);
-                    }
-                })
-               
+                if(confirm('Are you sure you want to delete request?')){
+                    Meteor.call('deleteRequest',id,
+                    (error,result)=>{
+                        if(error){
+                            alert('error deleting Request')
+                        }else{
+                            alert('deleted request successfully');
+                            setReload(reload+1);
+                        }
+                    })
+                }
             }
 
             setRemark=(id)=>{
@@ -189,16 +191,16 @@ const AdminRequest = () => {
             }
             return (
                 <div className='admin-page'>
-                    <div className='row row-cols-lg-auto g-3 p-3 search-row'>
-              <div className='col-12'>
+            <Stack direction="horizontal" gap={5} className='search-row'>
+              <div>
                 <input type='text' id='medname request' className='form-control form-control-sm' 
                 placeholder='search medicine name..' onKeyUp={()=>{search('medname request')}}/>
               </div>
-              <div className='col-12'>
+              <div>
                 <input type='text' id='requestername' className='form-control form-control-sm' 
                 placeholder='search requester name..' onKeyUp={()=>{search('requestername')}}/>
               </div>
-              <div className='col-12'>
+              <div>
               <Form.Select size="sm" id={`type request`} onChange={()=>{search('type request')}}>
                 <option value=''>All</option>
                 <option value='antipyretic'>antipyretic</option>
@@ -209,8 +211,10 @@ const AdminRequest = () => {
                 <option value='others'>others</option>
              </Form.Select>
               </div>
-
-            </div>
+              <div className='ms-auto'>
+                 <Button onClick={()=>{setReload(reload+1)}}>&#x21bb;</Button>
+             </div>
+            </Stack>
                 <div className="table-scrollbar Flipped"> {/*used to flip the div to get horizontal scrollbar */}
                 <div className='Flipped'> {/*used to flip back the table contents*/}
                     <table className="admin-table" id='table request'>
