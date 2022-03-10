@@ -3,6 +3,7 @@ import AdminDonation from './AdminDonation'
 import AdminRequest from './AdminRequest'
 import Delivery from './Delivery'
 import AdminContactUs from './AdminContactUs'
+import AdminUsers from './AdminUsers'
 import {Tabs,Tab} from 'react-bootstrap'
 
 
@@ -21,6 +22,9 @@ const Admin = () => {
             </Tab>
             <Tab eventKey="contactus" title="ContactUs">
                 <AdminContactUs/>
+            </Tab>
+            <Tab eventKey="users" title="Users">
+                <AdminUsers/>
             </Tab>
         </Tabs>
     </div>

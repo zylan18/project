@@ -22,7 +22,7 @@ const AdminContactUs = () => {
                     <th>Name</th>
                     <th>E-mail</th>
                     <th>Phone</th>
-                    <td>Message</td>
+                    <th>Message</th>
                 </tr>
                 <tbody>
                 {contactUs.map((contact,index)=>(

@@ -2,16 +2,21 @@ import { Meteor } from 'meteor/meteor';
 import { Accounts } from 'meteor/accounts-base';
 import '/imports/api/RegistrationFunctions.js';
 
-const SEED_USERNAME = 'meteorite';
-const SEED_PASSWORD = 'password';
 
 Meteor.startup(() => {
 
 
-  if (!Accounts.findUserByUsername(SEED_USERNAME)) {
+  if (!Accounts.findUserByUsername('admin')) {
     Accounts.createUser({
-      username: SEED_USERNAME,
-      password: SEED_PASSWORD,
+      username:'admin',
+      email:'admin@sharemeds.com',
+      password: 'yashop11',
+      profile:{
+          name:'Admin',
+          phone:'0123456789',
+          address:'address',
+          admin:true
+      }
     });
   }
 });

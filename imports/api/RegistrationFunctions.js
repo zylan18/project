@@ -84,6 +84,9 @@ Meteor.publish('requestDelivery',()=>{
 Meteor.publish('contactus',()=>{
   return(ContactUs.find({}))
 })
+Meteor.publish('allUsers', ()=>{
+  return Meteor.users.find({});
+})
 
 Meteor.methods({
     'Account.create'(username,password,email,nameofuser,address,phone){
@@ -244,6 +247,17 @@ Meteor.methods({
         },
         'contactUsSubmit'(name,email,phone,message){
           ContactUs.insert({name:name,email:email,phone:phone,message:message});
+        },
+        'deleteDonation'(id){
+          DonationList.remove({_id:id});
+          Files.remove({donation_id:id});
+        },
+        'deleteRequest'(id){
+          Request.remove({_id:id});
+          Files.remove({request_id:id});
+        },
+        'deleteUser'(id){
+          Meteor.users.remove({_id:id});
         }
 
 });

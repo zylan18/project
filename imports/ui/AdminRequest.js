@@ -6,6 +6,7 @@ import {Alert,Modal,Spinner,Carousel,Row,Col,Form,Button,Accordion,OverlayTrigge
 import {Files} from '../api/links';
 import {GiConfirmed} from '@react-icons/all-files/gi/GiConfirmed';//to use icon
 import {GiCancel} from '@react-icons/all-files/gi/GiCancel';
+import {FaTrashAlt} from '@react-icons/all-files/fa/FaTrashAlt'
 
 
 
@@ -46,9 +47,9 @@ const AdminRequest = () => {
         useEffect(() => {
             if(!isLoadingData && !isLoadingImg && !isLoadingDonationData){
                 const reqname=Request.find({}).fetch().reverse()
-                for(i=0;i<reqname.length;i++){
-                    document.getElementById(`status${i}`).checked=reqname[i].edit;
-                    }
+                // for(i=0;i<reqname.length;i++){
+                //     document.getElementById(`status${i}`).checked=reqname[i].edit;
+                //     }
                 }
             }, [isLoadingImg,reload]);
 
@@ -56,7 +57,7 @@ const AdminRequest = () => {
         //console.log(reqname);
         if(!isLoadingData && !isLoadingImg && !isLoadingDonationData){
             const reqname=Request.find({},{fields:{}}).fetch().reverse();
-            setEditStatus=(id)=>{
+            setEditStatus=(id,status)=>{
                 // Request.update(id,{$set:{edit:status}});
                 Meteor.call('setRequestEditStatus',id,status,
                 (error,result)=>{
@@ -68,7 +69,20 @@ const AdminRequest = () => {
                 }
             });
             }
-    
+            
+            deleteRequest=(id)=>{
+                Meteor.call('deleteRequest',id,
+                (error,result)=>{
+                    if(error){
+                        alert('error deleting Request')
+                    }else{
+                        alert('deleted request successfully');
+                        setReload(reload+1);
+                    }
+                })
+               
+            }
+
             setRemark=(id)=>{
                 // Request.update(id,{$set:{remark:remark,edit:true}});
                 Meteor.call('setRequestRemark',id,remark,
@@ -143,15 +157,15 @@ const AdminRequest = () => {
                 var fieldindex;
                 switch(field){
                     case 'medname request':{
-                        fieldindex=2;
+                        fieldindex=3;
                         break;
                     }
                     case 'requestername':{
-                        fieldindex=1;
+                        fieldindex=2;
                         break;
                     }
                     case 'type request':{
-                        fieldindex=3;
+                        fieldindex=4;
                         break;
                     }
         
@@ -200,12 +214,8 @@ const AdminRequest = () => {
                 <div className="table-scrollbar Flipped"> {/*used to flip the div to get horizontal scrollbar */}
                 <div className='Flipped'> {/*used to flip back the table contents*/}
                     <table className="admin-table" id='table request'>
-                        <tbody>
-                        <Accordion>
-                    {
-                    reqname.map((medicine,index) => (
-                        <Accordion.Item as='tr' eventKey={index} >
-                        <tr style={{'font-size':'12px'}}>
+                        <tr>
+                            <th width='50px'></th>
                             <th width="150px"></th>
                             <th width="100px">Requester Name</th>
                             <th width="100px">Medicine Name</th>
@@ -215,8 +225,87 @@ const AdminRequest = () => {
                             <th width="200px">Reason</th>
                             <th width="130px">Status</th>
                         </tr>
-                            <Accordion.Button as='tr' data-index={index} className={(verifyColor(medicine.verify_status))}>
-                            {/* {console.log(index)} */}
+                        <tbody>
+                    {
+                    reqname.map((medicine,index) => (
+                            <tr className={(verifyColor(medicine.verify_status))}>
+                            <td>
+                            <OverlayTrigger
+                            trigger="click" key={index} placement='right' rootClose={true} //rootClose to close popover when cllicked outside
+                            overlay={
+                                <Popover id={`popoveroptionsrequest${index}`}>
+                                <Popover.Header as="h3">
+                                    <Row style={{'font-size':'12px'}}>
+                                        <Col width='210px'>Set Edit</Col>
+                                        <Col width="130px">Verify Status</Col>
+                                        <Col width="100px">Verified by</Col>
+                                        <Col width="100px">Verify</Col>
+                                        <Col width="100px"></Col>
+                                        <Col width="150px">Remarks</Col>
+                                        <Col width='50px'></Col>
+                                    </Row>
+                                </Popover.Header>
+                                    <Popover.Body>
+                                     <Row>   
+                                        <Col width='210px'>
+                                            <Row>
+                                                <Col >    
+                                                    <Form.Check 
+                                                    type="switch"
+                                                    id={`status${index}`}
+                                                    checked={medicine.edit}
+                                                    label={(medicine.edit)?('Edit Enabled'):('Edit Disabled')}
+                                                    />
+                                                </Col>
+                                                <Col>
+                                                    <Button variant='warning' onClick={()=>{setEditStatus(medicine._id,!medicine.edit)}}>
+                                                     {(medicine.edit)?('disable'):('enable')}   
+                                                    </Button>
+                                                </Col>
+                                            </Row>
+                                        </Col>
+                                        <Col width="130px">
+                                        <span className={"status-"+(verifyColor(medicine.verify_status))}>
+                                        {(medicine.verify_status==true)?(<span style={verifyIcon}><GiConfirmed style={verifyIcon}/> Verified</span>)
+                                        :(medicine.verify_status=="rejected")?(<span style={cancelIcon}><GiCancel style={cancelIcon}/> Rejected</span>)
+                                        :("Not Verified")}
+                                        </span>
+                                        </Col>
+                                        <Col width="100px">{medicine.verified_by}</Col>
+                                        <Col width="100px">
+                                            <button id={index} className={(verifyColor(!medicine.verify_status))} onClick={()=>{verify(medicine._id)}}>
+                                                {(medicine.verify_status==true)?("Cancel")
+                                                :(medicine.verify_status=="rejected")?("Cancel Rejection")
+                                                :("Verify")}</button>
+                                        </Col> 
+                                        <Col width="100px" >   
+                                            <button style={{"color":"red"}} onClick={()=>rejectVerification(medicine._id)}>Reject</button>
+                                        </Col>
+                                        <Col width="150px">
+                                            <Row>
+                                                <Col>
+                                                    {(medicine.remark)?(medicine.remark):('no remarks yet')}
+                                                </Col>
+                                            </Row>
+                                            <Row>
+                                                <Col>
+                                                    <Button className='btn-danger' onClick={()=>{setRequest_id(medicine._id);handleRemark(medicine.remark);handleRemarkShow()}}>Remark</Button>
+                                                </Col>
+                                            </Row>
+                                            
+                                        </Col> 
+                                        <Col style={{'margin':'auto'}}>
+                                    <Button variant='danger' onClick={()=>{deleteRequest(medicine._id)}}>
+                                    <FaTrashAlt/>
+                                    </Button>
+                                </Col>
+                                      </Row >
+                                    </Popover.Body>
+                                </Popover>
+                            }>
+                                <Button>&#9881;</Button>
+                            </OverlayTrigger>
+                            </td>
                             <td width="150px" className="image-table">
                             {((Files.findOne({request_id:medicine._id})).data.length == 1)?//it checks if one image is uploaded then display one image else display carousel
                             ((image=(Files.findOne({request_id:medicine._id})).data)?
@@ -284,70 +373,17 @@ const AdminRequest = () => {
                             <td width='100px'>{medicine.exp_date}</td>
                             <td width='200px'>{medicine.reason}</td>
                             <td width='130px' id={`medstatus${index}`}>{medicine.status}</td>
-                            </Accordion.Button>
-                            <Accordion.Body>
-                                <tr style={{'font-size':'12px'}}>
-                                <th width='210px'>Set Edit</th>
-                                <th width="130px">Verify Status</th>
-                                <th width="100px">Verified by</th>
-                                <th width="100px">Verify</th>
-                                <th width="100px"></th>
-                                <th width="150px">Remarks</th>
-                                </tr>
-                            <th width='210px'>
-                                <tr>
-                                <th >    
-                                    <Form.Check 
-                                    type="switch"
-                                    id={`status${index}`}
-                                    onChange={e=>{handleStatus(e.target.checked)}}
-                                    label={(medicine.edit)?('Disable Edit'):('Enable Edit')}
-                                    />
-                                </th>
-                                    <th>
-                                        <Button variant='warning' onClick={()=>{setEditStatus(medicine._id)}}>set</Button>
-                                    </th>
-                                </tr>
-                            </th>
-                            <th width="130px">
-                            <span className={"status "+(verifyColor(medicine.verify_status))}>
-                            {(medicine.verify_status==true)?(<span style={verifyIcon}><GiConfirmed style={verifyIcon}/> Verified</span>)
-                            :(medicine.verify_status=="rejected")?(<span style={cancelIcon}><GiCancel style={cancelIcon}/> Rejected</span>)
-                            :("Not Verified")}
-                            </span>
-                            </th>
-                            <th width="100px">{medicine.verified_by}</th>
-                            <th width="100px">
-                                <button id={index} className={(verifyColor(!medicine.verify_status))} onClick={()=>{verify(medicine._id)}}>
-                                    {(medicine.verify_status==true)?("Cancel")
-                                    :(medicine.verify_status=="rejected")?("Cancel Rejection")
-                                    :("Verify")}</button>
-                            </th> 
-                            <th width="100px" >   
-                                <button style={{"color":"red"}} onClick={()=>rejectVerification(medicine._id)}>Reject</button>
-                            </th>
-                            <th width="150px">
-                                <tr>
-                                    <th>
-                                        {(medicine.remark)?(medicine.remark):('no remarks yet')}
-                                    </th>
-                                </tr>
-                                <tr>
-                                    <th>
-                                        <Button className='btn-danger' onClick={()=>{setRequest_id(medicine._id);handleRemark(medicine.remark);handleRemarkShow()}}>Remark</Button>
-                                    </th>
-                                </tr>
-                                
-                            </th> 
-                          </Accordion.Body>  
-                        </Accordion.Item>
+                         
+
+                            
+                        </tr>
                         
                     )
                     
                 )
                 
             }
-            </Accordion>
+
                     </tbody>
                     </table>
                     </div>

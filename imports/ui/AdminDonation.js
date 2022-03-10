@@ -5,6 +5,7 @@ import {Alert,Modal,Spinner,Form,Row,Col,Button,Carousel,Accordion,OverlayTrigge
 import {Files} from '../api/links';
 import {GiConfirmed} from '@react-icons/all-files/gi/GiConfirmed';//to use icon
 import {GiCancel} from '@react-icons/all-files/gi/GiCancel';
+import {FaTrashAlt} from '@react-icons/all-files/fa/FaTrashAlt'
 
 const AdminDonation = () => {
     if(Meteor.user()){
@@ -56,10 +57,17 @@ const AdminDonation = () => {
         if(!isLoadingData&&!isLoadingImg){
         console.log(reload);
         const donname=DonationList.find({},{fields:{}}).fetch().reverse();
+        // for(i=0;i<donname.length;i++){
+        //     if('in collection'||'storage'||'in delivery'||'delivered'){
+        //         document.getElementById(`status${i}`).checked=donname[i].edit;
+        //         }
+        // }
         for(i=0;i<donname.length;i++){
-            if('in collection'||'storage'||'in delivery'||'delivered'){
-                document.getElementById(`status${i}`).checked=donname[i].edit;
-                }
+            if(donname[i].verify_status==true){
+                document.getElementById(`row${i}`).className='verified'
+            }else{
+                document.getElementById(`row${i}`).className='not-verified'
+            }
         }
     }
         }, [isLoadingImg,reload]);
@@ -138,7 +146,21 @@ const AdminDonation = () => {
                 }
             })
         }
-        setEditStatus=(id)=>{
+
+        deleteDonation=(id)=>{
+            Meteor.call('deleteDonation',id,
+            (error,result)=>{
+                if(error){
+                    alert('error deleting donation')
+                }else{
+                    alert('deleted successfully');
+                    setReload(reload+1);
+                }
+            })
+           
+        }
+
+        setEditStatus=(id,status)=>{
             // DonationList.update(id,{$set:{edit:status}});
             Meteor.call('setEditStatus',id,status,
             (error,result)=>{
@@ -180,15 +202,15 @@ ${(DonationList.findOne({_id:donation_id})).brand}\n${(DonationList.findOne({_id
             var fieldindex;
             switch(field){
                 case 'medname':{
-                    fieldindex=3;
+                    fieldindex=4;
                     break;
                 }
                 case 'donorname':{
-                    fieldindex=2;
+                    fieldindex=3;
                     break;
                 }
                 case 'type':{
-                    fieldindex=4;
+                    fieldindex=5;
                     break;
                 }
     
@@ -237,12 +259,8 @@ ${(DonationList.findOne({_id:donation_id})).brand}\n${(DonationList.findOne({_id
           <div className="table-scrollbar Flipped"> {/*used to flip the div to get horizontal scrollbar */}
           <div className='Flipped'> {/*used to flip back the table contents*/}
             <table className="admin-table" id='table'>
-            
-            <Accordion>
-            {
-            donname.map((name,index) => (
-                <Accordion.Item eventKey={index} as='tr'>   
-                <tr style={{'font-size':'12px'}}>
+            <tr>    
+                    <th width='50px'></th>
                     <th width='150px'></th>
                     <th width='120px'></th>
                     <th width='120px'>Donor Name</th>
@@ -255,8 +273,86 @@ ${(DonationList.findOne({_id:donation_id})).brand}\n${(DonationList.findOne({_id
                     <th width='120px'>Expiry Date</th>
                     <th width='120px'>Status</th>
                 </tr>
-                <Accordion.Button as='tr' data-index={index} className={(verifyColor(name.verify_status))}>
-                    
+             <tbody>   
+            {
+            donname.map((name,index) => (
+                <tr data-index={index} id={`row${index}`} > 
+                    <td>
+                    <OverlayTrigger trigger="click" key={index} placement='right' rootClose={true} //rootClose to close popover when cllicked outside
+                    overlay={
+                    <Popover id={`popoveroptions${index}`}>
+                        <Popover.Header as="div">   
+                        <Row style={{'font-size':'12px'}}>
+                            <Col width='150px'>Set Medicine detail</Col>
+                            <Col width="210px">Set Edit</Col>
+                            <Col width="130px">Verification Status</Col>
+                            <Col width="100px">Verified by</Col>
+                            <Col width="100px">Verify</Col>
+                            <Col width="100px"></Col>
+                            <Col width="150px">Remark</Col>
+                            <Col width="50px"></Col> 
+                        </Row>
+                        </Popover.Header> 
+                        <Popover.Body>
+                          
+                            <Row>               
+                                <Col style={{'padding':'0px','margin':'auto'}} width='150px'>
+                                        <Button onClick={()=>{setDonation_id(name._id);setBrand(name.brand);setComposition(name.composition);setMedType(name.type);handleEditMedShow();}}>Edit</Button>
+                                </Col>
+                                
+                                <Col style={{'margin':'auto'}} width='210px'>{/*radio for edit status*/}
+                                    <Row>
+                                        <Col style={{'margin':'auto'}}>      
+                                        <Form.Check 
+                                        type="switch"
+                                        id={`status${index}`}
+                                        checked={name.edit}
+                                        label={(name.edit)?('Edit Enabled'):('Disabled Edit')}
+                                        />
+                                            
+                                        </Col>
+                                        <Col style={{'margin':'auto'}}>
+                                            <Button variant='warning' onClick={()=>{handleStatus(name.edit);setEditStatus(name._id,!name.edit);console.log(name.edit)}}>
+                                                {(name.edit)?('disable'):('enable')}</Button>
+                                        </Col>
+                                    </Row>
+                                </Col>
+                                <Col style={{'margin':'auto'}} width='130px'>
+                                <span className={"status-"+(verifyColor(name.verify_status))}>
+                                {(name.verify_status==true)?(<span style={verifyIcon}><GiConfirmed style={verifyIcon}/> Verified</span>)
+                                :(name.verify_status=="rejected")?(<span style={cancelIcon}><GiCancel style={cancelIcon}/> Rejected</span>)
+                                :("Not Verified")}
+                                </span>
+                                </Col>
+                                <Col style={{'margin':'auto'}} width='100px'>{name.verified_by}</Col>
+                                <Col style={{'margin':'auto'}} width='100px'>
+                                    <button id={index} className={(verifyColor(!name.verify_status))} onClick={()=>{verify(name._id)}}>
+                                        {(name.verify_status==true)?("Cancel")
+                                        :(name.verify_status=="rejected")?("Cancel Rejection")
+                                        :("Verify")}</button>
+                                </Col> 
+                                <Col style={{'margin':'auto'}} width='100px'>   
+                                    <button style={{"color":"red"}} onClick={()=>rejectVerification(name._id)}>Reject</button>
+                                </Col> 
+                                <Col style={{'margin':'auto'}} width='150px'>
+                                    {(name.remark)?(name.remark):('no remarks yet')}<br/>
+                                    <Button className='btn-danger' onClick={()=>{setDonation_id(name._id);handleRemark(name.remark);handleRemarkShow()}}>Remark</Button>
+                                </Col>
+                                <Col style={{'margin':'auto'}}>
+                                    <Button variant='danger' onClick={()=>{deleteDonation(name._id)}}>
+                                    <FaTrashAlt/>
+                                    </Button>
+                                </Col>
+                                
+                            </Row>
+                            
+                         </Popover.Body>
+                    </Popover>   
+                    }>
+                        <Button  >&#9881;</Button>
+                    </OverlayTrigger>
+
+                    </td> 
                      <td className="image-table" width='120px' >
                      {((Files.findOne({donation_id:name._id})).data.length == 1)?
                         ((image=(Files.findOne({donation_id:name._id})).data)?
@@ -361,7 +457,7 @@ ${(DonationList.findOne({_id:donation_id})).brand}\n${(DonationList.findOne({_id
                                 </Popover>
                             }
                             >       
-                        <p>{name.donor_name}</p>    
+                        <span>{name.donor_name}</span>    
                     </OverlayTrigger>
                     </td >
                     {/* <td width='120px'>{name.phone}</td>
@@ -373,68 +469,15 @@ ${(DonationList.findOne({_id:donation_id})).brand}\n${(DonationList.findOne({_id
                     <td width='120px'>{name.composition}</td>
                     <td width='120px'>{name.exp_date}</td>
                     <td width='120px'>{name.status}</td>
-                    </Accordion.Button>
-                    <Accordion.Body>    
-                    <tr style={{'font-size':'12px'}}>
-                    <th width='150px'>Set Medicine detail</th>
-                    <th width="210px">Set Edit</th>
-                    <th width="130px">Verification Status</th>
-                    <th width="100px">Verified by</th>
-                    <th width="100px">Verify</th>
-                    <th width="100px"></th>
-                    <th width="150px"></th> 
-                    </tr> 
-                    {/* <table>  */}
-                    <tr>               
-                    <th style={{'padding':'0px'}} width='150px'>
-                            <Button onClick={()=>{setDonation_id(name._id);setBrand(name.brand);setComposition(name.composition);setMedType(name.type);handleEditMedShow();}}>Edit</Button>
-                    </th>
+        
                     
-                    <th width='210px'>{/*radio for edit status*/}
-                        <tr>
-                            <th>      
-                                <Form.Check 
-                                type="switch"
-                                id={`status${index}`}
-                                onChange={e=>{handleStatus(e.target.checked)}}
-                                label={(name.edit)?('Disable Edit'):('Enable Edit')}
-                                />
-                            </th>
-                            <th>
-                                <Button variant='warning' onClick={()=>{setEditStatus(name._id)}}>set</Button>
-                            </th>
-                        </tr>
-                    </th>
-                    <th width='130px'>
-                    <span className={"status "+(verifyColor(name.verify_status))}>
-                    {(name.verify_status==true)?(<span style={verifyIcon}><GiConfirmed style={verifyIcon}/> Verified</span>)
-                    :(name.verify_status=="rejected")?(<span style={cancelIcon}><GiCancel style={cancelIcon}/> Rejected</span>)
-                    :("Not Verified")}
-                    </span>
-                    </th>
-                    <th width='100px'>{name.verified_by}</th>
-                    <th width='100px'>
-                        <button id={index} className={(verifyColor(!name.verify_status))} onClick={()=>{verify(name._id)}}>
-                            {(name.verify_status==true)?("Cancel")
-                            :(name.verify_status=="rejected")?("Cancel Rejection")
-                            :("Verify")}</button>
-                    </th> 
-                    <th width='100px'>   
-                        <button style={{"color":"red"}} onClick={()=>rejectVerification(name._id)}>Reject</button>
-                    </th> 
-                    <th width='150px'>
-                        {(name.remark)?(name.remark):('no remarks yet')}<br/>
-                        <Button className='btn-danger' onClick={()=>{setDonation_id(name._id);handleRemark(name.remark);handleRemarkShow()}}>Remark</Button>
-                    </th>
-                    </tr>
-                 {/* </table>    */}
-                </Accordion.Body>
-                </Accordion.Item>  
+                 </tr>   
+                
             )
          
         )
        
-    }       </Accordion>
+    }       </tbody>
             </table>
             </div>
            </div> 

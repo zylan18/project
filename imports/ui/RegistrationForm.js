@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import {Form, FloatingLabel,Button,Alert} from 'react-bootstrap';
+import {Form, FloatingLabel,Button,Alert,Modal} from 'react-bootstrap';
 import { Meteor } from 'meteor/meteor';
 //import { DonationList } from '../api/links';
-//import {useNavigate} from 'react-router-dom';
+import {useNavigate} from 'react-router-dom';
 
 
 const RegistrationForm = ()=>{
@@ -15,32 +15,52 @@ const RegistrationForm = ()=>{
     const [usernameError,handleUsernameError]=useState('');
     const [passwordError,handlePasswordError]=useState('');
     const [address,handleAddressChange]=useState('');
+
+    const [modalmessage,handleModalMessage]=useState('');
+    const [showsubmit, setShowSubmit] = useState(false);
+    const handleSubmitClose = () => setShowSubmit(false);
+    const handleSubmitShow = () => {setShowSubmit(true)};
+    const navigate=useNavigate();
+
     handleSubmit=(event)=>{
-      
+        event.preventDefault(); 
+        handleSubmitShow();
        if(password == confpassword){   
            handlePasswordError('');
+           handleModalMessage('uploading details....')
             Meteor.call('Account.create',username,password,email,name,address,phone,
             (error,result)=>{
                 if(error){
                     console.log(error.reason);
+                    handleModalMessage(error.reason)
+                    document.querySelector("#modalokayerror").style.display = "inline";
                     handleUsernameError(`*${error.reason}`);
-                    alert(error.reason);
+                    
                 }else{
-                    alert(`Name:${name}\n Username: ${username}\n password:${password}phone:${phone} \n email:${email}\n address:${address}`)
-                    Meteor.loginWithPassword(username,password)
+                    handleModalMessage('Registered Successfully')
+                    document.querySelector("#modalokay").style.display = "inline";
+                    document.querySelector("#modalokayerror").style.display = "none";
+                    //alert(`Name:${name}\n Username: ${username}\n password:${password}phone:${phone} \n email:${email}\n address:${address}`)
                 }
             })   
          }
         else{
+            
+            handleModalMessage('Passwords do not match');
+            //document.querySelector("#modalokay").style.display = "inline";
+            
+            
+           document.querySelector('#password').value='';
+           document.querySelector('#confpassword').value='';
+
             handlePasswordError('*Passwords do not match');
         }
-        event.preventDefault(); 
+        
     }
         if(!Meteor.user()){
             return (
+                <div className="form"> 
                 <Form onSubmit={handleSubmit}>
-                    
-                    <div className="form">    
                         <Form.Label className="form-label"><h1>Registration Form</h1></Form.Label> <br/>         
                         <Alert variant='warning'>You need to register inorder to donate or request medicine</Alert>          
                         <FloatingLabel controlId="floatingInput" label="Name" className="mb-3">
@@ -60,13 +80,13 @@ const RegistrationForm = ()=>{
                         </FloatingLabel>
                         
                         <FloatingLabel controlId="floatingInput" label="Password" className="mb-3">
-                            <input type='password' className='form-control' onChange={e=>handlePasswordChange(e.target.value)} 
+                            <input type='password' id='password' className='form-control' onChange={e=>handlePasswordChange(e.target.value)} 
                             placeholder='Password'
                             />
                             
                         </FloatingLabel>
-                        <FloatingLabel controlId="floatingInput" label="Confirm Password" className="mb-3">
-                            <input type='password' className='form-control' onChange={e=>handleConfPasswordChange(e.target.value)} 
+                        <FloatingLabel controlId="floatingInput"  label="Confirm Password" className="mb-3">
+                            <input type='password' id='confpassword' className='form-control' onChange={e=>handleConfPasswordChange(e.target.value)} 
                             placeholder='Confirm Password'
                             />
                         </FloatingLabel>
@@ -82,8 +102,26 @@ const RegistrationForm = ()=>{
                        <Form.Label className="loginError">{usernameError}</Form.Label>
                         <Form.Label className="loginError">{passwordError}</Form.Label><br/>
                         <Button variant="primary" type="submit">Submit</Button>
-                    </div>
+                    
+                    <Modal show={showsubmit} onHide={handleSubmitClose} backdrop="static" centered keyboard={false}>
+                    <Modal.Header>  
+                    </Modal.Header>
+                    <Modal.Body>
+                        <p style={{'textAlign':'center'}}>{modalmessage}</p>
+                    <div style={{'width': '15%','margin': 'auto'}}>
+                        
+                        <Button id='modalokay' style={{'display':'none'}}
+                        onClick={()=>{Meteor.loginWithPassword(username,password);navigate('/')}}
+                        >Okay</Button>
+
+                         {(showsubmit)?(<Button variant='danger' id='modalokayerror' 
+                            onClick={()=>{handleSubmitClose()}}
+                            >Okay</Button>):(null)}
+                    </div>    
+                    </Modal.Body>
+              </Modal>  
                 </Form>
+                </div>
             )
     }
     else{
