@@ -99,7 +99,7 @@ Meteor.methods({
                   name:nameofuser,
                   phone:phone,
                   address:address,
-                  admin:false
+                  role:'user'
               }
             });    
           }
@@ -258,6 +258,8 @@ Meteor.methods({
         },
         'deleteUser'(id){
           Meteor.users.remove({_id:id});
+        },'setRole'(id,role){
+          Meteor.users.update(id,{$set:{'profile.role':role}});
         }
 
 });

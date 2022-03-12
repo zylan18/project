@@ -45,7 +45,7 @@ const RequestStatus = () => {
     useEffect(()=>{
         if(!isLoadingData&&!isLoadingImg){
             const request=Request.findOne({_id:id});
-            if(Meteor.user().profile.admin||Meteor.user()._id==request.user_id){ 
+            if(Meteor.user().profile.role=='admin'||Meteor.user()._id==request.user_id){ 
         switch(request.status){
             case 'canceled':{
                 document.getElementById("verification").classList.add('not-done');
@@ -97,7 +97,7 @@ const RequestStatus = () => {
     if(!isLoadingData&&!isLoadingImg){
         const request=Request.findOne({_id:id});
         console.log(request);
-        if(Meteor.user().profile.admin||Meteor.user()._id==request.user_id){   
+        if(Meteor.user().profile.role=='admin'||Meteor.user()._id==request.user_id){   
   return( 
   <div className='form'>
       

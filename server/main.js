@@ -15,7 +15,7 @@ Meteor.startup(() => {
           name:'Admin',
           phone:'0123456789',
           address:'address',
-          admin:true
+          role:'admin',
       }
     });
   }

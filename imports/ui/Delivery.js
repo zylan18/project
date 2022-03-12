@@ -8,7 +8,7 @@ const Delivery = () => {
 
   // Get the element with id="defaultOpen" and click on it
   if (Meteor.user()) {
-    if(Meteor.user().profile.admin){
+    if(Meteor.user().profile.role=='admin'||Meteor.user().profile.role=='delivery'){
     const [status, handleStatus] = useState("");
     const [reload,setReload]=useState(0);
     const isLoadingRequest = useTracker(()=>{
@@ -98,16 +98,16 @@ const Delivery = () => {
                   <tbody>
                     <tr>
                       <th width="100px">Donor Name</th>
-                      <th width="100px">username</th>
-                      <th width="100px">address</th>
-                      <th width="100px">medicine name</th>
-                      <th width="100px">status</th>
-                      <th width="100px">set status</th>
+                      <th width="100px">Phone</th>
+                      <th width="100px">Address</th>
+                      <th width="100px">Medicine Name</th>
+                      <th width="100px">Status</th>
+                      <th width="100px">Set Status</th>
                     </tr>
                     {donation.map((medicine, index) => (
                       <tr style={{ backgroundColor: "#dddddd" }}>
-                        <td>{medicine.donor_name}</td>
-                        <td>{medicine.username}</td>
+                        <td>{medicine.donor_name} / {medicine.username}</td>
+                        <td>{medicine.phone}</td>
                         <td>{medicine.address}</td>
                         <td>{medicine.medicine_name}</td>
                         <td>{medicine.status}</td>
@@ -152,16 +152,16 @@ const Delivery = () => {
                   <tbody>
                     <tr>
                       <th width="100px">Requestee Name</th>
-                      <th width="100px">username</th>
-                      <th width="100px">address</th>
-                      <th width="100px">medicine name</th>
-                      <th width="100px">status</th>
-                      <th width="100px">set status</th>
+                      <th width="100px">Phone Number</th>
+                      <th width="100px">Address</th>
+                      <th width="100px">Medicine Name</th>
+                      <th width="100px">Status</th>
+                      <th width="100px">Set Status</th>
                     </tr>
                     {request.map((medicine, index) => (
                       <tr style={{ backgroundColor: "#dddddd" }}>
-                        <td>{medicine.requester_name}</td>
-                        <td>{medicine.username}</td>
+                        <td>{medicine.requester_name} / {medicine.username}</td>
+                        <td>{medicine.phone}</td>
                         <td>{medicine.address}</td>
                         <td>{medicine.medicine_name}</td>
                         <td>{medicine.status}</td>

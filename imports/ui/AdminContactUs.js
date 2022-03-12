@@ -6,7 +6,7 @@ import { Spinner,Alert,Button,Stack } from 'react-bootstrap';
 
 const AdminContactUs = () => {
     if(Meteor.user()){
-        if(Meteor.user().profile.admin){
+        if(Meteor.user().profile.role=='admin'){
     const isLoadingData = useTracker(()=>{
         const handle=Meteor.subscribe('contactus');//used useTracker to continuously check if subscribe is ready 
         return(!handle.ready());

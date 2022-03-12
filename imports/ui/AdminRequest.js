@@ -13,7 +13,7 @@ import {FaTrashAlt} from '@react-icons/all-files/fa/FaTrashAlt'
 
 const AdminRequest = () => {
         if(Meteor.user()){
-        if(Meteor.user().profile.admin){
+        if(Meteor.user().profile.role=='admin'){
             
         let verifyIcon = { color: "#26bd00"};//used to change color of icon
         let cancelIcon = { color: "#ff2222"};//used to change color of icon

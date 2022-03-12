@@ -40,7 +40,7 @@ const DonationStatus = () => {
     useEffect(()=>{
         if(!isLoadingData&&!isLoadingImg){
         const donation=DonationList.findOne({_id:id})
-        if(Meteor.user().profile.admin||Meteor.user()._id==donation.user_id){ 
+        if(Meteor.user().profile.role=='admin'||Meteor.user()._id==donation.user_id){ 
         console.log((DonationList.find({_id:id}).fetch())[0].status)
         switch(donation.status){
             case 'canceled':{
@@ -94,7 +94,7 @@ const DonationStatus = () => {
 
   if(!isLoadingData&&!isLoadingImg){
   const donation=DonationList.findOne({_id:id});
-  if(Meteor.user().profile.admin||Meteor.user()._id==donation.user_id){ 
+  if(Meteor.user().profile.role=='admin'||Meteor.user()._id==donation.user_id){ 
   return( 
   <div className='form'>
       

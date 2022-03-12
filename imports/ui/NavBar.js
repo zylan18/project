@@ -3,12 +3,17 @@ import { Navbar,Container,Nav,NavDropdown } from 'react-bootstrap';
 import {Button,Modal} from 'react-bootstrap';
 import { LoginForm } from './LoginForm';
 import { BrowserRouter as Router, Switch, Route, Link,} from "react-router-dom";
+import { useNavigate } from 'react-router-dom';
 
-const logout = () => {
-  Meteor.logout();
-}
+
 
 function NavBar() {
+  const navigate=useNavigate();
+  
+  const logout = () => {
+    Meteor.logout();
+    navigate('/');
+  }
     //const [show, setShow] = useState(false);
    // const user = useTracker(() => Meteor.user());
    // console.log(user);
@@ -35,7 +40,8 @@ function NavBar() {
                   <NavDropdown.Item href="/profile">Profile</NavDropdown.Item>
                   <NavDropdown.Item href="/yourdonations">Your Donations</NavDropdown.Item>
                   <NavDropdown.Item href="/yourrequests">Your Requests</NavDropdown.Item>
-                  {(Meteor.user().profile.admin)?(<NavDropdown.Item href="/admin">Admin</NavDropdown.Item>):null}
+                  {(Meteor.user().profile.role=='admin')?(<NavDropdown.Item href="/admin">Admin</NavDropdown.Item>):null}
+                  {(Meteor.user().profile.role=='delivery')?(<NavDropdown.Item href="/delivery">Delivery</NavDropdown.Item>):null}
                   <NavDropdown.Divider />
                   <NavDropdown.Item onClick={logout}>
                     <span className="red-text">Signout</span>
