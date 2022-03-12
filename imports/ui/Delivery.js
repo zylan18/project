@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Nav, Spinner, Form, Button, Tab, Row, Col,Stack } from "react-bootstrap";
-import { DonationList } from "../api/links";
-import { Request } from "../api/links";
+import { DonationList } from "../api/Collections";
+import { Request } from "../api/Collections";
 import {useTracker} from 'meteor/react-meteor-data'
 
 const Delivery = () => {

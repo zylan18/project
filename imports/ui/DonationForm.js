@@ -1,9 +1,9 @@
 import React, {useState} from 'react';
 import {Form, FloatingLabel,Button,Alert,Spinner,Modal,Row,Col} from 'react-bootstrap';
 import {useNavigate} from 'react-router-dom';
-import { DonationList } from '../api/links';
+import { DonationList } from '../api/Collections';
 //import {Meteor} from 'meteor/meteor';
-import {Files} from '../api/links';
+import {Files} from '../api/Collections';
 
 
 const DonationForm = () =>{

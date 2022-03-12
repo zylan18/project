@@ -1,6 +1,6 @@
 import React,{useEffect,useState} from 'react';
-import { Request } from '../api/links';
-import { Files } from '../api/links';
+import { Request } from '../api/Collections';
+import { Files } from '../api/Collections';
 import {FaCheck} from '@react-icons/all-files/fa/FaCheck';
 import { Spinner ,Col,Row,Button,Carousel,Modal} from 'react-bootstrap';
 import { useParams } from 'react-router-dom';

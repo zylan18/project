@@ -1,8 +1,8 @@
 import React,{useState,useEffect} from 'react';
-import { DonationList } from '../api/links';
+import { DonationList } from '../api/Collections';
 import {Alert,Spinner,Button,Modal,Carousel,Toast} from 'react-bootstrap';
 import { useTracker } from 'meteor/react-meteor-data';
-import {Files} from '../api/links';
+import {Files} from '../api/Collections';
 import {useNavigate} from 'react-router-dom';
 import {MdWarning} from '@react-icons/all-files/md/MdWarning';
 

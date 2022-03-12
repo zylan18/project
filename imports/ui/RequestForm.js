@@ -1,9 +1,9 @@
 import React,{useState} from 'react'
 import { Alert,Form,FloatingLabel,Modal,Spinner,Col,Row,Carousel,Button} from 'react-bootstrap'
 import { useParams } from 'react-router-dom'
-import { DonationList } from '../api/links'
-import { Files } from '../api/links'
-import {Request} from '../api/links'
+import { DonationList } from '../api/Collections'
+import { Files } from '../api/Collections'
+import {Request} from '../api/Collections'
 import { useTracker } from 'meteor/react-meteor-data';
 import {useNavigate} from 'react-router-dom';
 

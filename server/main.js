@@ -1,6 +1,6 @@
 import { Meteor } from 'meteor/meteor';
 import { Accounts } from 'meteor/accounts-base';
-import '/imports/api/RegistrationFunctions.js';
+import '/imports/api/Functions.js';
 
 
 Meteor.startup(() => {

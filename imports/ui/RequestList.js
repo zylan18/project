@@ -1,13 +1,13 @@
 import React,{useState,useCallback,useEffect} from 'react';
-import {DonationList} from '../api/links'
-import {Files} from '../api/links'
+import {DonationList} from '../api/Collections'
+import {Files} from '../api/Collections'
 import {Spinner,Modal,Carousel,Alert,Button} from 'react-bootstrap'
 import {useNavigate} from 'react-router-dom';
 import { useParams } from 'react-router-dom';
 import {FaSearch} from '@react-icons/all-files/fa/FaSearch';//to use icon
 import { useTracker} from 'meteor/react-meteor-data';
  
-const Antipyretics = () => {
+const RequestList = () => {
     if(Meteor.user()){
     let { type } = useParams();   
     const isLoadingData = useTracker(()=>{
@@ -153,4 +153,4 @@ else if(Meteor.loggingIn()){
   }
 }
 
-export default Antipyretics;
+export default RequestList;

@@ -1,13 +1,13 @@
 import React, {useState,useEffect} from 'react';
 import {Form, FloatingLabel,Button,Alert,Spinner,Modal} from 'react-bootstrap';
-import { DonationList } from '../api/links';
+import { DonationList } from '../api/Collections';
 //import {Meteor} from 'meteor/meteor';
-import {Files} from '../api/links';
+import {Files} from '../api/Collections';
 import { useParams } from 'react-router-dom';
 import {useNavigate} from 'react-router-dom';
 import {useTracker} from 'meteor/react-meteor-data';
 
-const DonationForm = () =>{
+const EditDonationForm = () =>{
 
         if(Meteor.user()){
         let { id } = useParams();
@@ -230,4 +230,4 @@ const DonationForm = () =>{
       }
 }
 
-export default DonationForm
+export default EditDonationForm

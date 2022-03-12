@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import {ContactUs} from '../api/links';
+import {ContactUs} from '../api/Collections';
 import {useTracker} from 'meteor/react-meteor-data';
 import { Spinner,Alert,Button,Stack } from 'react-bootstrap';
 

@@ -1,10 +1,10 @@
 import React,{useState,useEffect} from 'react'
-import { Request } from '../api/links'
-import { DonationList } from '../api/links';
+import { Request } from '../api/Collections'
+import { DonationList } from '../api/Collections';
 import { useTracker } from 'meteor/react-meteor-data';
 import {Alert,Modal,Spinner,Carousel,Row,Col,Form,Button,Accordion,OverlayTrigger,Popover,Stack} 
 from 'react-bootstrap';
-import {Files} from '../api/links';
+import {Files} from '../api/Collections';
 import {GiConfirmed} from '@react-icons/all-files/gi/GiConfirmed';//to use icon
 import {GiCancel} from '@react-icons/all-files/gi/GiCancel';
 import {FaTrashAlt} from '@react-icons/all-files/fa/FaTrashAlt'

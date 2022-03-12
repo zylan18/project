@@ -5,11 +5,9 @@ import { LoginForm } from './LoginForm';
 import { BrowserRouter as Router, Switch, Route, Link,} from "react-router-dom";
 import { useNavigate } from 'react-router-dom';
 
-
-
 function NavBar() {
   const navigate=useNavigate();
-  
+
   const logout = () => {
     Meteor.logout();
     navigate('/');

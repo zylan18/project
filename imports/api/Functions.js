@@ -1,9 +1,9 @@
 import { Accounts } from 'meteor/accounts-base';
-import {DonationList} from './links';
+import {DonationList} from './Collections';
 import {Meteor} from 'meteor/meteor'
-import {Files} from './links'
-import {Request} from './links'
-import {ContactUs} from './links'
+import {Files} from './Collections'
+import {Request} from './Collections'
+import {ContactUs} from './Collections'
 
 
 Meteor.publish('requestList',(type)=>{
