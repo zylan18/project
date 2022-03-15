@@ -1,5 +1,5 @@
 import React,{useState} from 'react'
-import { Alert,Form,FloatingLabel,Modal,Spinner,Col,Row,Carousel,Button} from 'react-bootstrap'
+import { Alert,Form,FloatingLabel,Modal,Spinner,Col,Row,Carousel,Button,Stack} from 'react-bootstrap'
 import { useParams } from 'react-router-dom'
 import { DonationList } from '../api/Collections'
 import { Files } from '../api/Collections'
@@ -62,7 +62,7 @@ const RequestForm = () => {
         reader.readAsArrayBuffer(file); //read the file as arraybuffer
     }
     else{
-        handleFileError('Only jpg, jpeg and png files support');
+        handleFileError('only jpg, jpeg and png files supported');
         document.getElementById("file").value=null;
     }
 }
@@ -112,7 +112,7 @@ const handleAddMedfile = (file) => {
                 handleModalMessage('Error uploading image\nimage not uploaded');
                 document.querySelector("#modalokayerror").style.display = "inline";
             }else{
-                handleModalMessage('Form and Images Submitted Successfully'); 
+                handleModalMessage(`Form and Images Submitted Successfully\nYour Request will soon be verified\nThank You`); 
                 document.querySelector("#modalokay").style.display = "inline";
             }
         });  
@@ -218,15 +218,15 @@ const handleAddMedfile = (file) => {
                     <Modal.Header>  
                     </Modal.Header>
                     <Modal.Body>
-                        <p style={{'textAlign':'center'}}>{modalmessage}</p>
-                    <div style={{'width': '15%','margin': 'auto'}}>
+                        <p style={{'textAlign':'center','white-space': 'pre-wrap'}}>{modalmessage}</p>
+                    <Stack direction="horizontal" className='justify-content-center' gap={5}>
                         <Button id='modalokay' style={{'display':'none'}}
                         onClick={()=>{navigate('/yourrequests')}}
                         >Okay</Button>
                          <Button variant='danger' id='modalokayerror' style={{'display':'none'}}
                             onClick={()=>{console.log(modalmessage);window.location.reload()}}
                             >Retry</Button>
-                    </div>    
+                    </Stack>    
                     </Modal.Body>
               </Modal>                    
 

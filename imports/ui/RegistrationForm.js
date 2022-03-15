@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import {Form, FloatingLabel,Button,Alert,Modal} from 'react-bootstrap';
+import {Form, FloatingLabel,Button,Alert,Modal,Stack} from 'react-bootstrap';
 import { Meteor } from 'meteor/meteor';
 //import { DonationList } from '../api/links';
 import {useNavigate} from 'react-router-dom';
@@ -69,15 +69,18 @@ const RegistrationForm = ()=>{
                                 />
                         </FloatingLabel>
                         <FloatingLabel controlId="floatingInput" label="Email" className="mb-3">
-                                <input type='text' className="form-control" onChange={e=>handleEmailChange(e.target.value)}
+                                <input type='email' className="form-control" onChange={e=>handleEmailChange(e.target.value)}
                                 placeholder="Email"
                                 /> 
                         </FloatingLabel>
                         <FloatingLabel controlId="floatingInput" label="Username" className="mb-3">
-                                <input type='text' className="form-control" onChange={e=>handleUsernameChange(e.target.value)}
+                                <input type='text' pattern='^[a-zA-Z0-9]([._-](?![._-])|[a-zA-Z0-9]){3,18}[a-zA-Z0-9]$' className="form-control" onChange={e=>handleUsernameChange(e.target.value)}
                                 placeholder="Username"
                                 /> 
                         </FloatingLabel>
+                        <Form.Text muted>
+                            Username must consists of 5-20 alphanumeric characters<br/>
+                        </Form.Text>
                         
                         <FloatingLabel controlId="floatingInput" label="Password" className="mb-3">
                             <input type='password' id='password' className='form-control' onChange={e=>handlePasswordChange(e.target.value)} 
@@ -108,7 +111,7 @@ const RegistrationForm = ()=>{
                     </Modal.Header>
                     <Modal.Body>
                         <p style={{'textAlign':'center'}}>{modalmessage}</p>
-                    <div style={{'width': '15%','margin': 'auto'}}>
+                        <Stack direction="horizontal" className='justify-content-center' gap={5}>
                         
                         <Button id='modalokay' style={{'display':'none'}}
                         onClick={()=>{Meteor.loginWithPassword(username,password);navigate('/')}}
@@ -117,7 +120,7 @@ const RegistrationForm = ()=>{
                          {(showsubmit)?(<Button variant='danger' id='modalokayerror' 
                             onClick={()=>{handleSubmitClose()}}
                             >Okay</Button>):(null)}
-                    </div>    
+                    </Stack>    
                     </Modal.Body>
               </Modal>  
                 </Form>

@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {Form, FloatingLabel,Button,Alert,Spinner,Modal,Row,Col} from 'react-bootstrap';
+import {Form, FloatingLabel,Button,Alert,Spinner,Modal,Row,Col,Stack} from 'react-bootstrap';
 import {useNavigate} from 'react-router-dom';
 import { DonationList } from '../api/Collections';
 //import {Meteor} from 'meteor/meteor';
@@ -50,7 +50,8 @@ const DonationForm = () =>{
                     event.preventDefault();   
                 }
                 else{
-                    handleModalMessage('Form and Images Submitted successfully');
+                    handleModalMessage(`Form and Images Submitted successfully\nYour donation will soon be verified
+                    \nThank You`);
                     document.querySelector("#modalokay").style.display = "inline";
                     // if(confirm('Do you want to donate again?')){
                     //     window.location.reload();
@@ -79,7 +80,7 @@ const DonationForm = () =>{
             reader.readAsArrayBuffer(file); //read the file as arraybuffer
         }
         else{
-            handleFileError('Only jpg, jpeg and png files support');
+            handleFileError('only jpg, jpeg and png files supported');
             document.getElementById("file").value=null;
         }
     }
@@ -104,10 +105,6 @@ const DonationForm = () =>{
         }
       }
     
-        // var dbimg = Files.find({user_id:Meteor.user()._id},{fields:{}}).fetch();
-        // dbimg=new Blob([dbimg[0].data]);
-        // dbimg=URL.createObjectURL(dbimg);
-        // console.log(img);
         var img=URL.createObjectURL(new Blob([medfile]))
         return (
             <div className="form">
@@ -126,7 +123,8 @@ const DonationForm = () =>{
                         />
                     </FloatingLabel>
                     <FloatingLabel controlId="floatingInput" label="Expiry Date" className="mb-3">
-                        <input type='date' className='form-control' onChange={e=>handleExpdateChange(e.target.value)}
+                        <input type='date' className='form-control' min={(new Date(Date.now() +  28* 24 * 60 * 60 * 1000).toISOString().split("T")[0])}//setting offset to 28 days from today
+                         onChange={e=>handleExpdateChange(e.target.value)}
                         required/>
                     </FloatingLabel>
                     <FloatingLabel controlId="floatingInput" label="Phone Number" className="mb-3">
@@ -160,13 +158,15 @@ const DonationForm = () =>{
                     <Modal.Header>  
                     </Modal.Header>
                     <Modal.Body>
-                        <p style={{'textAlign':'center'}}>{modalmessage}</p>
-                    <Row style={{'width': '50%','margin': 'auto'}}>
-                        <Col ><Button id='modalyes' style={{'display':'none'}} 
-                        onClick={()=>{window.location.reload()}}
-                        >Yes</Button></Col>
+                        <p style={{'textAlign':'center','white-space': 'pre-wrap'}}>{modalmessage}</p>
+                        <Stack direction="horizontal" className='justify-content-center' gap={5}>
+                        <div>
+                            <Button id='modalyes' style={{'display':'none'}} 
+                            onClick={()=>{window.location.reload()}}
+                            >Yes</Button>
+                        </div>
                         
-                        <Col id='modalokay' style={{'display':'none'}}><Button 
+                        <div id='modalokay' style={{'display':'none'}}><Button 
                         onClick={()=>{document.getElementById("modalokay").style.display = "none";
                         handleModalMessage('Do you want donate again?');
                         document.querySelector("#modalyes").style.display = "inline";
@@ -175,12 +175,13 @@ const DonationForm = () =>{
                          <Button variant='danger' id='modalokayerror' style={{'display':'none'}}
                             onClick={()=>{console.log(modalmessage);window.location.reload()}}
                             >Retry</Button>
-                        </Col>
+                        </div>
                         
-                        <Col><Button id='modalno' style={{'display':'none'}}
+                        <div><Button id='modalno' style={{'display':'none'}}
                         onClick={()=>{navigate(`/yourdonations`);}}
-                        >No</Button></Col>
-                    </Row>
+                        >No</Button>
+                        </div>
+                    </Stack>
                         
                     </Modal.Body>
               </Modal>

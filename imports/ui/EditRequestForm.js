@@ -68,7 +68,7 @@ const EditRequestForm = () => {
         reader.readAsArrayBuffer(file); //read the file as arraybuffer
     }
     else{
-        handleFileError('Only jpg, jpeg and png files support');
+        handleFileError('only jpg, jpeg and png files supported');
         document.getElementById("file").value=null;
     }
 }

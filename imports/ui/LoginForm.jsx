@@ -1,6 +1,7 @@
 import { Meteor } from 'meteor/meteor';
 import React, { useState } from 'react';
 import {Modal,Button,FloatingLabel,Form,Alert} from 'react-bootstrap'
+import { useNavigate } from 'react-router-dom';
 export const LoginForm = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -8,7 +9,7 @@ export const LoginForm = () => {
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
-
+  const navigate=useNavigate();
   const submit = e => {
     e.preventDefault();
     console.log(username,password);
@@ -18,9 +19,10 @@ export const LoginForm = () => {
       }
       else{
         handleClose();
+        navigate('/');
       }
       });
-
+   
     
   };
 
