@@ -68,62 +68,48 @@ if(Meteor.user()){
             <Carousel>
 <Carousel.Item>
   <img
-    className="d-block w-100"
+    className="carouselImage"
     src="/images/ok_2.gif"
     alt="First slide"
   />
   <Carousel.Caption>
-    <h1 className='slide-text'><p>Don't panic. 
+    <h3 className='slide-text'><p>Don't panic. 
     But #DontTakeltEasy.
     WE ARE IN THIS TOGETHER.Be informed. 
     Take precautions. Stay safe..</p>
-    </h1>
+    </h3>
     
   </Carousel.Caption>
 </Carousel.Item>
 <Carousel.Item>
   <img
-    className="d-block w-100"
-    src="/images/analgesic.jpg"
+    className="carouselImage"
+    src="/images/slide_2.jpg"
     alt="Second slide"
-    
   />
 
   <Carousel.Caption>
-  <h1 className='slide-text'>
+  <h3 className='slide-text'>
     <p>Helping one person might not change the 
-      whole worlds,but it could change the world for
-       one person!!</p></h1>
+      whole world,but it could change the world for
+       one person!!</p></h3>
   </Carousel.Caption>
 </Carousel.Item>
 <Carousel.Item>
   <img
-    className="d-block w-100"
+    className="carouselImage"
     src='/images/s3.jpg'
     alt="Third slide"
   />
-
   <Carousel.Caption>
-    <h3>Third slide label</h3>
-    <p>Praesent commodo cursus magna, vel scelerisque nisl consectetur.</p>
+    
+    <h3 className='slide-text'>
+    <p>Medicine heals doubts as well as diseases.</p>
+    </h3>
   </Carousel.Caption>
 </Carousel.Item>
 </Carousel>
-{/* <br><br><br> */}
-{/* <br/>
 <br/>
-<br/>
-          <div className='home-image-container'>
-            <img className="home-image" src='/images/corona.jpg'/>
-            <div className='home-image-text'><h1>Donation</h1><a class="btn btn-danger btn-lg text-uppercase js-scroll-trigger" 
-         href="#contactus">Tell us More</a></div>
-
-            <br>
-            </br>
-            </div> */}
-            {/* <div tabindex="0" role="button" class="_2tdEn _1pXi6 _3K0Ka _220Ph"><div tabindex="0" role="button" class="_2tdEn _1pXi6"><img class="cKtiT" src="https://assets.pharmeasy.in/web-assets/dist/581b7351.svg" alt="ooc"/>
-            </div><div class="qLCRa"><div>Call For Details</div>
-            <strong>+91 9967705674</strong></div><div tabindex="0" role="button" class="_2tdEn _1pXi6 _1_5aQ">×</div></div> */}
             <div className='parallax' style={{'backgroundImage':'url("/images/s2.jpg")'}}>
               <br/>
               <div style={{'margin':'auto','width':'50%'}}>
@@ -153,7 +139,7 @@ if(Meteor.user()){
           </div>
            <br/>
            <br/> 
-          {/**over flow issue is here */}    
+             
           
             <div className='how-to-donate'>
               <h1 style={{'width': '55%',
@@ -230,17 +216,6 @@ if(Meteor.user()){
 </br>
 
   <footer>
-      {/* <div class="footer-content">
-          <h3>About us </h3>
-          <p>Started in 2022 Sharemeds an initiative by SIES Collage Students grows exponentially through its research in technology and Social Care 
-            .Sharemeds works towards development of Healthy Society.
-            We take surplus medications off of your hands and get them to the people who need them. .</p>
-          <div>
-          <a style={{'padding':'10px'}}href="#"><FaInstagram/></a>
-              <a style={{'padding':'10px'}} href="#"><FaFacebookSquare/></a>
-              <a style={{'padding':'10px'}} href="#"><FaTwitterSquare/></a>
-       </div>
-      </div> */}
       <div class="footer-bottom">
           <p>copyright &copy;2022. designed by <span>Yash & Manoj with &#10084; </span></p>
       </div>

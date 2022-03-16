@@ -17,7 +17,7 @@ const RequestForm = () => {
     const [medfile,handleFileChange]=useState('');
     const [show, setShow] = useState(false);
     const [donation_id,setDonation_id]=useState('');
-    const [requestername,handleRequesterNameChange]=useState(Meteor.user().profile.address);
+    const [requestername,handleRequesterNameChange]=useState(Meteor.user().profile.name);
 
     const [reason,handleReasonChange]=useState('');
     const handleClose = () => setShow(false);

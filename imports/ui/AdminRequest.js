@@ -57,7 +57,8 @@ const AdminRequest = () => {
         var image;
         //console.log(reqname);
         if(!isLoadingData && !isLoadingImg && !isLoadingDonationData){
-            const reqname=Request.find({},{fields:{}}).fetch().reverse();
+            const reqname=(Request.find({},{fields:{}}).fetch()).reverse();
+            console.log(reqname);
             setEditStatus=(id,status)=>{
                 // Request.update(id,{$set:{edit:status}});
                 Meteor.call('setRequestEditStatus',id,status,
@@ -332,6 +333,9 @@ const AdminRequest = () => {
                                 <Popover id={`popover${index}`}>
                                 <Popover.Header as="h3">User Details</Popover.Header>
                                 <Popover.Body>
+                                <Row style={{'color':'green'}}>
+                                        <Col>name:</Col><Col>{medicine.requester_name}</Col>
+                                    </Row>
                                     <Row style={{'color':'red'}}>
                                         <Col>Phone Number:</Col><Col>{medicine.phone}</Col>
                                     </Row>
@@ -342,7 +346,7 @@ const AdminRequest = () => {
                                 </Popover>
                             }
                             >       
-                               <p>{medicine.requester_name} / {medicine.username}</p> 
+                               <p>{medicine.username}</p> 
                             </OverlayTrigger>       
                             </td>
                             {/* {console.log(medicine.donor_name)} */}
