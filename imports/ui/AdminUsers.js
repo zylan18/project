@@ -104,8 +104,8 @@ const AdminUsers = () => {
                         </td>
                         <td>{user.username}</td>
                         <td>{user.profile.name}</td>
-                        <td>{user.profile.phone}</td>
                         <td style={{'word-wrap':'break-word'}}>{user.emails[0].address}</td>
+                        <td>{user.profile.phone}</td>
                         <td style={{'word-wrap':'break-word'}}>{user.profile.address}</td>
                     </tr>
                 )
