@@ -24,7 +24,15 @@ if(Meteor.user()){
     </div>
     <br/>
     <br/>
+    <br/>
+    <p style={{'fontSize':'larger'}} >In need of any medicine?</p>
+    <a href='/request' className='request-now' style={{'font-size': '20px','padding': '15px'}}>Request Now</a>
+    <br/>
+    <br/>
+    <br/>
+    
     <h1>The impact is real</h1>
+    <br/>
     <br/>
     <img src='/images/homepage-tiny-quotes.png' style={{'margin-left':'-50%','width':'15%'}}/>
     <br/>

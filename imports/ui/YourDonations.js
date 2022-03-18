@@ -51,7 +51,7 @@ const YourDonations = () => {
 
     useEffect(()=>{
         if(!isLoadingData && !isLoadingImg){
-            const donor=DonationList.find({username:(Meteor.user()).username},{fields:{}}).fetch();
+            const donor=(DonationList.find({username:(Meteor.user()).username},{fields:{}}).fetch()).reverse();
             for(i=0;i<donor.length;i++){
                 handleAdd(true);
             }
@@ -59,7 +59,7 @@ const YourDonations = () => {
     },[isLoadingImg]) 
 
     if(!isLoadingData && !isLoadingImg){
-    const donationList=DonationList.find({username:(Meteor.user()).username},{fields:{}}).fetch();
+    const donationList=DonationList.find({username:(Meteor.user()).username},{fields:{}}).fetch().reverse();
         console.log(donationList)
         return (
             <div className="admin-page">

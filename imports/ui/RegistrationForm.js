@@ -45,11 +45,18 @@ const RegistrationForm = ()=>{
             })   
          }
         else{
+            // while(true){
+            //     if(showsubmit){
+            //         console.log('inside while');
+            //         
+                    
+            //         document.querySelector("#modalokayerror").style.display = "inline";
+            //         break;
+            //     }
+            // }
+            //document.querySelector("#modalokayerror").style.display = "inline";
             
-            handleModalMessage('Passwords do not match');
-            //document.querySelector("#modalokay").style.display = "inline";
-            
-            
+           handleModalMessage('Passwords do not match');
            document.querySelector('#password').value='';
            document.querySelector('#confpassword').value='';
 
@@ -104,22 +111,23 @@ const RegistrationForm = ()=>{
                        </FloatingLabel>
                        <Form.Label className="loginError">{usernameError}</Form.Label>
                         <Form.Label className="loginError">{passwordError}</Form.Label><br/>
-                        <Button variant="primary" type="submit">Submit</Button>
-                    
+                        <Button variant="primary" type="submit">Submit</Button>                  
                     <Modal show={showsubmit} onHide={handleSubmitClose} backdrop="static" centered keyboard={false}>
                     <Modal.Header>  
                     </Modal.Header>
                     <Modal.Body>
                         <p style={{'textAlign':'center'}}>{modalmessage}</p>
                         <Stack direction="horizontal" className='justify-content-center' gap={5}>
-                        
                         <Button id='modalokay' style={{'display':'none'}}
                         onClick={()=>{Meteor.loginWithPassword(username,password);navigate('/')}}
                         >Okay</Button>
 
-                         {(showsubmit)?(<Button variant='danger' id='modalokayerror' 
+                        {(passwordError)?(<Button variant='danger' id='modalokayerror' 
                             onClick={()=>{handleSubmitClose()}}
-                            >Okay</Button>):(null)}
+                            >Okay</Button>)
+                            :(<Button variant='danger' id='modalokayerror' style={{"display":"none"}}
+                            onClick={()=>{handleSubmitClose()}}
+                            >Okay</Button>)}
                     </Stack>    
                     </Modal.Body>
               </Modal>  

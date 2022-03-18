@@ -108,7 +108,11 @@ const RequestList = () => {
                             <td className='medicine-detail'>{medicine.brand}</td>
                             <td className='medicine-detail'>{medicine.composition}</td>
                             <td className='medicine-detail'>{medicine.exp_date}</td>
-                            <td><Button className='btn-primary request-button' onClick={()=>{med_id=medicine._id;handleOnClick()}}>request</Button></td>
+                            <td>
+                                <div className="d-flex justify-content-around">
+                                <Button className='btn-primary' onClick={()=>{med_id=medicine._id;handleOnClick()}}>request</Button>
+                                </div>
+                            </td>
                         </tr>    
                         
                     )

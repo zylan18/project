@@ -50,14 +50,14 @@ const YourRequests = () => {
     }) 
     useEffect(()=>{
         if(!isLoadingData && !isLoadingImg){
-            const request=Request.find({username:(Meteor.user()).username},{fields:{}}).fetch();
+            const request=Request.find({username:(Meteor.user()).username},{fields:{}}).fetch().reverse();
             for(i=0;i<request.length;i++){
                 handleAdd(true);
             }
         }
     },[isLoadingImg])   
     if(!isLoadingData && !isLoadingImg){
-    const requestList=Request.find({username:(Meteor.user()).username},{fields:{}}).fetch();
+    const requestList=Request.find({username:(Meteor.user()).username},{fields:{}}).fetch().reverse();
         return (
             <div className="admin-page">
                 <h1>Your Requests</h1>
