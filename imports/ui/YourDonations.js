@@ -1,6 +1,6 @@
 import React,{useState,useEffect} from 'react';
 import { DonationList } from '../api/Collections';
-import {Alert,Spinner,Button,Modal,Carousel,Toast} from 'react-bootstrap';
+import {Alert,Spinner,Button,Modal,Carousel,Toast,Row,Col,Placeholder} from 'react-bootstrap';
 import { useTracker } from 'meteor/react-meteor-data';
 import {Files} from '../api/Collections';
 import {useNavigate} from 'react-router-dom';
@@ -120,7 +120,10 @@ const YourDonations = () => {
                             <Button className="btn-danger" onClick={()=>cancelDonation(index)}>Cancel</Button>
                         </td>):null}  */}
                         <td className='medicine-detail'><a href={`/donationstatus/${donor._id}`}>click here for more details</a></td>
-                        <td className='request-button'>{(donor.edit)?(<Button onClick={()=>navigate(`/editdonation/${donor._id}`)}>edit</Button>):(null)}</td>
+                        <td>{(donor.edit)
+                        ?(<div className="d-flex justify-content-around">
+                            <Button onClick={()=>navigate(`/editdonation/${donor._id}`)}
+                            >edit</Button></div>):(null)}</td>
                     </tr>
                     
                     )
@@ -146,11 +149,144 @@ const YourDonations = () => {
               </Modal>
             </div>
         )
-    }else{
-        return(<div>
-            <Spinner className="spinner" animation="grow" variant="primary" 
-           />
-        </div>)  
+    }else{//isLoading
+        return(<div className='admin-page'>
+        <h1>Your Donations</h1>
+        <div  style={{'width':'98%','margin':'auto'}}>
+        <Row className='your-table-header'>
+            <Col style={{'padding':'8px','width':'100px'}} ></Col>
+            <Col style={{'padding':'8px','width':'100px'}} ><b>Medicine Name</b></Col>
+            <Col style={{'padding':'8px','width':'100px'}} ><b>Donated at</b></Col> 
+            <Col style={{'padding':'8px','width':'100px'}} ><b>Status</b></Col>
+            <Col style={{'padding':'8px','width':'100px'}} ><b>Remarks</b></Col>
+            <Col style={{'padding':'8px','width':'100px'}} ></Col>
+            <Col style={{'padding':'8px','width':'75px'}} ></Col>
+        </Row>
+        <Placeholder animation='glow'>
+        <Row className="align-items-center" style={{'border':'1px solid #26bd00','border-radius':'5px','padding':'8px','background-color': '#cbfdbe'}}>
+            <Col lg>
+                <Placeholder animation='wave'>
+                    <Placeholder style={{'height':'100px'}}/>
+                </Placeholder>
+            </Col> 
+            <Col lg>
+                <Placeholder animation='wave' >
+                    <Placeholder xs={12} />
+                </Placeholder>
+            </Col> 
+            <Col lg>
+                <Placeholder animation='wave'>
+                    <Placeholder xs={12} />
+                </Placeholder>
+            </Col>
+            <Col lg>
+                <Placeholder animation='wave'>
+                    <Placeholder xs={12} />
+                </Placeholder>
+            </Col> 
+            <Col lg>
+                <Placeholder animation='wave'>
+                    <Placeholder xs={12} />
+                </Placeholder>
+            </Col>
+            <Col lg>
+                <Placeholder animation='wave'>
+                    <Placeholder xs={12} bg='primary'/>
+                </Placeholder>
+            </Col> 
+            <Col lg>
+                <Placeholder animation='wave'>
+                <div className="d-flex justify-content-around">
+                    <Placeholder.Button xs={3} lg={6}/>
+                 </div>   
+                </Placeholder>
+            </Col>
+        </Row>
+        </Placeholder>
+        <Placeholder animation='glow'>
+        <Row className="align-items-center" style={{'border':'1px solid #ff2222','border-radius':'5px','padding':'8px','background-color': '#ffa0a0'}}>
+            <Col lg>
+                <Placeholder animation='wave'>
+                    <Placeholder style={{'height':'100px'}}/>
+                </Placeholder>
+            </Col> 
+            <Col lg>
+                <Placeholder animation='wave' >
+                    <Placeholder xs={12} />
+                </Placeholder>
+            </Col> 
+            <Col lg>
+                <Placeholder animation='wave'>
+                    <Placeholder xs={12} />
+                </Placeholder>
+            </Col>
+            <Col lg>
+                <Placeholder animation='wave'>
+                    <Placeholder xs={12} />
+                </Placeholder>
+            </Col> 
+            <Col lg>
+                <Placeholder animation='wave'>
+                    <Placeholder xs={12} />
+                </Placeholder>
+            </Col>
+            <Col lg>
+                <Placeholder animation='wave'>
+                    <Placeholder xs={12} bg='primary'/>
+                </Placeholder>
+            </Col> 
+            <Col lg>
+                <Placeholder animation='wave'>
+                <div className="d-flex justify-content-around">
+                    <Placeholder.Button xs={3} lg={6}/>
+                 </div>   
+                </Placeholder>
+            </Col>
+        </Row>
+        </Placeholder>
+        <Placeholder animation='glow'>
+        <Row className="align-items-center" style={{'border':'1px solid #26bd00','border-radius':'5px','padding':'8px','background-color': '#cbfdbe'}}>
+            <Col lg>
+                <Placeholder animation='wave'>
+                    <Placeholder style={{'height':'100px'}}/>
+                </Placeholder>
+            </Col> 
+            <Col lg>
+                <Placeholder animation='wave' >
+                    <Placeholder xs={12} />
+                </Placeholder>
+            </Col> 
+            <Col lg>
+                <Placeholder animation='wave'>
+                    <Placeholder xs={12} />
+                </Placeholder>
+            </Col>
+            <Col lg>
+                <Placeholder animation='wave'>
+                    <Placeholder xs={12} />
+                </Placeholder>
+            </Col> 
+            <Col lg>
+                <Placeholder animation='wave'>
+                    <Placeholder xs={12} />
+                </Placeholder>
+            </Col>
+            <Col lg>
+                <Placeholder animation='wave'>
+                    <Placeholder xs={12} bg='primary'/>
+                </Placeholder>
+            </Col> 
+            <Col lg>
+                <Placeholder animation='wave'>
+                <div className="d-flex justify-content-around">
+                    <Placeholder.Button xs={3} lg={6}/>
+                 </div>   
+                </Placeholder>
+            </Col>
+        </Row>
+        </Placeholder>
+        </div>
+    </div>)  
     }
     }
     else if(Meteor.loggingIn()){
