@@ -103,7 +103,7 @@ const RequestStatus = () => {
       
         <Row>
         <Col sm>    
-        <h3>Current Status: {request.status}</h3>
+        <h2><Row><Col>Current Status:</Col><Col>{request.status}</Col></Row></h2>
         <div class="delivery-progress">
             <ul class="StepProgress">
                 <li id='verification' class="StepProgress-item">

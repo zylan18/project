@@ -86,8 +86,16 @@ const DonationStatus = () => {
                 document.getElementById("storage").classList.add('is-done');  
                 break;
             }
+            case 'request verified':{
+                document.getElementById("verification").classList.add('is-done');
+                document.getElementById("pick-up").classList.add('is-done');
+                document.getElementById("collected").classList.add('is-done');
+                document.getElementById("in-transit").classList.add('is-done');  
+                document.getElementById("storage").classList.add('is-done');  
+                break;
+            }
         }
-        console.log('useEffect');
+        
         }
     }
     })//removed the array parameter of useEffect as it makes it run useEffect only once
@@ -100,7 +108,7 @@ const DonationStatus = () => {
       
         <Row>
         <Col sm>    
-        <h1>Current Status: {donation.status}</h1>
+        <h2><Row><Col>Current Status:</Col><Col>{donation.status}</Col></Row></h2>
         <div class="delivery-progress">
             <ul class="StepProgress">
                 <li id='verification' class="StepProgress-item">
