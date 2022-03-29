@@ -4,6 +4,7 @@ import {Meteor} from 'meteor/meteor'
 import {Files} from './Collections'
 import {Request} from './Collections'
 import {ContactUs} from './Collections'
+import { Email } from 'meteor/email'
 
 
 Meteor.publish('requestList',(type)=>{
@@ -260,6 +261,25 @@ Meteor.methods({
           Meteor.users.remove({_id:id});
         },'setRole'(id,role){
           Meteor.users.update(id,{$set:{'profile.role':role}});
+        },
+        sendEmail(to, from, subject, text) {
+          
+          console.log(`sent mail to ${to}`);
+      
+          // Let other method calls from the same client start running, without
+          // waiting for the email sending to complete.
+          this.unblock();
+      
+          Email.send({
+            to: to,
+            from: from,
+            subject: subject,
+            html: text
+          });
+          console.log(`sent mail to ${to}`);
         }
 
 });
+Meteor.startup(function () {
+  process.env.MAIL_URL = 'smtp://postmaster@sandboxfccb87a7147c4b34b11365353462f55c.mailgun.org:176a66d0df1c6c290552744d11724a08-62916a6c-d32fba70@smtp.mailgun.org:587';
+  });

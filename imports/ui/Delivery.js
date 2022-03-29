@@ -18,7 +18,8 @@ const Delivery = () => {
 
     const isLoadingDonation = useTracker(()=>{
       const handle=Meteor.subscribe('donationDelivery');
-      return(!handle.ready());
+      const handleuser=Meteor.subscribe('allUsers');
+      return(!handle.ready()&&!handleuser.ready());
       })
     useEffect(() => {
       if(!isLoadingDonation && !isLoadingRequest){
@@ -36,6 +37,27 @@ const Delivery = () => {
             alert('Error collection status not updated');
           }else{
             alert(`status changed successfully to ${status}`)
+            var email=Meteor.users.findOne({username:(DonationList.findOne({_id:id})).username}).emails[0].address;
+                    console.log(email);
+                    var body=`<!DOCTYPE html>
+                    <html lang="en">
+                    <head> 
+                        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+                    </head>
+                    <body>
+                        <h3>Status update of your donation:</h3>
+                        <h3>Medicine Name: ${(DonationList.findOne({_id:id})).medicine_name}</h3>
+                        <h3>Donation id: ${id}</h3>
+                        <h3>status: ${(DonationList.findOne({_id:id})).status}</h3>
+                    </body>
+                </html>`
+                    Meteor.call(
+                        'sendEmail',
+                        `${(DonationList.findOne({_id:id})).username} <${email}>`,
+                        'admin@sharemeds.com',
+                        'Medicine Donation status',
+                        body
+                    );
             setReload(reload+1);
           }
         })
@@ -52,6 +74,27 @@ const Delivery = () => {
             alert('Error delivery status not updated');
           }else{
             alert(`status changed successfully to ${status}`)
+            var email=Meteor.users.findOne({username:(DonationList.findOne({_id:id})).username}).emails[0].address;
+                    console.log(email);
+                    var body=`<!DOCTYPE html>
+                    <html lang="en">
+                    <head> 
+                        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+                    </head>
+                    <body>
+                        <h3>Status update of your donation:</h3>
+                        <h3>Medicine Name: ${(DonationList.findOne({_id:id})).medicine_name}</h3>
+                        <h3>Donation id: ${id}</h3>
+                        <h3>status: ${(DonationList.findOne({_id:id})).status}</h3>
+                    </body>
+                </html>`
+                    Meteor.call(
+                        'sendEmail',
+                        `${(DonationList.findOne({_id:id})).username} <${email}>`,
+                        'admin@sharemeds.com',
+                        'Medicine Donation status',
+                        body
+                    );
             setReload(reload+1);
           }
         })

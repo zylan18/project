@@ -7,10 +7,18 @@ import {HiOutlineHeart} from '@react-icons/all-files/hi/HiOutlineHeart'
 
 const Home = () => {
 
-    //console.log(user.username);
+    
 if(Meteor.user()){
+  
   return(
   <div className='form'>
+    <button onClick={()=>{(Meteor.call(
+  'sendEmail',
+  `Manoj Nadar <${Meteor.user().emails[0].address}>`,
+  'admin@sharemeds.com',
+  'Hello from Meteor!',
+  'This is a test of Email.send.'
+))}}>Send Mail</button>
     <br/>
     <div style={{'textAlign':'center'}}> 
     <h1>{Meteor.user().profile.name} are you ready to<br/> make a positive impact?</h1>

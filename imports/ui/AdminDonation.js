@@ -43,8 +43,9 @@ const AdminDonation = () => {
     const handleRemarkShow = () => {setRemarkShow(true)};
     const isLoadingData = useTracker(()=>{
         const handle=Meteor.subscribe('donationAdmin');//used useTracker to continuously check if subscribe is ready 
+        const handleusers=Meteor.subscribe('allUsers');
         console.log('isLoadingData')
-        return(!handle.ready());
+        return(!handle.ready()&&!handleusers.ready());
         })
 
     const isLoadingImg = useTracker(()=>{
@@ -58,11 +59,7 @@ const AdminDonation = () => {
         if(!isLoadingData&&!isLoadingImg){
         console.log(reload);
         const donname=DonationList.find({},{fields:{}}).fetch().reverse();
-        // for(i=0;i<donname.length;i++){
-        //     if('in collection'||'storage'||'in delivery'||'delivered'){
-        //         document.getElementById(`status${i}`).checked=donname[i].edit;
-        //         }
-        // }
+        
         for(i=0;i<donname.length;i++){
             if(donname[i].verify_status==true){
                 document.getElementById(`row${i}`).className='verified'
@@ -79,33 +76,38 @@ const AdminDonation = () => {
         console.log(donname);
         function verify(id){  
             const user=Meteor.user();
-            // if(donname[index].verify_status == true){
-            // DonationList.update(donname[index]._id,{$set:{verify_status:false}});
-            // DonationList.update(donname[index]._id,{$set:{status:'not verified'}});
-            // DonationList.update(donname[index]._id,{$set:{edit:true}});
-            // console.log(donname[index].verify_status);
-            // }
-            // else if(donname[index].verify_status == "rejected"){
-            //     DonationList.update(donname[index]._id,{$set:{verify_status:false}});
-            //     DonationList.update(donname[index]._id,{$set:{status:'in verification'}});
-            //     DonationList.update(donname[index]._id,{$set:{verify_status:false}});
-            //     console.log(donname[index].verified_by);
-            // }
-            // else{
-            //     DonationList.update(donname[index]._id,{$set:{verify_status:true}});
-            //     DonationList.update(donname[index]._id,{$set:{status:'verified'}});
-            //     DonationList.update(donname[index]._id,{$set:{edit:false}});
-            //     console.log(donname[index].verified_by);
-            // }
             Meteor.call('adminVerify',id,Meteor.user().username,
             (error,result)=>{
                 if(error){
                     alert('error status not updated');
                 }else{
                     alert(`verify status changed to ${(DonationList.findOne({_id:id})).status}`);
+                    var email=Meteor.users.findOne({username:(DonationList.findOne({_id:id})).username}).emails[0].address;
+                    console.log(email);
+                    var body=`<!DOCTYPE html>
+                    <html lang="en">
+                    <head> 
+                        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+                    </head>
+                    <body>
+                        <h3>Status update of your donation:</h3>
+                        <h3>Medicine Name: ${(DonationList.findOne({_id:id})).medicine_name}</h3>
+                        <h3>Donation id: ${id}</h3>
+                        <h3>status: ${(DonationList.findOne({_id:id})).status}</h3>
+                    </body>
+                </html>`
+                    Meteor.call(
+                        'sendEmail',
+                        `${(DonationList.findOne({_id:id})).username} <${email}>`,
+                        'admin@sharemeds.com',
+                        'Medicine Donation status',
+                        body
+                    );
+            
                     setReload(reload+1);
                 }
             });
+            console.log(id);
             
             console.log("update");
             // DonationList.update(donname[index]._id,{$set:{verified_by:user.username}});
@@ -119,8 +121,32 @@ const AdminDonation = () => {
                     alert('error status not updated');
                 }else{
                     alert(`verify status changed to ${(DonationList.findOne({_id:id})).status}`);
+                    
                     setReload(reload+1);
                 }
+                var email=Meteor.users.findOne({username:(DonationList.findOne({_id:id})).username}).emails[0].address;
+                    console.log(email);
+                    var body=`<!DOCTYPE html>
+                    <html lang="en">
+                    <head> 
+                        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+                    </head>
+                    <body>
+                        <h3>Status update of your donation:</h3>
+                        <h3>Medicine Name: ${(DonationList.findOne({_id:id})).medicine_name}</h3>
+                        <h3>Donation id: ${id}</h3>
+                        <h3 style="color:red">status: ${(DonationList.findOne({_id:id})).status}</h3>
+                    </body>
+                </html>`
+                    Meteor.call(
+                        'sendEmail',
+                        `${(DonationList.findOne({_id:id})).username} <${email}>`,
+                        'admin@sharemeds.com',
+                        'Medicine Donation status',
+                        body
+                    );
+                      
+                    
             });
             // DonationList.update(id,{$set:{verify_status:'rejected'}});
             // DonationList.update(id,{$set:{status:'rejected'}});

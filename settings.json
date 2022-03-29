@@ -1,0 +1,10 @@
+{
+  "packages": {
+    "email": {
+      "service": "mail.ee",
+      "user": "sharemeds@mail.ee",
+      "password": "yashop11"
+      
+    }
+  }
+}

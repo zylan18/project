@@ -33,7 +33,8 @@ const AdminRequest = () => {
         
         const isLoadingData = useTracker(()=>{
             const handle=Meteor.subscribe('requestAdmin');//used useTracker to continuously check if subscribe is ready 
-            return(!handle.ready());
+            const handleuser=Meteor.subscribe('allUsers')
+            return(!handle.ready()&&!handleuser.ready());
             })
         const isLoadingDonationData = useTracker(()=>{
             const handle=Meteor.subscribe('donationAdmin');//used useTracker to continuously check if subscribe is ready 
@@ -108,29 +109,31 @@ const AdminRequest = () => {
                         alert('error status not updated');
                     }else{
                         alert(`verify status changed to ${(Request.findOne({_id:id})).status}`);
-                        setReload(reload+1);
-                    }
-                });
-                // if(reqname[index].verify_status == true){
-                // Request.update(reqname[index]._id,{$set:{verify_status:false}});
-                // Request.update(reqname[index]._id,{$set:{status:'not verified'}});
-                // Request.update(reqname[index]._id,{$set:{edit:true}});
-                // DonationList.update(reqname[index].donation_id,{$set:{status:'storage'}})
-                // console.log(reqname[index].verify_status);
-                // }
-                // else if(reqname[index].verify_status == "rejected"){
-                //     Request.update(reqname[index]._id,{$set:{verify_status:false}});
-                //     Request.update(reqname[index]._id,{$set:{status:'in verification'}});
-                //     Request.update(reqname[index]._id,{$set:{edit:true}});
-                //     console.log(reqname[index].verified_by);
-                // }
-                // else{
-                //     Request.update(reqname[index]._id,{$set:{verify_status:true}});
-                //     Request.update(reqname[index]._id,{$set:{status:'verified'}});
-                //     Request.update(reqname[index]._id,{$set:{edit:false}});
-                //     DonationList.update(reqname[index].donation_id,{$set:{status:'request verified'}})
-                //     console.log(reqname[index].verified_by);
-                // }
+                        var email=Meteor.users.findOne({username:(Request.findOne({_id:id})).username}).emails[0].address;
+                        console.log(email);
+                        var body=`<!DOCTYPE html>
+                        <html lang="en">
+                            <head> 
+                                <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+                            </head>
+                            <body>
+                                <h3>Status update of your Request:</h3>
+                                <h3>Medicine Name: ${(Request.findOne({_id:id})).medicine_name}</h3>
+                                <h3>Request id: ${id}</h3>
+                                <h3>status: ${(Request.findOne({_id:id})).status}</h3>
+                            </body>
+                        </html>`
+                        Meteor.call(
+                            'sendEmail',
+                            `${(Request.findOne({_id:id})).username} <${email}>`,
+                            'admin@sharemeds.com',
+                            'Medicine Request status',
+                            body
+                        );
+                            setReload(reload+1);
+                        }
+                    });
+               
                 console.log("update");
                
             }
@@ -142,6 +145,27 @@ const AdminRequest = () => {
                         alert('error status not updated');
                     }else{
                         alert(`verify status changed to ${(Request.findOne({_id:id})).status}`);
+                        var email=Meteor.users.findOne({username:(Request.findOne({_id:id})).username}).emails[0].address;
+                        console.log(email);
+                        var body=`<!DOCTYPE html>
+                        <html lang="en">
+                            <head> 
+                                <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+                            </head>
+                            <body>
+                                <h3>Status update of your Request:</h3>
+                                <h3>Medicine Name: ${(Request.findOne({_id:id})).medicine_name}</h3>
+                                <h3>Request id: ${id}</h3>
+                                <h3 style="color:red">status: ${(Request.findOne({_id:id})).status}</h3>
+                            </body>
+                        </html>`
+                        Meteor.call(
+                            'sendEmail',
+                            `${(Request.findOne({_id:id})).username} <${email}>`,
+                            'admin@sharemeds.com',
+                            'Medicine Request status',
+                            body
+                        );
                         setReload(reload+1);
                     }
                 })
