@@ -31,7 +31,7 @@ const RegistrationForm = ()=>{
             Meteor.call('Account.create',username,password,email,name,address,phone,
             (error,result)=>{
                 if(error){
-                    console.log(error.reason);
+                    console.log(error);
                     handleModalMessage(error.reason)
                     document.querySelector("#modalokayerror").style.display = "inline";
                     handleUsernameError(`*${error.reason}`);

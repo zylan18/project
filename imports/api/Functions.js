@@ -92,7 +92,7 @@ Meteor.publish('allUsers', ()=>{
 Meteor.methods({
     'Account.create'(username,password,email,nameofuser,address,phone){
         if (!Accounts.findUserByUsername(username)) {
-            Accounts.createUser({
+            Accounts.createUserVerifyingEmail({
               username: username,
               email:email,
               password: password,
@@ -281,5 +281,8 @@ Meteor.methods({
 
 });
 Meteor.startup(function () {
-  process.env.MAIL_URL = 'smtp://postmaster@sandboxfccb87a7147c4b34b11365353462f55c.mailgun.org:176a66d0df1c6c290552744d11724a08-62916a6c-d32fba70@smtp.mailgun.org:587';
+  process.env.MAIL_URL = 'mailgun smtp here';
+  Accounts.config({
+    sendVerificationEmail:true,
+   });
   });
