@@ -48,15 +48,15 @@ const AdminDonation = () => {
         return(!handle.ready()&&!handleusers.ready());
         })
 
-    const isLoadingImg = useTracker(()=>{
-        const handle=Meteor.subscribe('donationAdminImages');
-        return(!handle.ready());
-        })
+    // const isLoadingImg = useTracker(()=>{
+    //     const handle=Meteor.subscribe('donationAdminImages');
+    //     return(!handle.ready());
+    //     })
 
     
 
     useEffect(() => {
-        if(!isLoadingData&&!isLoadingImg){
+        if(!isLoadingData){
         console.log(reload);
         const donname=DonationList.find({},{fields:{}}).fetch().reverse();
         
@@ -68,10 +68,10 @@ const AdminDonation = () => {
             }
         }
     }
-        }, [isLoadingImg,reload]);
+        }, [isLoadingData,reload]);
     
     var image;
-    if(!isLoadingData && !isLoadingImg){
+    if(!isLoadingData){
         const donname=DonationList.find({},{fields:{}}).fetch().reverse();
         console.log(donname);
         function verify(id){  
@@ -306,7 +306,7 @@ ${(DonationList.findOne({_id:donation_id})).brand}\n${(DonationList.findOne({_id
                 </tr>
              <tbody>   
             {
-            donname.map((name,index) => (
+            donname.map((donation,index) => (
                 <tr data-index={index} id={`row${index}`} > 
                     <td>
                     <OverlayTrigger trigger="click" key={index} placement='right' rootClose={true} //rootClose to close popover when cllicked outside
@@ -328,7 +328,7 @@ ${(DonationList.findOne({_id:donation_id})).brand}\n${(DonationList.findOne({_id
                           
                             <Row>               
                                 <Col style={{'padding':'0px','margin':'auto'}} width='150px'>
-                                        <Button onClick={()=>{setDonation_id(name._id);setBrand(name.brand);setComposition(name.composition);setMedType(name.type);handleEditMedShow();}}>Edit</Button>
+                                        <Button onClick={()=>{setDonation_id(donation._id);setBrand(donation.brand);setComposition(donation.composition);setMedType(donation.type);handleEditMedShow();}}>Edit</Button>
                                 </Col>
                                 
                                 <Col style={{'margin':'auto'}} width='210px'>{/*radio for edit status*/}
@@ -337,40 +337,40 @@ ${(DonationList.findOne({_id:donation_id})).brand}\n${(DonationList.findOne({_id
                                         <Form.Check 
                                         type="switch"
                                         id={`status${index}`}
-                                        checked={name.edit}
-                                        label={(name.edit)?('Edit Enabled'):('Disabled Edit')}
+                                        checked={donation.edit}
+                                        label={(donation.edit)?('Edit Enabled'):('Disabled Edit')}
                                         />
                                             
                                         </Col>
                                         <Col style={{'margin':'auto'}}>
-                                            <Button variant='warning' onClick={()=>{handleStatus(name.edit);setEditStatus(name._id,!name.edit);console.log(name.edit)}}>
-                                                {(name.edit)?('disable'):('enable')}</Button>
+                                            <Button variant='warning' onClick={()=>{handleStatus(donation.edit);setEditStatus(donation._id,!donation.edit);console.log(donation.edit)}}>
+                                                {(donation.edit)?('disable'):('enable')}</Button>
                                         </Col>
                                     </Row>
                                 </Col>
                                 <Col style={{'margin':'auto'}} width='130px'>
-                                <span className={"status-"+(verifyColor(name.verify_status))}>
-                                {(name.verify_status==true)?(<span style={verifyIcon}><GiConfirmed style={verifyIcon}/> Verified</span>)
-                                :(name.verify_status=="rejected")?(<span style={cancelIcon}><GiCancel style={cancelIcon}/> Rejected</span>)
+                                <span className={"status-"+(verifyColor(donation.verify_status))}>
+                                {(donation.verify_status==true)?(<span style={verifyIcon}><GiConfirmed style={verifyIcon}/> Verified</span>)
+                                :(donation.verify_status=="rejected")?(<span style={cancelIcon}><GiCancel style={cancelIcon}/> Rejected</span>)
                                 :("Not Verified")}
                                 </span>
                                 </Col>
-                                <Col style={{'margin':'auto'}} width='100px'>{name.verified_by}</Col>
+                                <Col style={{'margin':'auto'}} width='100px'>{donation.verified_by}</Col>
                                 <Col style={{'margin':'auto'}} width='100px'>
-                                    <button id={index} className={(verifyColor(!name.verify_status))} onClick={()=>{verify(name._id)}}>
-                                        {(name.verify_status==true)?("Cancel")
-                                        :(name.verify_status=="rejected")?("Cancel Rejection")
+                                    <button id={index} className={(verifyColor(!donation.verify_status))} onClick={()=>{verify(donation._id)}}>
+                                        {(donation.verify_status==true)?("Cancel")
+                                        :(donation.verify_status=="rejected")?("Cancel Rejection")
                                         :("Verify")}</button>
                                 </Col> 
                                 <Col style={{'margin':'auto'}} width='100px'>   
-                                    <button style={{"color":"red"}} onClick={()=>rejectVerification(name._id)}>Reject</button>
+                                    <button style={{"color":"red"}} onClick={()=>rejectVerification(donation._id)}>Reject</button>
                                 </Col> 
                                 <Col style={{'margin':'auto'}} width='150px'>
-                                    {(name.remark)?(name.remark):('no remarks yet')}<br/>
-                                    <Button className='btn-danger' onClick={()=>{setDonation_id(name._id);handleRemark(name.remark);handleRemarkShow()}}>Remark</Button>
+                                    {(donation.remark)?(donation.remark):('no remarks yet')}<br/>
+                                    <Button className='btn-danger' onClick={()=>{setDonation_id(donation._id);handleRemark(donation.remark);handleRemarkShow()}}>Remark</Button>
                                 </Col>
                                 <Col style={{'margin':'auto'}}>
-                                    <Button variant='danger' onClick={()=>{deleteDonation(name._id)}}>
+                                    <Button variant='danger' onClick={()=>{deleteDonation(donation._id)}}>
                                     <FaTrashAlt/>
                                     </Button>
                                 </Col>
@@ -385,17 +385,17 @@ ${(DonationList.findOne({_id:donation_id})).brand}\n${(DonationList.findOne({_id
 
                     </td> 
                      <td className="image-table" width='120px' >
-                     {((Files.findOne({donation_id:name._id})).data.length == 1)?
-                        ((image=(Files.findOne({donation_id:name._id})).data)?
+                     {(donation.images.length == 1)?
+                        ((image=donation.images)?
                         (<img className='preview-image' loading='lazy' src={URL.createObjectURL(new Blob([image[0]]))}
-                        onClick={()=>{setDonation_id(name._id);handleShow()}}/>)
+                        onClick={()=>{setDonation_id(donation._id);handleShow()}}/>)
                         :"Not found")
                         :(<Carousel variant="dark">
-                                    {(image=(Files.findOne({donation_id:name._id})).data)?
+                                    {(image=donation.images)?
                                     ( image.map((img,index) => (
                                     <Carousel.Item>
                                     <img className='preview-image' loading='lazy' src={URL.createObjectURL(new Blob([img]))}
-                                    onClick={()=>{setDonation_id(name._id);{console.log(donation_id)};handleShow()}}/>
+                                    onClick={()=>{setDonation_id(donation._id);{console.log(donation_id)};handleShow()}}/>
                                     </Carousel.Item>))):"Not found"
                                     }
                             </Carousel>)}
@@ -410,59 +410,59 @@ ${(DonationList.findOne({_id:donation_id})).brand}\n${(DonationList.findOne({_id
                                 <table>
                     <tr>
                         <td align='right'>_id:</td>
-                        <td>{name._id}</td>
+                        <td>{donation._id}</td>
                     </tr>
                     <tr>
                         <td align='right'>user_id:</td>
-                        <td>{(name.user_id)?(name.user_id):('not found')}</td>
+                        <td>{(donation.user_id)?(donation.user_id):('not found')}</td>
                     </tr>
                     <tr>
                         <td align='right'>donatdeat:</td>
-                        <td>{name.donatedat}</td>
+                        <td>{donation.donatedat}</td>
                     </tr>
                     <tr>
                         <td align='right'>username:</td>
-                        <td>{name.username}</td>
+                        <td>{donation.username}</td>
                     </tr>
                     <tr>
                         <td align='right'>donor_name:</td>
-                        <td>{name.donor_name}</td>
+                        <td>{donation.donor_name}</td>
                     </tr>
                     <tr>
                         <td align='right'>medicine_name:</td>
-                        <td>{name.medicine_name}</td>
+                        <td>{donation.medicine_name}</td>
                     </tr>
                     <tr>
                         <td align='right'>phone:</td>
-                        <td>{name.phone}</td>
+                        <td>{donation.phone}</td>
                     </tr>
                     <tr>
                         <td align='right'>address:</td>
-                        <td>{name.address}</td>
+                        <td>{donation.address}</td>
                     </tr>
                     <tr>
                         <td align='right'>brand:</td>
-                        <td>{name.brand}</td>
+                        <td>{donation.brand}</td>
                     </tr>
                     <tr>
                         <td align='right'>composition:</td>
-                        <td>{name.composition}</td>
+                        <td>{donation.composition}</td>
                     </tr>
                     <tr>
                         <td align='right'>exp_date:</td>
-                        <td>{name.exp_date}</td>
+                        <td>{donation.exp_date}</td>
                     </tr>
                     <tr>
                         <td align='right'>verify_status:</td>
-                        <td>{(name.verify_status)?('true'):('false')}</td>
+                        <td>{(donation.verify_status)?('true'):('false')}</td>
                     </tr>
                     <tr>
                         <td align='right'>status:</td>
-                        <td>{name.status}</td>
+                        <td>{donation.status}</td>
                     </tr>
                     <tr>
                         <td align='right'>verified_by:</td>
-                        <td>{name.verified_by}</td>
+                        <td>{donation.verified_by}</td>
                     </tr>
                     </table>
                                 </Popover.Body>
@@ -479,27 +479,27 @@ ${(DonationList.findOne({_id:donation_id})).brand}\n${(DonationList.findOne({_id
                                 <Popover.Header as="h3">User Details</Popover.Header>
                                 <Popover.Body>
                                     <Row style={{'color':'red'}}>
-                                        <Col>Phone Number:</Col><Col>{name.phone}</Col>
+                                        <Col>Phone Number:</Col><Col>{donation.phone}</Col>
                                     </Row>
                                     <Row style={{'color':'blue'}}>    
-                                        <Col>Address:</Col><Col >{name.address}</Col>
+                                        <Col>Address:</Col><Col >{donation.address}</Col>
                                     </Row>       
                                 </Popover.Body>
                                 </Popover>
                             }
                             >       
-                        <span>{name.donor_name}</span>    
+                        <span>{donation.donor_name}</span>    
                     </OverlayTrigger>
                     </td >
                     {/* <td width='120px'>{name.phone}</td>
                     <td width='200px'>{name.address}</td> */}
                     {/* {console.log(name.donor_name)} */}
-                    <td width='120px'>{name.medicine_name}</td>
-                    <td width='120px'>{name.type}</td>
-                    <td width='120px'>{name.brand}</td>
-                    <td width='120px'>{name.composition}</td>
-                    <td width='120px'>{name.exp_date}</td>
-                    <td width='120px'>{name.status}</td>
+                    <td width='120px'>{donation.medicine_name}</td>
+                    <td width='120px'>{donation.type}</td>
+                    <td width='120px'>{donation.brand}</td>
+                    <td width='120px'>{donation.composition}</td>
+                    <td width='120px'>{donation.exp_date}</td>
+                    <td width='120px'>{donation.status}</td>
         
                     
                  </tr>   
@@ -517,7 +517,7 @@ ${(DonationList.findOne({_id:donation_id})).brand}\n${(DonationList.findOne({_id
                 </Modal.Header>
                 <Modal.Body>
                 {donation_id?(<Carousel variant="dark">
-                            {(image=(Files.findOne({donation_id:donation_id})).data)?
+                            {(image=(DonationList.findOne({_id:donation_id})).data)?
                             ( image.map((img,index) => (
                             <Carousel.Item>
                             <img className='admin-image' loading='lazy' src={URL.createObjectURL(new Blob([img]))}

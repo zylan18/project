@@ -59,7 +59,7 @@ export const LoginForm = () => {
       />
       </FloatingLabel>
       <Form.Label className="loginError">{loginError}</Form.Label>
-      <a href='/register'>register</a><br/>
+      <a className='link' onClick={()=>{navigate('/register');handleClose()}}>register</a><br/>
       <Button type="submit" className={"btn-primary"}>Log In</Button>
     </Form>
       </Modal.Body>

@@ -3,6 +3,16 @@ $secondary:#E4F9F5;
 $dark:#40514E;
 @import '../node_modules/bootstrap/scss/bootstrap.scss';
 
+.link{
+ cursor: pointer;
+ color: $primary !important;
+ text-decoration: underline;
+}
+.link:hover{
+  color: #0d6669 !important;
+}
+
+
 body{
   background-color: $secondary;
   font-family: arial, sans-serif;
@@ -204,12 +214,13 @@ body{
   color:#FFF; 
   background-color: #40514E; 
   min-width:30px;
-  
+  text-decoration: none !important;
   //border:solid black 0.5px;
 }
 
 .dropdown-menu a:hover{
-  background-color: $secondary; 
+  background-color: $secondary !important;
+  color: #40514E; 
 }
 .red-text{
   color:$warning;

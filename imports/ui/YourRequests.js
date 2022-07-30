@@ -20,6 +20,12 @@ const YourRequests = () => {
     if(Meteor.user()){
         
     const [request_id,setRequest_id]=useState('');
+    const [limit, setlimit] = useState(3);
+    const changeLimit = () => {
+      setlimit(limit + 3);
+      console.log(limit)
+    };
+
     const navigate = useNavigate();
 
     const [showtoast, setShowToast] = useState([]);
@@ -44,19 +50,19 @@ const YourRequests = () => {
         return(!handle.ready());
         })
 
-    const isLoadingImg=useTracker(()=>{
-        const handle=Meteor.subscribe('yourRequestImages')
-        return(!handle.ready());
-    }) 
+    // const isLoadingImg=useTracker(()=>{
+    //     const handle=Meteor.subscribe('yourRequestImages')
+    //     return(!handle.ready());
+    // }) 
     useEffect(()=>{
-        if(!isLoadingData && !isLoadingImg){
+        if(!isLoadingData){
             const request=Request.find({username:(Meteor.user()).username},{fields:{}}).fetch().reverse();
             for(i=0;i<request.length;i++){
                 handleAdd(true);
             }
         }
-    },[isLoadingImg])   
-    if(!isLoadingData && !isLoadingImg){
+    },[isLoadingData])   
+    if(!isLoadingData){
     const requestList=Request.find({username:(Meteor.user()).username},{fields:{}}).fetch().reverse();
         return (
             <div className="admin-page">
@@ -88,13 +94,13 @@ const YourRequests = () => {
                 {requestList.map((request,index) => (
                     <tr data-index={index} className={(verifyColor(request.verify_status))}>
                         <td>
-                        {((Files.findOne({request_id:request._id})).data.length == 1)?//it checks if one image is uploaded then display one image else display carousel
-                        ((image=(Files.findOne({request_id:request._id})).data)?
+                        {(request.images.length == 1)?//it checks if one image is uploaded then display one image else display carousel
+                        ((image=request.images)?
                         (<img loading='lazy' className='preview-image' src={URL.createObjectURL(new Blob([image[0]]))}
                         onClick={()=>{setRequest_id(request._id);handleShow()}}/>)
                         :"Not found")
                         :(<Carousel variant="dark">
-                                    {(image=(Files.findOne({request_id:request._id})).data)?
+                                    {(image=request.images)?
                                     ( image.map((img,index) => (
                                     <Carousel.Item>
                                     <img loading='lazy' className='preview-image' src={URL.createObjectURL(new Blob([img]))}
@@ -116,7 +122,7 @@ const YourRequests = () => {
                         </td>):null}  */}
                         <td>
                             <div className="d-flex justify-content-around">
-                                <a href={`/requeststatus/${request._id}`}>click here for more details</a>
+                                <a className='link' onClick={()=>navigate(`/requeststatus/${request._id}`)}>click here for more details</a>
                             </div>
                         </td>
                         <td>{(request.edit)
@@ -135,7 +141,7 @@ const YourRequests = () => {
                 <Modal.Body>
                 {request_id?
                 (<Carousel variant="dark">
-                            {(image=(Files.findOne({request_id:request_id})).data)?
+                            {(image=(Request.findOne({_id:request_id})).images)?
                             ( image.map((img,index) => (
                             <Carousel.Item>
                             <img loading='lazy' className='admin-image' src={URL.createObjectURL(new Blob([img]))}
@@ -145,6 +151,13 @@ const YourRequests = () => {
                 </Carousel> ):null}
                 </Modal.Body>
               </Modal>
+              {(requestList.length < limit) ? null : (
+            <div className="d-grid gap-2">
+              <Button variant="outline-primary" size="sm" onClick={changeLimit}>
+                Click here to load more
+              </Button>
+            </div>
+          )}
             </div>
         )
     }else{//isLoading

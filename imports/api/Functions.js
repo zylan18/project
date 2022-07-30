@@ -19,24 +19,24 @@ Meteor.publish('donationImages',()=>{
   return(Files.find({donation_id:{$exists:true}}));
 });
 
-Meteor.publish('yourDonations',function(){//arrow function does not take this.userId
+Meteor.publish('yourDonations',function(limit){//arrow function does not take this.userId
   console.log(this.userId,'yourDonation')
-  return(DonationList.find({user_id:this.userId},{fields:{}}))
+  return(DonationList.find({user_id:this.userId},{fields:{},limit:limit}))
 })
 
-Meteor.publish('yourDonationImages',function(){
+Meteor.publish('yourDonationImages',function(limit){
   console.log(this.userId,'yourDonationImages')
-  return(Files.find({donation_id:{$exists:true},user_id:this.userId}));
+  return(Files.find({donation_id:{$exists:true},user_id:this.userId},{limit:limit}));
 })
 
-Meteor.publish('yourRequests',function(){
+Meteor.publish('yourRequests',function(limit){
   console.log(this.userId,'yourRequests')
-  return(Request.find({user_id:this.userId},{fields:{}}))
+  return(Request.find({user_id:this.userId},{fields:{},limit:limit}))
 })
 
-Meteor.publish('yourRequestImages',function(){
+Meteor.publish('yourRequestImages',function(limit){
   console.log(this.userId,'yourRequestImages')
-  return(Files.find({request_id:{$exists:true},user_id:this.userId}));
+  return(Files.find({request_id:{$exists:true},user_id:this.userId},{limit:limit}));
 })
 
 Meteor.publish('donationStatus',(id)=>{
@@ -49,9 +49,11 @@ Meteor.publish('donationStatusImages',(id)=>{
   return(Files.find({donation_id:id}));
 })
 
-Meteor.publish('requestStatus',(id)=>{
+Meteor.publish('requestStatus',function (id){
   console.log(this.userId,'requestStatus')
-  return(Request.find({_id:id},{fields:{}}))
+  var donationId=Request.findOne({_id:id}).donation_id
+  console.log(donationId)
+  return([Request.find({_id:id},{fields:{}}),DonationList.find({_id:donationId},{fields:{}})])//to return multiple collection use array
 })
 
 Meteor.publish('requestStatusImages',(id)=>{
@@ -134,32 +136,32 @@ Meteor.methods({
        'getDonationImage'(id){
         return((Files.findOne({donation_id:id})).data);
        },
-       'submitDonationForm'(user_id,username,donorname,address,phone,medname,expdate){
+       'submitDonationForm'(user_id,username,donorname,address,phone,medname,expdate,images){
         date=new Date;
         DonationList.insert({user_id:user_id,donatedat:date.toLocaleString(),
           username:username,donor_name:donorname,address:address,phone:phone, 
-          medicine_name:medname,brand:'',composition:'',exp_date:expdate,verify_status:false,verified_by:'',
+          medicine_name:medname,images:images,brand:'',composition:'',exp_date:expdate,verify_status:false,verified_by:'',
           status:'in verification',edit:true,remark:''})
        },
-        'submitReuqestForm'(user_id,username,reqname,donation_id,reason,address,phone){
+        'submitReuqestForm'(user_id,username,reqname,donation_id,reason,address,phone,images){
           var date=new Date;
           const medicine=DonationList.findOne({_id:donation_id});
           Request.insert({user_id:user_id,requestdate:date.toLocaleString(),
             username:username,requester_name:reqname,donation_id:donation_id, 
-            medicine_name:medicine.medicine_name, exp_date:medicine.exp_date,verify_status:false,verified_by:'',
+            medicine_name:medicine.medicine_name, images:images,exp_date:medicine.exp_date,verify_status:false,verified_by:'',
             status:'in verification',type:medicine.type,reason:reason,address:address,phone:phone,edit:true,remark:''})
         },
-        'updateDonationForm'(id,donorname,address,phone,medname,expdate){
+        'updateDonationForm'(id,donorname,address,phone,medname,expdate,images){
           date=new Date;
-          DonationList.update(id,{$set:{donor_name:donorname,address:address,phone:phone, 
+          DonationList.update(id,{$set:{donor_name:donorname,address:address,phone:phone,images:images, 
             medicine_name:medname,exp_date:expdate,updatedon:date.toLocaleString()}});
          },
          'updateDonationImages'(id,data){
           Files.update((Files.findOne({donation_id:id})._id),{$set:{data:data}});
         },
-        'updateRequestForm'(id,reqname,reason,address,phone){
+        'updateRequestForm'(id,reqname,reason,address,phone,images){
           var date=new Date;
-          Request.update(id,{$set:{requester_name:reqname, 
+          Request.update(id,{$set:{requester_name:reqname,images:images, 
             reason:reason,address:address,phone:phone,updatedon:date.toLocaleString()}})
         },
         'updateRequestImages'(id,data){
@@ -281,7 +283,6 @@ Meteor.methods({
 
 });
 Meteor.startup(function () {
-  process.env.MAIL_URL = 'mailgun smtp here';
   Accounts.config({
     sendVerificationEmail:true,
    });

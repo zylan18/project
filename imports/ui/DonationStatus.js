@@ -141,13 +141,13 @@ const DonationStatus = () => {
         </Col>
         <Col sm>
         <Row>
-            <Col> {((Files.findOne({donation_id:id})).data.length == 1)?//it checks if one image is uploaded then display one image else display carousel
-                        ((image=(Files.findOne({donation_id:id})).data)?
+            <Col> {((donation.images).length == 1)?//it checks if one image is uploaded then display one image else display carousel
+                        ((image=donation.images)?
                         (<img className='preview-image' src={URL.createObjectURL(new Blob([image[0]]))}
                         onClick={()=>{handleShow()}}/>)
                         :"Not found")
                         :(<Carousel variant="dark">
-                                    {(image=(Files.findOne({donation_id:id})).data)?
+                                    {(image=donation.images)?
                                     ( image.map((img,index) => (
                                     <Carousel.Item>
                                     <img className='preview-image' src={URL.createObjectURL(new Blob([img]))}
@@ -200,7 +200,7 @@ const DonationStatus = () => {
                 <Modal.Body>
                 {id?
                 (<Carousel variant="dark">
-                    {(image=(Files.findOne({donation_id:id})).data)?
+                    {(image=donation.images)?
                     ( image.map((img,index) => (
                     <Carousel.Item>
                     <img className='admin-image' src={URL.createObjectURL(new Blob([img]))}

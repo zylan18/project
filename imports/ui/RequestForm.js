@@ -6,15 +6,15 @@ import { Files } from '../api/Collections'
 import {Request} from '../api/Collections'
 import { useTracker } from 'meteor/react-meteor-data';
 import {useNavigate} from 'react-router-dom';
+import ImageUploader from './ImageUploader'
 
 const RequestForm = () => {
-    
     
     const user=Meteor.user();
     if (user){
     let { id } = useParams();//used to get values from address bar
     medicine=DonationList.findOne({_id:id})
-    const [medfile,handleFileChange]=useState('');
+    const [prescriptionImg,handleFileChange]=useState('');
     const [show, setShow] = useState(false);
     const [donation_id,setDonation_id]=useState('');
     const [requestername,handleRequesterNameChange]=useState(Meteor.user().profile.name);
@@ -37,89 +37,33 @@ const RequestForm = () => {
         return(!handle.ready());
         })
 
-    const isLoadingImg=useTracker(()=>{
-        const handle=Meteor.subscribe('donationStatusImages',id);
-        return(!handle.ready());
-    })    
-
-
-    var img;
-    
-    function fileInput(event){ 
-        var file = event.target.files[0]; //assuming 1 file only
-        if (!file) return;
-         
-        if(file.size<=5243000){ //used to check file size
-            console.log(file.type);
-            if (file.type=='image/jpeg'||file.type=='image/png'){ //used to check file type
-            handleFileError('');
-            console.log(file.size);
-            var reader = new FileReader(); //create a reader according to HTML5 File API
-            reader.onload = function(event){          
-            var buffer = new Uint8Array(reader.result) // convert to binary
-            handleAddMedfile(buffer);
-        }
-        reader.readAsArrayBuffer(file); //read the file as arraybuffer
-    }
-    else{
-        handleFileError('only jpg, jpeg and png files supported');
-        document.getElementById("file").value=null;
-    }
+const getImage=(image)=>{
+    handleFileChange(image)
 }
-    else{
-        handleFileError('File Size more than 5MB');
-        document.getElementById("file").value=null;
-    } 
-}
-const handleAddMedfile = (file) => {
-    const newmedfile = [...medfile];
-    newmedfile.push(file);
-    handleFileChange(newmedfile);
-    console.log(medfile)
-  }
-  const handleRemoveMedfile = (file) => {
-    const newmedfile = medfile.filter((t) => t !== file);
-    handleFileChange(newmedfile);
-    if(medfile.length==1){//to make value of file input when there are files uploaded and all are cleared
-        console.log(medfile.length);
-        document.getElementById('file').value=null;
-    }
-  }
   
     var date=new Date;
     handleSubmit=(event)=>{
-        //alert(`user_id:${Meteor.user()._id}\nrequestdate:${date.toLocaleString()}\nusername:${user.username}\nrequester_name:${user.profile.name}\ndonation_id:${id}\nmedicine_name:${medicine.medicine_name}\nexp_date:${medicine.exp_date}\nverify_status:${false}\nverified_by:${''}\nstatus:${'in verification'}\ntype:${medicine.type}`);
         handleSubmitShow()
         handleModalMessage('Submitting details.....');
-        Meteor.call('submitReuqestForm',Meteor.user()._id,Meteor.user().username,requestername,id,reason,address,phone,
+        //submit form details
+        Meteor.call('submitReuqestForm',Meteor.user()._id,Meteor.user().username,requestername,id,reason,address,phone,prescriptionImg,
         (error,result)=>{
             if(error){
+                //error in submit
                 handleModalMessage('Error request form not submitted');
                 document.querySelector("#modalokayerror").style.display = "inline";
                 event.preventDefault();
             }else{
-                handleModalMessage('Form Submitted');
-            }
-        });
-        handleModalMessage('Submitting images.....');
-        // Request.insert({user_id:Meteor.user()._id,requestdate:date.toLocaleString(),
-        // username:user.username,requester_name:user.profile.name,donation_id:id, 
-        // medicine_name:medicine.medicine_name, exp_date:medicine.exp_date,verify_status:false,verified_by:'',
-        // status:'in verification',type:medicine.type,reason:reason,address:address,phone:phone,edit:true,remark:''})
-        Meteor.call('requestFormSaveFile',Meteor.user()._id,Meteor.user().username,medfile,
-        (error,result)=>{
-            if(error){
-                handleModalMessage('Error uploading image\nimage not uploaded');
-                document.querySelector("#modalokayerror").style.display = "inline";
-            }else{
-                handleModalMessage(`Form and Images Submitted Successfully\nYour Request will soon be verified\nThank You`); 
+                //submit success
+                handleModalMessage(`Form Submitted Successfully\nYour Request will soon be verified\nThank You`); 
                 document.querySelector("#modalokay").style.display = "inline";
             }
-        });  
+        });
+        
         event.preventDefault();  
     }
-        var img=URL.createObjectURL(new Blob([medfile]))
-        if(!isLoadingData&&!isLoadingImg){
+        
+        if(!isLoadingData){
         return (
             <div className="form">
                 <Form onSubmit={handleSubmit}>
@@ -130,11 +74,11 @@ const handleAddMedfile = (file) => {
                             <tr>
                                 <td rowspan="4">
 
-                         {   (((Files.findOne({donation_id:medicine._id})).data).length==1)?
-                            (<img className='request-preview-image' src={URL.createObjectURL(new Blob((Files.findOne({donation_id:medicine._id})).data))}
+                         {   ((medicine.images).length==1)?
+                            (<img className='request-preview-image' src={URL.createObjectURL(new Blob(medicine.images))}
                                     onClick={()=>{setDonation_id(medicine._id);{console.log(donation_id)};handleShow()}}/>)
                             :(<Carousel variant="dark">
-                                    {(image=(Files.findOne({donation_id:medicine._id})).data)?
+                                    {(image=medicine.images)?
                                     ( image.map((img,index) => (
                                     <Carousel.Item>
                                     <img className='request-preview-image' src={URL.createObjectURL(new Blob([img]))}
@@ -184,17 +128,8 @@ const handleAddMedfile = (file) => {
                         </FloatingLabel><br/>
                         <Form.Label>Upload Prescription/Documents</Form.Label>
                         <br/>
-                        {medfile?(
-                         medfile.map((img,index) => (   
-                        <div className="upload-image-container">
-                        <img src={URL.createObjectURL(new Blob([img]))}
-                        className="upload-preview-image"/>
-                        <button className="circle-x-button" onClick={()=>{handleRemoveMedfile(img);}}
-                        >X</button>
-                        </div>))):(null)
-                        }
-                        <input type='file' id='file' accept="image/png, image/jpeg, image/jpg" className="file-input" required onChange={fileInput}/>
-                        <Form.Label className="loginError">{fileerror}</Form.Label>
+                        <ImageUploader getImage={getImage}/>
+                        <br/>
                         <br/>
                          <Button type='submit'>Submit</Button>   
                     </Form>
@@ -203,7 +138,7 @@ const handleAddMedfile = (file) => {
                     </Modal.Header>
                     <Modal.Body>
                     {donation_id?(<Carousel variant="dark">
-                                    {(image=(Files.findOne({donation_id:medicine._id})).data)?
+                                    {(image=medicine.images)?
                                     ( image.map((img,index) => (
                                     <Carousel.Item>
                                     <img className='admin-image' src={URL.createObjectURL(new Blob([img]))}

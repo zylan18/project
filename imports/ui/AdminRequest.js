@@ -8,7 +8,7 @@ import {Files} from '../api/Collections';
 import {GiConfirmed} from '@react-icons/all-files/gi/GiConfirmed';//to use icon
 import {GiCancel} from '@react-icons/all-files/gi/GiCancel';
 import {FaTrashAlt} from '@react-icons/all-files/fa/FaTrashAlt'
-
+import { Link } from 'react-router-dom';
 
 
 const AdminRequest = () => {
@@ -41,23 +41,23 @@ const AdminRequest = () => {
             return(!handle.ready());
             })    
     
-        const isLoadingImg = useTracker(()=>{
-            const handle=Meteor.subscribe('requestAdminImages');
-            return(!handle.ready());
-            })
+        // const isLoadingImg = useTracker(()=>{
+        //     const handle=Meteor.subscribe('requestAdminImages');
+        //     return(!handle.ready());
+        //     })
 
         useEffect(() => {
-            if(!isLoadingData && !isLoadingImg && !isLoadingDonationData){
+            if(!isLoadingData && !isLoadingDonationData){
                 const reqname=Request.find({}).fetch().reverse()
                 // for(i=0;i<reqname.length;i++){
                 //     document.getElementById(`status${i}`).checked=reqname[i].edit;
                 //     }
                 }
-            }, [isLoadingImg,reload]);
+            }, [reload]);
 
         var image;
         //console.log(reqname);
-        if(!isLoadingData && !isLoadingImg && !isLoadingDonationData){
+        if(!isLoadingData && !isLoadingDonationData){
             const reqname=(Request.find({},{fields:{}}).fetch()).reverse();
             console.log(reqname);
             setEditStatus=(id,status)=>{
@@ -256,8 +256,8 @@ const AdminRequest = () => {
                         </tr>
                         <tbody>
                     {
-                    reqname.map((medicine,index) => (
-                            <tr className={(verifyColor(medicine.verify_status))}>
+                    reqname.map((request,index) => (
+                            <tr className={(verifyColor(request.verify_status))}>
                             <td>
                             <OverlayTrigger
                             trigger="click" key={index} placement='right' rootClose={true} //rootClose to close popover when cllicked outside
@@ -282,49 +282,49 @@ const AdminRequest = () => {
                                                     <Form.Check 
                                                     type="switch"
                                                     id={`status${index}`}
-                                                    checked={medicine.edit}
-                                                    label={(medicine.edit)?('Edit Enabled'):('Edit Disabled')}
+                                                    checked={request.edit}
+                                                    label={(request.edit)?('Edit Enabled'):('Edit Disabled')}
                                                     />
                                                 </Col>
                                                 <Col>
-                                                    <Button variant='warning' onClick={()=>{setEditStatus(medicine._id,!medicine.edit)}}>
-                                                     {(medicine.edit)?('disable'):('enable')}   
+                                                    <Button variant='warning' onClick={()=>{setEditStatus(request._id,!request.edit)}}>
+                                                     {(request.edit)?('disable'):('enable')}   
                                                     </Button>
                                                 </Col>
                                             </Row>
                                         </Col>
                                         <Col width="130px">
-                                        <span className={"status-"+(verifyColor(medicine.verify_status))}>
-                                        {(medicine.verify_status==true)?(<span style={verifyIcon}><GiConfirmed style={verifyIcon}/> Verified</span>)
-                                        :(medicine.verify_status=="rejected")?(<span style={cancelIcon}><GiCancel style={cancelIcon}/> Rejected</span>)
+                                        <span className={"status-"+(verifyColor(request.verify_status))}>
+                                        {(request.verify_status==true)?(<span style={verifyIcon}><GiConfirmed style={verifyIcon}/> Verified</span>)
+                                        :(request.verify_status=="rejected")?(<span style={cancelIcon}><GiCancel style={cancelIcon}/> Rejected</span>)
                                         :("Not Verified")}
                                         </span>
                                         </Col>
-                                        <Col width="100px">{medicine.verified_by}</Col>
+                                        <Col width="100px">{request.verified_by}</Col>
                                         <Col width="100px">
-                                            <button id={index} className={(verifyColor(!medicine.verify_status))} onClick={()=>{verify(medicine._id)}}>
-                                                {(medicine.verify_status==true)?("Cancel")
-                                                :(medicine.verify_status=="rejected")?("Cancel Rejection")
+                                            <button id={index} className={(verifyColor(!request.verify_status))} onClick={()=>{verify(request._id)}}>
+                                                {(request.verify_status==true)?("Cancel")
+                                                :(request.verify_status=="rejected")?("Cancel Rejection")
                                                 :("Verify")}</button>
                                         </Col> 
                                         <Col width="100px" >   
-                                            <button style={{"color":"red"}} onClick={()=>rejectVerification(medicine._id)}>Reject</button>
+                                            <button style={{"color":"red"}} onClick={()=>rejectVerification(request._id)}>Reject</button>
                                         </Col>
                                         <Col width="150px">
                                             <Row>
                                                 <Col>
-                                                    {(medicine.remark)?(medicine.remark):('no remarks yet')}
+                                                    {(request.remark)?(request.remark):('no remarks yet')}
                                                 </Col>
                                             </Row>
                                             <Row>
                                                 <Col>
-                                                    <Button className='btn-danger' onClick={()=>{setRequest_id(medicine._id);handleRemark(medicine.remark);handleRemarkShow()}}>Remark</Button>
+                                                    <Button className='btn-danger' onClick={()=>{setRequest_id(request._id);handleRemark(request.remark);handleRemarkShow()}}>Remark</Button>
                                                 </Col>
                                             </Row>
                                             
                                         </Col> 
                                         <Col style={{'margin':'auto'}}>
-                                    <Button variant='danger' onClick={()=>{deleteRequest(medicine._id)}}>
+                                    <Button variant='danger' onClick={()=>{deleteRequest(request._id)}}>
                                     <FaTrashAlt/>
                                     </Button>
                                 </Col>
@@ -336,17 +336,17 @@ const AdminRequest = () => {
                             </OverlayTrigger>
                             </td>
                             <td width="150px" className="image-table">
-                            {((Files.findOne({request_id:medicine._id})).data.length == 1)?//it checks if one image is uploaded then display one image else display carousel
-                            ((image=(Files.findOne({request_id:medicine._id})).data)?
+                            {(request.images.length == 1)?//it checks if one image is uploaded then display one image else display carousel
+                            ((image=request.images)?
                             (<img className='preview-image' loading='lazy' src={URL.createObjectURL(new Blob([image[0]]))}
-                            onClick={()=>{setRequest_id(medicine._id);handleShow()}}/>)
+                            onClick={()=>{setRequest_id(request._id);handleShow()}}/>)
                             :"Not found")
                             :(<Carousel variant="dark">
-                                        {(image=(Files.findOne({request_id:medicine._id})).data)?
+                                        {(image=request.images)?
                                         ( image.map((img,index) => (
                                         <Carousel.Item>
                                         <img className='preview-image' loading='lazy' src={URL.createObjectURL(new Blob([img]))}
-                                        onClick={()=>{setRequest_id(medicine._id);{console.log(request_id)};handleShow()}}/>
+                                        onClick={()=>{setRequest_id(request._id);{console.log(request_id)};handleShow()}}/>
                                         </Carousel.Item>))):"Not found"
                                         }
                                 </Carousel>)}
@@ -358,19 +358,19 @@ const AdminRequest = () => {
                                 <Popover.Header as="h3">User Details</Popover.Header>
                                 <Popover.Body>
                                 <Row style={{'color':'green'}}>
-                                        <Col>name:</Col><Col>{medicine.requester_name}</Col>
+                                        <Col>name:</Col><Col>{request.requester_name}</Col>
                                     </Row>
                                     <Row style={{'color':'red'}}>
-                                        <Col>Phone Number:</Col><Col>{medicine.phone}</Col>
+                                        <Col>Phone Number:</Col><Col>{request.phone}</Col>
                                     </Row>
                                     <Row style={{'color':'blue'}}>    
-                                        <Col>Address:</Col><Col >{medicine.address}</Col>
+                                        <Col>Address:</Col><Col >{request.address}</Col>
                                     </Row>       
                                 </Popover.Body>
                                 </Popover>
                             }
                             >       
-                               <p>{medicine.username}</p> 
+                               <p>{request.username}</p> 
                             </OverlayTrigger>       
                             </td>
                             {/* {console.log(medicine.donor_name)} */}
@@ -381,30 +381,30 @@ const AdminRequest = () => {
                             placement='top'
                             overlay={
                                 <Popover id={`popover${index}`}>
-                                <Popover.Header as="h3">{medicine.medicine_name}</Popover.Header>
+                                <Popover.Header as="h3">{request.medicine_name}</Popover.Header>
                                 <Popover.Body>
                                     <Row style={{'color':'red'}}>
-                                        <Col>Type:</Col><Col>{medicine.type}</Col>
+                                        <Col>Type:</Col><Col>{request.type}</Col>
                                     </Row>
                                     <Row style={{'color':'blue'}}>    
-                                        <Col>Status:</Col><Col >{(DonationList.findOne({_id:medicine.donation_id})).status}</Col>
+                                        <Col>Status:</Col><Col >{(DonationList.findOne({_id:request.donation_id})).status}</Col>
                                     </Row>   
                                     <Row style={{'color':'green'}}>
-                                        <Col>Donor:</Col><Col>{(DonationList.findOne({_id:medicine.donation_id})).username}</Col>
+                                        <Col>Donor:</Col><Col>{(DonationList.findOne({_id:request.donation_id})).username}</Col>
                                     </Row>    
                                     
                                 </Popover.Body>
                                 </Popover>
                             }
                             >   
-                                <a href={`/donationstatus/${medicine.donation_id}`}>{medicine.medicine_name}</a>
+                                <Link to={`/donationstatus/${request.donation_id}`}>{request.medicine_name}</Link>
                             </OverlayTrigger>    
                             </td>
-                            <td width='100px'>{medicine.type}</td>
-                            <td width='100px'>{medicine.requestdate}</td>
-                            <td width='100px'>{medicine.exp_date}</td>
-                            <td width='200px'>{medicine.reason}</td>
-                            <td width='130px' id={`medstatus${index}`}>{medicine.status}</td>
+                            <td width='100px'>{request.type}</td>
+                            <td width='100px'>{request.requestdate}</td>
+                            <td width='100px'>{request.exp_date}</td>
+                            <td width='200px'>{request.reason}</td>
+                            <td width='130px' id={`medstatus${index}`}>{request.status}</td>
                          
 
                             
@@ -425,7 +425,7 @@ const AdminRequest = () => {
                         </Modal.Header>
                         <Modal.Body>
                         {request_id?(<Carousel variant="dark">
-                                        {(image=(Files.findOne({request_id:request_id})).data)?
+                                        {(image=(Request.findOne({_id:request_id})).images)?
                                         ( image.map((img,index) => (
                                         <Carousel.Item>
                                         <img className='admin-image' loading='lazy' src={URL.createObjectURL(new Blob([img]))}

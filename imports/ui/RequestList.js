@@ -15,10 +15,10 @@ const RequestList = () => {
         return(!handle.ready());
         })
 
-    const isLoadingImg = useTracker(()=>{
-        const handle=Meteor.subscribe('donationImages');
-        return(!handle.ready());
-        })
+    // const isLoadingImg = useTracker(()=>{
+    //     const handle=Meteor.subscribe('donationImages');
+    //     return(!handle.ready());
+    //     })
 
     const [show, setShow] = useState(false);
     const [donation_id,setDonation_id]=useState('');
@@ -32,7 +32,7 @@ const RequestList = () => {
         navigate(`/requestform/${med_id}`);
     }
     //if checks if data is loaded added it after all hooks to maintain the amount of hooks called before if
-    if(!isLoadingData&&!isLoadingImg){
+    if(!isLoadingData){
         const medicineList=DonationList.find({type:type}).fetch();
         const search=()=>{
             let filter=document.getElementById('search').value.toUpperCase();
@@ -59,7 +59,7 @@ const RequestList = () => {
         // const handleOnClick = useCallback(() => navigate(`/requestform/${med_id}`, {replace: true}), [navigate]);//used to send to /requestform/med_id
         if(medicineList.length==0){
             return(<Alert variant='warning'>No Medicine Available &nbsp; 
-                    <Alert.Link href='/request'>click here to go back</Alert.Link></Alert>)
+                    <Alert.Link onClick={()=>navigate('/request')}>click here to go back</Alert.Link></Alert>)
             }
             else{          
             return(
@@ -89,13 +89,13 @@ const RequestList = () => {
                     medicineList.map((medicine,index) => (
                         <tr data-index={index} style={{backgroundColor:'#dddddd'}}>
                             <td className="image-table">
-                            {((Files.findOne({donation_id:medicine._id})).data.length == 1)?//it checks if one image is uploaded then display one image else display carousel
-                                ((image=(Files.findOne({donation_id:medicine._id})).data)?
+                            {(medicine.images.length == 1)?//it checks if one image is uploaded then display one image else display carousel
+                                ((image=medicine.images)?
                                 (<img className='preview-image' loading='lazy' src={URL.createObjectURL(new Blob([image[0]]))}
                                 onClick={()=>{setDonation_id(medicine._id);handleShow()}}/>)
                                 :"Not found")
                                 :(<Carousel variant="dark">
-                                    {(image=(Files.findOne({donation_id:medicine._id})).data)?
+                                    {(image=medicine.images)?
                                     ( image.map((img,index) => (
                                     <Carousel.Item>
                                     <img className='preview-image' loading='lazy' src={URL.createObjectURL(new Blob([img]))}
@@ -126,7 +126,7 @@ const RequestList = () => {
                         </Modal.Header>
                         <Modal.Body>
                         {donation_id?(<Carousel variant="dark">
-                                    {(image=(Files.findOne({donation_id:donation_id})).data)?
+                                    {(image=(DonationList.findOne({_id:donation_id})).data)?
                                     ( image.map((img,index) => (
                                     <Carousel.Item>
                                     <img className='admin-image' src={URL.createObjectURL(new Blob([img]))}

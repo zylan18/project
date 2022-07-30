@@ -1,9 +1,8 @@
 import React, {useState} from 'react';
 import {Form, FloatingLabel,Button,Alert,Spinner,Modal,Row,Col,Stack} from 'react-bootstrap';
 import {useNavigate} from 'react-router-dom';
-import { DonationList } from '../api/Collections';
 //import {Meteor} from 'meteor/meteor';
-import {Files} from '../api/Collections';
+import ImageUploader from './ImageUploader'
 
 
 const DonationForm = () =>{
@@ -22,12 +21,13 @@ const DonationForm = () =>{
         const handleClose = () => setShow(false);
         const handleShow = () => {setShow(true)};
         const navigate = useNavigate();
+        // if(Meteor.user().emails[0].verified){
         handleSubmit=(event)=>{
             // if(confirm(`Are you sure your details correct?\nDonor Name:${donorname}\nAddress:${address}\nMedicine Name:${medname}\nExpiry Date:${expdate}
             date=new Date;
             handleShow();
             handleModalMessage('Submitting please wait ....');
-            Meteor.call('submitDonationForm',Meteor.user()._id,Meteor.user().username,donorname,address,phone,medname,expdate,
+            Meteor.call('submitDonationForm',Meteor.user()._id,Meteor.user().username,donorname,address,phone,medname,expdate,medfile,
             (error,result)=>{
                 if(error){
                     handleModalMessage('Error in submiting donation form\nForm not submitted');
@@ -36,58 +36,18 @@ const DonationForm = () =>{
                 }
                 else{
                     handleModalMessage('form submitted successfully');
+                    handleModalMessage(`Form and Images Submitted successfully\nYour donation will soon be verified\nThank You`);
+                    document.querySelector("#modalokay").style.display = "inline";
                     event.preventDefault();
                    }
             });
 
-            handleModalMessage('Submitting image please wait ....');
-            console.log(medfile);
-            Meteor.call('saveFile',Meteor.user()._id,Meteor.user().username,medfile,
-            (error,result)=>{
-                if(error){
-                    handleModalMessage('error in uploading image\nImage not upladed');
-                    document.querySelector("#modalokayerror").style.display = "inline";
-                    event.preventDefault();   
-                }
-                else{
-                    handleModalMessage(`Form and Images Submitted successfully\nYour donation will soon be verified
-                    \nThank You`);
-                    document.querySelector("#modalokay").style.display = "inline";
-                    // if(confirm('Do you want to donate again?')){
-                    //     window.location.reload();
-                    // }else{
-                    //     navigate(`/yourdonations`);
-                    // } 
-                }
-            });
         event.preventDefault();
     }
        
-        function fileInput(event){ 
-            var file = event.target.files[0]; //assuming 1 file only
-            if (!file) return;
-             
-            if(file.size<=5243000){ //used to check file size
-                console.log(file.type);
-                if (file.type=='image/jpeg'||file.type=='image/png'){ //used to check file type
-                handleFileError('');
-                console.log(file.size);
-                var reader = new FileReader(); //create a reader according to HTML5 File API
-                reader.onload = function(event){          
-                var buffer = new Uint8Array(reader.result) // convert to binary
-                handleAddMedfile(buffer);
-            }
-            reader.readAsArrayBuffer(file); //read the file as arraybuffer
-        }
-        else{
-            handleFileError('only jpg, jpeg and png files supported');
-            document.getElementById("file").value=null;
-        }
-    }
-        else{
-            handleFileError('File Size more than 5MB');
-            document.getElementById("file").value=null;
-        } 
+        const getImage=(image)=>{ 
+            handleFileChange(image)
+            console.log(image);
     }
 
     const handleAddMedfile = (file) => {
@@ -138,18 +98,10 @@ const DonationForm = () =>{
                                 />        
                         </FloatingLabel>
                     <br/>
+                    
                     <Form.Label>Upload images of Medicine</Form.Label><br/>
-                        {medfile?(
-                         medfile.map((img,index) => (   
-                        <div className="upload-image-container">
-                        <img src={URL.createObjectURL(new Blob([img]))}
-                        className="upload-preview-image"/>
-                        <button className="circle-x-button" onClick={()=>{handleRemoveMedfile(img);}}
-                        >X</button>
-                        </div>))):(null)
-                        }
-                        <input className='file-input' type='file' accept="image/png, image/jpeg, image/jpg" id='file' required onChange={fileInput}/>
-                        <Form.Label className="loginError" style={{'display':'inline-block'}}>{fileerror}</Form.Label>
+                        {/* Image Uploader */}
+                    <ImageUploader getImage={getImage}/>
                    <br/><br/>     
 
                 <Button className="btn-primary" variant="primary" type="submit">Submit</Button>
@@ -187,6 +139,7 @@ const DonationForm = () =>{
               </Modal>
                 </div>
         )
+    
       }//if
       else if(Meteor.loggingIn()){
       return(<div>
@@ -197,7 +150,7 @@ const DonationForm = () =>{
           return(<div>
               <Alert variant="danger">Login to access this page. 
               If you have not registered then 
-              <Alert.Link href="/register" variant="danger"> click here </Alert.Link>
+              <Alert.Link onClick={()=>navigate("/register")} variant="danger"> click here </Alert.Link>
               to register
               </Alert>
           </div>)

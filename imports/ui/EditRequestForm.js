@@ -1,4 +1,4 @@
-import React,{useState,useEffect} from 'react'
+import React,{useState,useEffect, useRef} from 'react'
 import {Alert,Form,FloatingLabel,Modal,Spinner,Col,Row,Carousel,Button} from 'react-bootstrap'
 import { useParams,useNavigate } from 'react-router-dom'
 import { DonationList } from '../api/Collections'
@@ -27,17 +27,14 @@ const EditRequestForm = () => {
     const [phone,handlePhoneChange]=useState();
     const [fileerror,handleFileError]=useState();
     const navigate=useNavigate();
+    const modalokay=useRef(null)
     const isLoadingData = useTracker(()=>{
         const handle=Meteor.subscribe('requestStatus',id);//used useTracker to continuously check if subscribe is ready 
         return(!handle.ready());
         })
-
-    const isLoadingImg=useTracker(()=>{
-        const handle=Meteor.subscribe('requestStatusImages',id);
-        return(!handle.ready());
-    })    
+ 
     useEffect(()=>{
-        if(!isLoadingData && !isLoadingImg){
+        if(!isLoadingData){
            const request=Request.findOne({_id:id});
             if((Request.findOne({_id:id})).edit){
             handleAddressChange(request.address);
@@ -45,11 +42,10 @@ const EditRequestForm = () => {
             handleRequseterNameChange(request.requester_name);
             setDonation_id(request.donation_id);
             handlePhoneChange(request.phone);
-            handleFileChange((Files.findOne({request_id:id}).data));
+            handleFileChange(request.images);
             }
         }
-    },[(isLoadingImg)])
-    var img;
+    },[(isLoadingData)])
     
     function fileInput(event){ 
         var file = event.target.files[0]; //assuming 1 file only
@@ -97,32 +93,34 @@ const handleAddMedfile = (file) => {
         //alert(`user_id:${Meteor.user()._id}\nrequestdate:${date.toLocaleString()}\nusername:${user.username}\nrequester_name:${user.profile.name}\ndonation_id:${id}\nmedicine_name:${request.medicine_name}\nexp_date:${request.exp_date}\nverify_status:${false}\nverified_by:${''}\nstatus:${'in verification'}\ntype:${request.type}`);
         handleSubmitShow();
         handleModalMessage('Updating details.....');
-        Meteor.call('updateRequestForm',id,requestername,reason,address,phone,
+        Meteor.call('updateRequestForm',id,requestername,reason,address,phone,medfile,
         (error,result)=>{
             if(error){
                 handleModalMessage('Error request form not updated');
                 event.preventDefault();
             }else{
                 handleModalMessage('Form Updated successfully');
+                modalokay.current.style.display='inline'
             }
         });
-        handleModalMessage('Updating images.....');
-        // Request.update(id,{$set:{reason:reason,address:address,status:'in verification',edit:true,phone:phone}})
-        // 
-        Meteor.call('updateRequestImages',id,medfile,
-        (error,result)=>{
-            if(error){
-                handleModalMessage('Error images not uploaded');
-            }else{
-                handleModalMessage('Form and Images uploaded successfully');
-                document.querySelector('#modalokay').style.display='inline'
-            }
-        })
+        // handleModalMessage('Updating images.....');
+        // // Request.update(id,{$set:{reason:reason,address:address,status:'in verification',edit:true,phone:phone}})
+        // // 
+        // Meteor.call('updateRequestImages',id,medfile,
+        // (error,result)=>{
+        //     if(error){
+        //         handleModalMessage('Error images not uploaded');
+        //     }else{
+        //         handleModalMessage('Form and Images uploaded successfully');
+        //         document.querySelector('#modalokay').style.display='inline'
+        //     }
+        // })
         event.preventDefault()
         
     }
-    if(!isLoadingData && !isLoadingImg){
+    if(!isLoadingData){
         const request=Request.findOne({});
+        const donation=DonationList.findOne({_id:request.donation_id})
         if(request.edit){
         var img=URL.createObjectURL(new Blob([medfile]))
         return (
@@ -136,11 +134,11 @@ const handleAddMedfile = (file) => {
                             <tr padding='1px'><b>Medicine Details:</b></tr>
                             <tr>
                                 <td rowspan="4">
-                                {   (((Files.findOne({donation_id:request.donation_id})).data).length==1)?
-                            (<img className='request-preview-image' src={URL.createObjectURL(new Blob((Files.findOne({donation_id:request.donation_id})).data))}
+                                {   (donation.images.length==1)?
+                            (<img className='request-preview-image' src={URL.createObjectURL(new Blob(donation.images))}
                                     onClick={()=>{setDonation_id(request.donation_id);{console.log(donation_id)};handleShow()}}/>)
                             :(<Carousel variant="dark">
-                                    {(image=(Files.findOne({donation_id:request.donation_id})).data)?
+                                    {(image=donation.images)?
                                     ( image.map((img,index) => (
                                     <Carousel.Item>
                                     <img className='request-preview-image' src={URL.createObjectURL(new Blob([img]))}
@@ -208,7 +206,7 @@ const handleAddMedfile = (file) => {
                     </Modal.Header>
                     <Modal.Body>
                     {donation_id?(<Carousel variant="dark">
-                                    {(image=(Files.findOne({donation_id:donation_id})).data)?
+                                    {(image=donation.images)?
                                     ( image.map((img,index) => (
                                     <Carousel.Item>
                                     <img className='admin-image' src={URL.createObjectURL(new Blob([img]))}
@@ -224,7 +222,7 @@ const handleAddMedfile = (file) => {
                     <Modal.Body>
                         <p style={{'textAlign':'center'}}>{modalmessage}</p>
                     <div style={{'width': '15%','margin': 'auto'}}>
-                        <Button id='modalokay' style={{'display':'none'}}
+                        <Button id='modalokay' ref={modalokay} style={{'display':'none'}}
                         onClick={()=>{navigate('/yourrequests')}}
                         >Okay</Button>
                          <Button variant='danger' id='modalokayerror' style={{'display':'none'}}

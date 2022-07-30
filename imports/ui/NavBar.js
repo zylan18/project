@@ -21,8 +21,8 @@ function NavBar() {
         <meta name="viewport" content="width=device-width, initial-scale=1"/>
         <Navbar bg="primary" className="w-auto" variant="dark" expand='lg'>
           <Container>
-            <Navbar.Brand  href="/">
-              <img src='/images/logo.png' width="110" style={{'object-fit':'contain'}} className="d-inline-block align-top logo"/>
+            <Navbar.Brand>
+              <img src='/images/logo.png' width="110" style={{'object-fit':'contain'}} className="d-inline-block align-top logo" onClick={()=>navigate('/')}/>
             </Navbar.Brand>
           
             <Navbar.Toggle aria-controls="basic-navbar-nav" />
@@ -35,11 +35,11 @@ function NavBar() {
                   <Link className="nav-link" to={"/contactus"}>Contact Us</Link>
                <div className='ms-auto'> 
                   <NavDropdown title={Meteor.user().username} id="navbarScrollingDropdown">
-                  <NavDropdown.Item href="/profile">Profile</NavDropdown.Item>
-                  <NavDropdown.Item href="/yourdonations">Your Donations</NavDropdown.Item>
-                  <NavDropdown.Item href="/yourrequests">Your Requests</NavDropdown.Item>
-                  {(Meteor.user().profile.role=='admin')?(<NavDropdown.Item href="/admin">Admin</NavDropdown.Item>):null}
-                  {(Meteor.user().profile.role=='delivery')?(<NavDropdown.Item href="/delivery">Delivery</NavDropdown.Item>):null}
+                  <NavDropdown.Item onClick={()=>navigate("/profile")}>Profile</NavDropdown.Item>
+                  <NavDropdown.Item onClick={()=>navigate("/yourdonations")}>Your Donations</NavDropdown.Item>
+                  <NavDropdown.Item onClick={()=>navigate("/yourrequests")}>Your Requests</NavDropdown.Item>
+                  {(Meteor.user().profile.role=='admin')?(<NavDropdown.Item onClick={()=>navigate("/admin")}>Admin</NavDropdown.Item>):null}
+                  {(Meteor.user().profile.role=='delivery')?(<NavDropdown.Item onClick={()=>navigate("/delivery")}>Delivery</NavDropdown.Item>):null}
                   <NavDropdown.Divider />
                   <NavDropdown.Item onClick={logout}>
                     <span className="red-text">Signout</span>

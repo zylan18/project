@@ -1,4 +1,5 @@
-import React,{useCallback,useState} from 'react';
+import React from "react";
+import { Link } from "react-router-dom";
 
 const Request = () => {
   return (
@@ -11,7 +12,7 @@ const Request = () => {
                         Antipyretic is a substance that reduces fever.Antipyretics cause the hypothalamus to override a prostaglandin-induced increase in temperature &nbsp; 
                         <a href='https://en.wikipedia.org/wiki/Antipyretic'>more</a>
                 </p>
-                <a className='request-now' href={`/requestlist/antipyretic`}>Request Now</a>
+                <Link className='request-now' to={`/requestlist/antipyretic`}>Request Now</Link>
                     
                         <div class="go-corner" href="#">
                             <div class="go-arrow">
@@ -28,7 +29,7 @@ const Request = () => {
                     &nbsp; 
                         <a href='https://en.wikipedia.org/wiki/Antiseptic'>more</a>
                    </p>
-                   <a className='request-now' href={`/requestlist/antiseptic`}>Request Now</a>
+                   <Link className='request-now' to={`/requestlist/antiseptic`}>Request Now</Link>
                     
                         <div class="go-corner" href="#">
                             <div class="go-arrow">
@@ -46,7 +47,7 @@ const Request = () => {
                     It is the most important type of antibacterial agent for fighting bacterial infections &nbsp; 
                     <a href='https://en.wikipedia.org/wiki/Antibiotic'>more</a>
                    </p>
-                   <a className='request-now' href={`/requestlist/antibiotic`}>Request Now</a>
+                   <Link className='request-now' to={`/requestlist/antibiotic`}>Request Now</Link>
                     
                         <div class="go-corner" href="#">
                             <div class="go-arrow">
@@ -64,7 +65,7 @@ const Request = () => {
                      is any member of the group of drugs used to achieve relief from pain&nbsp; 
                     <a href='https://en.wikipedia.org/wiki/Analgesic'>more</a>
                    </p>
-                   <a className='request-now' href={`/requestlist/analgestic`}>Request Now</a>
+                   <Link className='request-now' to={`/requestlist/analgestic`}>Request Now</Link>
                         <div class="go-corner" href="#">
                             <div class="go-arrow">
                                 →
@@ -81,7 +82,7 @@ const Request = () => {
                     by intense and sustained mood shifts, such as bipolar disorder.&nbsp; 
                     <a href='https://en.wikipedia.org/wiki/Mood_stabilizer'>more</a>
                    </p>
-                   <a className='request-now' href={`/requestlist/mood_stabilizer`}>Request Now</a>
+                   <Link className='request-now' to={`/requestlist/mood_stabilizer`}>Request Now</Link>
                         <div class="go-corner" href="#">
                             <div class="go-arrow">
                                 →
@@ -96,7 +97,7 @@ const Request = () => {
                     <p className="small">
                     This includes other medcines and medical items like suppliments, masks, etc. &nbsp;<br/><br/><br/>
                    </p>
-                   <a className='request-now' href={`/requestlist/others`}>Request Now</a>
+                   <Link className='request-now' to={`/requestlist/others`}>Request Now</Link>
                         <div class="go-corner" href="#">
                             <div class="go-arrow">
                                 →

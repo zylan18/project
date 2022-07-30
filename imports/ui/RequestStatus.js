@@ -1,6 +1,6 @@
 import React,{useEffect,useState} from 'react';
 import { Request } from '../api/Collections';
-import { Files } from '../api/Collections';
+import { DonationList } from '../api/Collections';
 import {FaCheck} from '@react-icons/all-files/fa/FaCheck';
 import { Spinner ,Col,Row,Button,Carousel,Modal} from 'react-bootstrap';
 import { useParams } from 'react-router-dom';
@@ -21,10 +21,10 @@ const RequestStatus = () => {
         return(!handle.ready());
         })
 
-    const isLoadingImg=useTracker(()=>{
-        const handle=Meteor.subscribe('requestStatusImages',id);
-        return(!handle.ready());
-    })    
+    // const isLoadingImg=useTracker(()=>{
+    //     const handle=Meteor.subscribe('requestStatusImages',id);
+    //     return(!handle.ready());
+    // })    
     
     
         function cancelRequest(){
@@ -43,7 +43,7 @@ const RequestStatus = () => {
     }
     
     useEffect(()=>{
-        if(!isLoadingData&&!isLoadingImg){
+        if(!isLoadingData){
             const request=Request.findOne({_id:id});
             if(Meteor.user().profile.role=='admin'||Meteor.user()._id==request.user_id){ 
         switch(request.status){
@@ -94,7 +94,7 @@ const RequestStatus = () => {
     }
 }
     })
-    if(!isLoadingData&&!isLoadingImg){
+    if(!isLoadingData){
         const request=Request.findOne({_id:id});
         console.log(request);
         if(Meteor.user().profile.role=='admin'||Meteor.user()._id==request.user_id){   
@@ -136,13 +136,13 @@ const RequestStatus = () => {
         </Col>
         <Col sm>
         <Row>
-            <Col> {((Files.findOne({donation_id:request.donation_id})).data.length == 1)?//it checks if one image is uploaded then display one image else display carousel
-                        ((image=(Files.findOne({donation_id:request.donation_id})).data)?
+            <Col> {((DonationList.findOne({_id:request.donation_id})).images.length == 1)?//it checks if one image is uploaded then display one image else display carousel
+                        ((image=(DonationList.findOne({_id:request.donation_id})).images)?
                         (<img className='preview-image' src={URL.createObjectURL(new Blob([image[0]]))}
                         onClick={()=>{handleDonationShow()}}/>)
                         :"Not found")
                         :(<Carousel variant="dark">
-                                    {(image=(Files.findOne({donation_id:request.donation_id})).data)?
+                                    {(image=(DonationList.findOne({_id:request.donation_id})).images)?
                                     ( image.map((img,index) => (
                                     <Carousel.Item>
                                     <img className='preview-image' src={URL.createObjectURL(new Blob([img]))}
@@ -180,13 +180,13 @@ const RequestStatus = () => {
                 Submitted Documents/Prescription
             </Col>
             <Col>
-            {((Files.findOne({request_id:id})).data.length == 1)?//it checks if one image is uploaded then display one image else display carousel
-                        ((image=(Files.findOne({request_id:id})).data)?
+            {(request.images.length == 1)?//it checks if one image is uploaded then display one image else display carousel
+                        ((image=request.images)?
                         (<img className='preview-image' src={URL.createObjectURL(new Blob([image[0]]))}
                         onClick={()=>{handleShow()}}/>)
                         :"Not found")
                         :(<Carousel variant="dark">
-                                    {(image=(Files.findOne({request_id:id})).data)?
+                                    {(image=request.images)?
                                     ( image.map((img,index) => (
                                     <Carousel.Item>
                                     <img className='preview-image' src={URL.createObjectURL(new Blob([img]))}
@@ -217,7 +217,7 @@ const RequestStatus = () => {
                 <Modal.Body>
                 {id?
                 (<Carousel variant="dark">
-                    {(image=(Files.findOne({request_id:id})).data)?
+                    {(image=request.images)?
                     ( image.map((img,index) => (
                     <Carousel.Item>
                     <img className='admin-image' src={URL.createObjectURL(new Blob([img]))}
@@ -234,7 +234,7 @@ const RequestStatus = () => {
                 <Modal.Body>
                 {(request.donation_id)?
                 (<Carousel variant="dark">
-                    {(image=(Files.findOne({donation_id:request.donation_id})).data)?
+                    {(image=DonationList.findOne({_id:request.donation_id}).images)?
                     ( image.map((img,index) => (
                     <Carousel.Item>
                     <img className='admin-image' src={URL.createObjectURL(new Blob([img]))}

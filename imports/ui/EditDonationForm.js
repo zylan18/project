@@ -1,4 +1,4 @@
-import React, {useState,useEffect} from 'react';
+import React, {useState,useEffect, useRef} from 'react';
 import {Form, FloatingLabel,Button,Alert,Spinner,Modal} from 'react-bootstrap';
 import { DonationList } from '../api/Collections';
 //import {Meteor} from 'meteor/meteor';
@@ -6,6 +6,8 @@ import {Files} from '../api/Collections';
 import { useParams } from 'react-router-dom';
 import {useNavigate} from 'react-router-dom';
 import {useTracker} from 'meteor/react-meteor-data';
+import ImageUploader from './ImageUploader';
+
 
 const EditDonationForm = () =>{
 
@@ -24,19 +26,16 @@ const EditDonationForm = () =>{
         const handleSubmitClose = () => setShowSubmit(false);
         const handleSubmitShow = () => {setShowSubmit(true)};
 
-        var fileinput;
+        const modalokay= useRef(null)
+
         const [fileerror,handleFileError]=useState();
         const isLoadingData = useTracker(()=>{
             const handle=Meteor.subscribe('donationStatus',id);//used useTracker to continuously check if subscribe is ready 
             return(!handle.ready());
             })
-    
-        const isLoadingImg=useTracker(()=>{
-            const handle=Meteor.subscribe('donationStatusImages',id);
-            return(!handle.ready());
-        })    
+      
         useEffect(()=>{
-            if(!isLoadingData && !isLoadingImg){
+            if(!isLoadingData){
                const donation=DonationList.findOne({_id:id});
                 if((DonationList.findOne({_id:id})).edit){
                 handleDonornameChange(donation.donor_name);
@@ -44,16 +43,17 @@ const EditDonationForm = () =>{
                 handlePhoneChange(donation.phone);
                 handleMednameChange(donation.medicine_name);
                 handleExpdateChange(donation.exp_date);
-                handleFileChange((Files.findOne({donation_id:id}).data));
+                handleFileChange((donation.images));
+                console.log(medfile)
                 }
             }
-        },[(isLoadingImg)])//added is loadingImage as dependency to update state
+        },[(isLoadingData)])//added is loadingImage as dependency to update state
         
         handleSubmit=(event)=>{
             date=new Date;
             handleSubmitShow();
             handleModalMessage('Updating details.....');
-            Meteor.call('updateDonationForm',id,donorname,address,phone,medname,expdate,
+            Meteor.call('updateDonationForm',id,donorname,address,phone,medname,expdate,medfile,
             (error,result)=>{
                 if(error){
                     handleModalMessage('Error in updating donation form\nForm not submitted');
@@ -62,73 +62,61 @@ const EditDonationForm = () =>{
                 }
                 else{
                     handleModalMessage('\nform updated successfully');
+                    modalokay.current.style.display='inline'
                 }
             });
             
             console.log(medfile);
-            // Files.update((Files.findOne({donation_id:id})._id),{$set:{data:medfile}});
-            handleModalMessage('\nUpdating images.....');
-            Meteor.call('updateDonationImages',id,medfile,
-            (error,result)=>{
-                if(error){
-                    handleModalMessage('Error! images not updated');
-                    document.querySelector('#modalokayerror').style.display='inline';
-                }else{
-                    handleModalMessage('\nForm and Images updated successfully');
-                    document.querySelector('#modalokay').style.display='inline';
-                    console.log(modalmessage);
-                }
-            });
+            
             event.preventDefault();
         }
         
 
-        function fileInput(event){ 
-            var file = event.target.files[0]; //assuming 1 file only
-            if (!file) return;
+    //     function fileInput(event){ 
+    //         var file = event.target.files[0]; //assuming 1 file only
+    //         if (!file) return;
              
-            if(file.size<=5243000){ //used to check file size
-                console.log(file.type);
-                if (file.type=='image/jpeg'||file.type=='image/png'){ //used to check file type
-                handleFileError('');
-                console.log(file.size);
-                var reader = new FileReader(); //create a reader according to HTML5 File API
-                reader.onload = function(event){          
-                var buffer = new Uint8Array(reader.result) // convert to binary
-                handleAddMedfile(buffer);
-            }
-            reader.readAsArrayBuffer(file); //read the file as arraybuffer
-        }
-        else{
-            handleFileError('only jpg, jpeg and png files supported');
-            document.getElementById("file").value=null;
-        }
-    }
-        else{
-            handleFileError('File Size more than 5MB');
-            document.getElementById("file").value=null;
-        }
-    }    
-    const handleAddMedfile = (file) => {
-        const newmedfile = [...medfile];
-        newmedfile.push(file);
-        handleFileChange(newmedfile);
-        console.log(medfile)
-      }
+    //         if(file.size<=5243000){ //used to check file size
+    //             console.log(file.type);
+    //             if (file.type=='image/jpeg'||file.type=='image/png'){ //used to check file type
+    //             handleFileError('');
+    //             console.log(file.size);
+    //             var reader = new FileReader(); //create a reader according to HTML5 File API
+    //             reader.onload = function(event){          
+    //             var buffer = new Uint8Array(reader.result) // convert to binary
+    //             handleAddMedfile(buffer);
+    //         }
+    //         reader.readAsArrayBuffer(file); //read the file as arraybuffer
+    //     }
+    //     else{
+    //         handleFileError('only jpg, jpeg and png files supported');
+    //         document.getElementById("file").value=null;
+    //     }
+    // }
+    //     else{
+    //         handleFileError('File Size more than 5MB');
+    //         document.getElementById("file").value=null;
+    //     }
+    // }    
+    // const handleAddMedfile = (file) => {
+    //     const newmedfile = [...medfile];
+    //     newmedfile.push(file);
+    //     handleFileChange(newmedfile);
+    //     console.log(medfile)
+    //   }
 
-      const handleRemoveMedfile = (file) => {
-        const newmedfile = medfile.filter((t) => t !== file);
-        handleFileChange(newmedfile);
-        if(medfile.length==1){//to make value of file input when there are files uploaded and all are cleared
-            console.log(medfile.length);
-            document.getElementById('file').value=null;
+    //   const handleRemoveMedfile = (file) => {
+    //     const newmedfile = medfile.filter((t) => t !== file);
+    //     handleFileChange(newmedfile);
+    //     if(medfile.length==1){//to make value of file input when there are files uploaded and all are cleared
+    //         console.log(medfile.length);
+    //         document.getElementById('file').value=null;
+    //     }
+    //   }
+        const getImage=(image)=>{
+            handleFileChange(image)
         }
-      }
-        // var dbimg = Files.find({user_id:Meteor.user()._id},{fields:{}}).fetch();
-        // dbimg=new Blob([dbimg[0].data]);
-        // dbimg=URL.createObjectURL(dbimg);
-        // console.log(img);
-        if(!isLoadingData && !isLoadingImg){
+        if(!isLoadingData){
         if((DonationList.findOne({_id:id})).edit){ 
         
             var img=URL.createObjectURL(new Blob([medfile]))
@@ -165,7 +153,8 @@ const EditDonationForm = () =>{
                         </FloatingLabel>
                     <br/>
                     <Form.Label>Upload images of Medicine</Form.Label><br/>
-                        {medfile?(
+                        <ImageUploader getImage={getImage} images={(DonationList.findOne({_id:id})).images}/>
+                        {/* {medfile?(
                          medfile.map((img,index) => (   
                         <div className="upload-image-container">
                         <img src={URL.createObjectURL(new Blob([img]))}
@@ -175,7 +164,7 @@ const EditDonationForm = () =>{
                         </div>))):(null)
                         }
                         <input className='file-input' type='file' accept="image/png, image/jpeg, image/jpg" id='file' onChange={fileInput}/>
-                        <Form.Label className="loginError" style={{'display':'inline-block'}}>{fileerror}</Form.Label>
+                        <Form.Label className="loginError" style={{'display':'inline-block'}}>{fileerror}</Form.Label> */}
                    <br/><br/>     
 
                 <Button className="btn-primary" variant="primary" type="submit">Update</Button>
@@ -186,7 +175,7 @@ const EditDonationForm = () =>{
                         <Modal.Body>
                             <p style={{'textAlign':'center'}}>{modalmessage}</p>
                         <div style={{'width': '15%','margin': 'auto'}}>
-                            <Button id='modalokay' style={{'display':'none'}}
+                            <Button id='modalokay' ref={modalokay} style={{'display':'none'}}
                             onClick={()=>{console.log(modalmessage);navigate('/yourdonations')}}
                             >Okay</Button>
                             <Button variant='danger' id='modalokayerror' style={{'display':'none'}}
